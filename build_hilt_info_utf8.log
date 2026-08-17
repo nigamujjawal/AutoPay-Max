@@ -1,0 +1,1557 @@
+﻿Initialized native services in: D:\GradleCache\native
+Initialized jansi services in: D:\GradleCache\native
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.4.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Path for java installation 'C:\Users\Asus\.jdks\corretto-21.0.2-1' (IntelliJ) auto-detected does not contain a java executable
+Path for java installation 'C:\Users\Asus\.jdks\corretto-21.0.2' (IntelliJ) auto-detected does not contain a java executable
+Directory 'C:\Program Files\Java\jre1.8.0_202' (Windows Registry) auto-detected used for java installations does not exist
+Directory 'C:\Program Files\Java\jdk1.8.0_202' (Windows Registry) auto-detected used for java installations does not exist
+Received JVM installation metadata from 'C:\Program Files\Java\jdk-21': {JAVA_HOME=C:\Program Files\Java\jdk-21, JAVA_VERSION=21.0.2, JAVA_VENDOR=Oracle Corporation, RUNTIME_NAME=Java(TM) SE Runtime Environment, RUNTIME_VERSION=21.0.2+13-LTS-58, VM_NAME=Java HotSpot(TM) 64-Bit Server VM, VM_VERSION=21.0.2+13-LTS-58, VM_VENDOR=Oracle Corporation, OS_ARCH=amd64}
+Starting process 'Gradle build daemon'. Working directory: D:\GradleCache\daemon\9.4.1 Command: C:\Program Files\Java\jdk-21\bin\java.exe --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED -Xmx2048m -Dfile.encoding=UTF-8 -Duser.country=IN -Duser.language=en -Duser.variant -cp D:\GradleCache\wrapper\dists\gradle-9.4.1-bin\arn2x92ynaizyzdaamcbpbhtj\gradle-9.4.1\lib\gradle-daemon-main-9.4.1.jar -javaagent:D:\GradleCache\wrapper\dists\gradle-9.4.1-bin\arn2x92ynaizyzdaamcbpbhtj\gradle-9.4.1\lib\agents\gradle-instrumentation-agent-9.4.1.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 9.4.1
+Successfully started process 'Gradle build daemon'
+An attempt to start the daemon took 1.105 secs.
+The client will now receive all logging from the daemon (pid: 2832). The daemon log file: D:\GradleCache\daemon\9.4.1\daemon-2832.out.log
+Daemon will be stopped at the end of the build 
+Using 12 worker leases.
+Operational build model parameters: {cachingModelBuilding=false, configurationCache=false, configurationCacheDisabledReason=null, configurationCacheParallelLoad=false, configurationCacheParallelStore=false, configureOnDemand=false, invalidateCoupledProjects=false, isolatedProjects=false, modelAsProjectDependency=false, modelBuilding=false, parallelModelBuilding=false, parallelProjectConfiguration=false, parallelProjectExecution=false, resilientModelBuilding=false}
+Received JVM installation metadata from 'C:\Program Files\Java\jdk-21': {JAVA_HOME=C:\Program Files\Java\jdk-21, JAVA_VERSION=21.0.2, JAVA_VENDOR=Oracle Corporation, RUNTIME_NAME=Java(TM) SE Runtime Environment, RUNTIME_VERSION=21.0.2+13-LTS-58, VM_NAME=Java HotSpot(TM) 64-Bit Server VM, VM_VERSION=21.0.2+13-LTS-58, VM_VENDOR=Oracle Corporation, OS_ARCH=amd64}
+Watching the file system is configured to be enabled if available
+Now considering [D:\certificate\AppStorysAutoPayManager] as hierarchies to watch
+File system watching is active
+Starting Build
+Resolved plugin [id: 'org.gradle.toolchains.foojay-resolver-convention', version: '1.0.0']
+Settings evaluated using settings file 'D:\certificate\AppStorysAutoPayManager\settings.gradle.kts'.
+Projects loaded. Root project using build file 'D:\certificate\AppStorysAutoPayManager\build.gradle.kts'.
+Included projects: [root project 'AppStorysAutoPayManager', project ':app']
+
+> Configure project :
+Evaluating root project 'AppStorysAutoPayManager' using build file 'D:\certificate\AppStorysAutoPayManager\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '9.2.1', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.plugin.compose', version: '2.0.21', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.kapt', version: '2.0.21', apply: false]
+Resolved plugin [id: 'com.google.dagger.hilt.android', version: '2.51.1', apply: false]
+Resolved plugin [id: 'com.google.devtools.ksp', version: '2.0.21-1.0.27', apply: false]
+
+> Configure project :app
+Evaluating project ':app' using build file 'D:\certificate\AppStorysAutoPayManager\app\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '9.2.1']
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '2.0.21']
+Resolved plugin [id: 'org.jetbrains.kotlin.kapt', version: '2.0.21']
+Resolved plugin [id: 'com.google.dagger.hilt.android', version: '2.51.1']
+Resolved plugin [id: 'org.jetbrains.kotlin.plugin.compose', version: '2.0.21']
+Resolved plugin [id: 'com.google.devtools.ksp', version: '2.0.21-1.0.27']
+WARNING: The option setting 'android.builtInKotlin=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.newDsl=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+Using default execution profile
+Build 844d3e2b-a629-4fae-9617-3e186b91c9de is started
+Using Kotlin Gradle Plugin gradle813 variant
+WARNING: API 'applicationVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling applicationVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+WARNING: API 'testVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling testVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+WARNING: API 'unitTestVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling unitTestVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+All projects evaluated.
+Adding -Xuse-inline-scopes-numbers Kotlin compiler flag for task :app:compileDebugKotlin
+Task name matched 'compileDebugKotlin'
+Selected primary task 'compileDebugKotlin' from project :
+Tasks to be executed: [task ':app:checkKotlinGradlePluginConfigurationErrors', task ':app:preBuild', task ':app:preDebugBuild', task ':app:generateDebugResources', task ':app:packageDebugResources', task ':app:processDebugNavigationResources', task ':app:parseDebugLocalResources', task ':app:generateDebugRFile', task ':app:kspDebugKotlin', task ':app:kaptGenerateStubsDebugKotlin', task ':app:kaptDebugKotlin', task ':app:compileDebugKotlin']
+Tasks that were excluded: []
+Resolve mutations for :app:checkKotlinGradlePluginConfigurationErrors (Thread[#75,Execution worker Thread 3,5,main]) started.
+:app:checkKotlinGradlePluginConfigurationErrors (Thread[#75,Execution worker Thread 3,5,main]) started.
+
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+Skipping task ':app:checkKotlinGradlePluginConfigurationErrors' as task onlyIf 'errorDiagnostics are present' is false.
+Resolve mutations for :app:preBuild (Thread[#75,Execution worker Thread 3,5,main]) started.
+:app:preBuild (Thread[#75,Execution worker Thread 3,5,main]) started.
+
+> Task :app:preBuild UP-TO-DATE
+Skipping task ':app:preBuild' as it has no actions.
+Resolve mutations for :app:preDebugBuild (Thread[#72,included builds,5,main]) started.
+:app:preDebugBuild (Thread[#72,included builds,5,main]) started.
+
+> Task :app:preDebugBuild UP-TO-DATE
+Skipping task ':app:preDebugBuild' as it has no actions.
+Resolve mutations for :app:generateDebugResources (Thread[#72,included builds,5,main]) started.
+:app:generateDebugResources (Thread[#72,included builds,5,main]) started.
+
+> Task :app:generateDebugResources UP-TO-DATE
+Caching disabled for task ':app:generateDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugResources' as it is up-to-date.
+Resolve mutations for :app:packageDebugResources (Thread[#72,included builds,5,main]) started.
+:app:packageDebugResources (Thread[#72,included builds,5,main]) started.
+
+> Task :app:packageDebugResources UP-TO-DATE
+Caching disabled for task ':app:packageDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:packageDebugResources' as it is up-to-date.
+Resolve mutations for :app:processDebugNavigationResources (Thread[#75,Execution worker Thread 3,5,main]) started.
+:app:processDebugNavigationResources (Thread[#75,Execution worker Thread 3,5,main]) started.
+
+> Task :app:processDebugNavigationResources UP-TO-DATE
+Caching disabled for task ':app:processDebugNavigationResources' because:
+  Build cache is disabled
+Skipping task ':app:processDebugNavigationResources' as it is up-to-date.
+Resolve mutations for :app:parseDebugLocalResources (Thread[#75,Execution worker Thread 3,5,main]) started.
+:app:parseDebugLocalResources (Thread[#75,Execution worker Thread 3,5,main]) started.
+
+> Task :app:parseDebugLocalResources UP-TO-DATE
+Caching disabled for task ':app:parseDebugLocalResources' because:
+  Build cache is disabled
+Skipping task ':app:parseDebugLocalResources' as it is up-to-date.
+Resolve mutations for :app:generateDebugRFile (Thread[#75,Execution worker Thread 3,5,main]) started.
+:app:generateDebugRFile (Thread[#75,Execution worker Thread 3,5,main]) started.
+
+> Task :app:generateDebugRFile UP-TO-DATE
+Caching disabled for task ':app:generateDebugRFile' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugRFile' as it is up-to-date.
+Resolve mutations for :app:kspDebugKotlin (Thread[#75,Execution worker Thread 3,5,main]) started.
+:app:kspDebugKotlin (Thread[#82,Execution worker Thread 10,5,main]) started.
+
+> Task :app:kspDebugKotlin UP-TO-DATE
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+Adding -Xuse-inline-scopes-numbers Kotlin compiler flag for task :app:compileDebugAndroidTestKotlin
+GradleBuildProject.Builder should not be accessed through AnalyticsConfiguratorService after AnalyticsService is created. Analytics information of this build might be incomplete.
+Caching disabled for task ':app:kspDebugKotlin' because:
+  Build cache is disabled
+Skipping task ':app:kspDebugKotlin' as it is up-to-date.
+Resolve mutations for :app:kaptGenerateStubsDebugKotlin (Thread[#82,Execution worker Thread 10,5,main]) started.
+:app:kaptGenerateStubsDebugKotlin (Thread[#82,Execution worker Thread 10,5,main]) started.
+
+> Task :app:kaptGenerateStubsDebugKotlin UP-TO-DATE
+Caching disabled for task ':app:kaptGenerateStubsDebugKotlin' because:
+  Build cache is disabled
+Skipping task ':app:kaptGenerateStubsDebugKotlin' as it is up-to-date.
+Resolve mutations for :app:kaptDebugKotlin (Thread[#82,Execution worker Thread 10,5,main]) started.
+:app:kaptDebugKotlin (Thread[#79,Execution worker Thread 7,5,main]) started.
+
+> Task :app:kaptDebugKotlin
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+Caching disabled for task ':app:kaptDebugKotlin' because:
+  Build cache is disabled
+Task ':app:kaptDebugKotlin' is not up-to-date because:
+  Task has failed previously.
+The input changes require a full rebuild for incremental task ':app:kaptDebugKotlin'.
+Running kapt annotation processing using the Gradle Worker API
+Using workers NONE isolation mode to run kapt
+.\gradlew : error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To 
+support newer versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided 
+Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the 
+kotlinx-metadata-jvm library.
+At line:1 char:1
++ .\gradlew compileDebugKotlin --no-daemon --stacktrace --info > build_ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (error: [Hilt] P...ta-jvm library.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:245)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:242)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:242)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:44)
+  	at dagger.hilt.android.processor.internal.viewmodel.ViewModelMetadata$Companion.create$java_dagger_hilt_android_proc
+essor_internal_viewmodel_processor_lib(ViewModelMetadata.kt:66)
+  	at 
+dagger.hilt.android.processor.internal.viewmodel.ViewModelProcessingStep.processEach(ViewModelProcessingStep.kt:36)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:49)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:245)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:242)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:242)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:44)
+  	at dagger.hilt.android.processor.internal.viewmodel.ViewModelMetadata$Companion.create$java_dagger_hilt_android_proc
+essor_internal_viewmodel_processor_lib(ViewModelMetadata.kt:66)
+  	at 
+dagger.hilt.android.processor.internal.viewmodel.ViewModelProcessingStep.processEach(ViewModelProcessingStep.kt:36)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:49)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:245)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:242)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:242)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:44)
+  	at dagger.hilt.android.processor.internal.viewmodel.ViewModelMetadata$Companion.create$java_dagger_hilt_android_proc
+essor_internal_viewmodel_processor_lib(ViewModelMetadata.kt:66)
+  	at 
+dagger.hilt.android.processor.internal.viewmodel.ViewModelProcessingStep.processEach(ViewModelProcessingStep.kt:36)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:49)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:245)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:242)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:242)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:44)
+  	at dagger.hilt.android.processor.internal.viewmodel.ViewModelMetadata$Companion.create$java_dagger_hilt_android_proc
+essor_internal_viewmodel_processor_lib(ViewModelMetadata.kt:66)
+  	at 
+dagger.hilt.android.processor.internal.viewmodel.ViewModelProcessingStep.processEach(ViewModelProcessingStep.kt:36)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:49)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:245)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:242)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:242)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:44)
+  	at dagger.hilt.android.processor.internal.viewmodel.ViewModelMetadata$Companion.create$java_dagger_hilt_android_proc
+essor_internal_viewmodel_processor_lib(ViewModelMetadata.kt:66)
+  	at 
+dagger.hilt.android.processor.internal.viewmodel.ViewModelProcessingStep.processEach(ViewModelProcessingStep.kt:36)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:49)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:245)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$type$2.invoke(JavacTypeElemen
+t.kt:242)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:242)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getType(JavacTypeElement.kt:44)
+  	at dagger.hilt.android.processor.internal.viewmodel.ViewModelMetadata$Companion.create$java_dagger_hilt_android_proc
+essor_internal_viewmodel_processor_lib(ViewModelMetadata.kt:66)
+  	at 
+dagger.hilt.android.processor.internal.viewmodel.ViewModelProcessingStep.processEach(ViewModelProcessingStep.kt:36)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:49)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.isClass(JavacTypeElement.kt:150)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processModule(AggregatedDepsProcessing
+Step.java:142)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processEach(AggregatedDepsProcessingSt
+ep.java:107)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.process(AggregatedDepsProcessingStep.j
+ava:46)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.isClass(JavacTypeElement.kt:150)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processModule(AggregatedDepsProcessing
+Step.java:142)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processEach(AggregatedDepsProcessingSt
+ep.java:107)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.process(AggregatedDepsProcessingStep.j
+ava:46)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.isInterface(JavacTypeElement.
+kt:158)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processEntryPoint(AggregatedDepsProces
+singStep.java:296)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processEach(AggregatedDepsProcessingSt
+ep.java:109)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.process(AggregatedDepsProcessingStep.j
+ava:46)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+error: [Hilt] Provided Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer 
+versions, update the kotlinx-metadata-jvm library.: java.lang.IllegalArgumentException: Provided Metadata instance has 
+version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm 
+library.
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatibl
+e$kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersio
+nForRead(JvmReadUtils.kt:90)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$ko
+tlinx_metadata_jvm(JvmReadUtils.kt:47)
+  	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(
+KotlinClassMetadata.kt:793)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Ko
+tlinClassMetadataUtils.kt:184)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:62)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(Javac
+TypeElement.kt:61)
+  	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeEl
+ement.kt:61)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.isInterface(JavacTypeElement.
+kt:158)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processEntryPoint(AggregatedDepsProces
+singStep.java:296)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.processEach(AggregatedDepsProcessingSt
+ep.java:109)
+  	at dagger.hilt.processor.internal.BaseProcessingStep.process(BaseProcessingStep.java:118)
+  	at dagger.hilt.processor.internal.aggregateddeps.AggregatedDepsProcessingStep.process(AggregatedDepsProcessingStep.j
+ava:46)
+
+> Task :app:kaptDebugKotlin FAILED
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotatio
+nProcessor.kt:132)
+  	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBas
+icAnnotationProcessor.kt:73)
+  	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+  	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.callProcessor(JavacProcessingEnvironment.j
+ava:1021)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.discoverAndRunProcs(JavacProcessingEnviron
+ment.java:937)
+  	at 
+jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment$Round.run(JavacProcessingEnvironment.java:1265)
+  	at jdk.compiler/com.sun.tools.javac.processing.JavacProcessingEnvironment.doProcessing(JavacProcessingEnvironment.ja
+va:1380)
+  	at jdk.compiler/com.sun.tools.javac.main.JavaCompiler.processAnnotations(JavaCompiler.java:1272)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+  	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+  	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+  	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+  	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+  	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+  	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTas
+k.kt:273)
+  	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+  	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:210)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOpera
+tionRunner.java:205)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+  	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+  	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+  	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+  	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutio
+nQueue.java:194)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQ
+ueue.java:127)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.
+java:169)
+  	at org.gradle.internal.Factories$1.create(Factories.java:30)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+  	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+  	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQue
+ue.java:164)
+  	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.ja
+va:133)
+  	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+  	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+  	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+  	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+  	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+  	at java.base/java.lang.Thread.run(Thread.java:1583)
+  
+  [1;31m[Hilt] Processing did not complete. See error above for details.[0m
+Build 844d3e2b-a629-4fae-9617-3e186b91c9de is closed
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:kaptDebugKotlin'.
+> A failure occurred while executing 
+org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction
+
+* Try:
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:kaptDebugKotlin'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecut
+er.java:135)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
+	at 
+org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:133)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:121)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskEx
+ecuter.java:41)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.j
+ava:51)
+	at 
+org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at 
+org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.DefaultNodeExecutor.executeLocalTaskNode(DefaultNodeExecutor.java:55)
+	at org.gradle.execution.plan.DefaultNodeExecutor.execute(DefaultNodeExecutor.java:34)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGrap
+h.java:355)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGrap
+h.java:343)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(Defaul
+tTaskExecutionGraph.java:339)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:84)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExec
+utionGraph.java:339)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExec
+utionGraph.java:328)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while 
+executing org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction
+	at 
+org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:289)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.jav
+a:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocks$2(DefaultWorkerLeaseService.java:350)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:348)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:332)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:337)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:267)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:244)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:227)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:210)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:176)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:167)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:47)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:137)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:134)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:134)
+	at org.gradle.internal.execution.steps.ExecuteStep$Mutable.execute(ExecuteStep.java:80)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:51)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:29)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:39)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:42)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:24)
+	at 
+org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at 
+org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:28)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:76)
+	at org.gradle.internal.Either$Right.fold(Either.java:176)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:74)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:49)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishe
+dStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishe
+dStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.j
+ava:70)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.j
+ava:32)
+	at 
+org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:69)
+	at 
+org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:37)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:63)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:34)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:79)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:99)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.execute(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.executeMutable(CaptureMutableStateBefore
+ExecutionStep.java:86)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecuti
+onStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecuti
+onStep.java:45)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeWithNonEmptySources(SkipEmptyMutableWorkStep.ja
+va:210)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:85)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:53)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedS
+tep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.ja
+va:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.ja
+va:23)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:77)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:43)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$executeMutable$0(AssignMutableWorkspaceStep.j
+ava:34)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:305)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:30)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:21)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationF
+iringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep
+.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep
+.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:56)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:38)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:68)
+	at 
+org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:132)
+	... 30 more
+Caused by: java.lang.reflect.InvocationTargetException
+	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTask.
+kt:273)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQ
+ueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQue
+ue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.ja
+va:169)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue
+.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java
+:133)
+	... 2 more
+Caused by: java.lang.reflect.InvocationTargetException
+	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+	... 33 more
+Caused by: com.sun.tools.javac.processing.AnnotationProcessingError: java.lang.IllegalArgumentException: Provided 
+Metadata instance has version 2.2.0, while maximum supported version is 2.1.0. To support newer versions, update the 
+kotlinx-metadata-jvm library.
+	... 36 more
+Caused by: java.lang.IllegalArgumentException: Provided Metadata instance has version 2.2.0, while maximum supported 
+version is 2.1.0. To support newer versions, update the kotlinx-metadata-jvm library.
+	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatible$
+kotlinx_metadata_jvm(JvmReadUtils.kt:101)
+	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersionF
+orRead(JvmReadUtils.kt:90)
+	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl$kotl
+inx_metadata_jvm(JvmReadUtils.kt:47)
+	at dagger.spi.internal.shaded.androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.readStrict(Ko
+tlinClassMetadata.kt:793)
+	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(Kotl
+inClassMetadataUtils.kt:184)
+	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(JavacTy
+peElement.kt:62)
+	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(JavacTy
+peElement.kt:61)
+	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeElem
+ent.kt:61)
+	at 
+dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacTypeElement.isClass(JavacTypeElement.kt:150)
+	at dagger.internal.codegen.xprocessing.XElements.getKindName(XElements.java:365)
+	at dagger.internal.codegen.base.DaggerSuperficialValidation$ValidationException.getMessageForElement(DaggerSuperficial
+Validation.java:636)
+	at dagger.internal.codegen.base.DaggerSuperficialValidation$ValidationException.append(DaggerSuperficialValidation.jav
+a:547)
+	at dagger.internal.codegen.base.DaggerSuperficialValidation$ValidationException.access$200(DaggerSuperficialValidation
+.java:491)
+	at dagger.internal.codegen.base.DaggerSuperficialValidation.validateTypeOf(DaggerSuperficialValidation.java:142)
+	at dagger.internal.codegen.validation.InjectValidator.validateForMembersInjectionInternalUncached(InjectValidator.java
+:374)
+	at dagger.internal.codegen.base.Util.reentrantComputeIfAbsent(Util.java:33)
+	at dagger.internal.codegen.validation.InjectValidator.validateForMembersInjectionInternal(InjectValidator.java:369)
+	at dagger.internal.codegen.validation.InjectValidator.validateUncached(InjectValidator.java:143)
+	at dagger.internal.codegen.base.Util.reentrantComputeIfAbsent(Util.java:33)
+	at dagger.internal.codegen.validation.InjectValidator.validate(InjectValidator.java:138)
+	at 
+dagger.internal.codegen.validation.InjectBindingRegistryImpl.tryRegisterConstructor(InjectBindingRegistryImpl.java:255)
+	at dagger.internal.codegen.validation.InjectBindingRegistryImpl.tryRegisterInjectConstructor(InjectBindingRegistryImpl
+.java:241)
+	at dagger.internal.codegen.processingstep.InjectProcessingStep.process(InjectProcessingStep.java:73)
+	at 
+dagger.internal.codegen.processingstep.TypeCheckingProcessingStep.lambda$process$0(TypeCheckingProcessingStep.java:94)
+	at com.google.common.collect.RegularImmutableMap.forEach(RegularImmutableMap.java:297)
+	at dagger.internal.codegen.processingstep.TypeCheckingProcessingStep.process(TypeCheckingProcessingStep.java:72)
+	at dagger.internal.codegen.processingstep.TypeCheckingProcessingStep.process(TypeCheckingProcessingStep.java:49)
+	at dagger.spi.internal.shaded.androidx.room.compiler.processing.XProcessingStep.process(XProcessingStep.kt:59)
+	at dagger.spi.internal.shaded.androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotationP
+rocessor.kt:132)
+	at dagger.spi.internal.shaded.androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBasic
+AnnotationProcessor.kt:73)
+	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+	... 36 more
+
+
+BUILD FAILED in 21s
+8 actionable tasks: 1 executed, 7 up-to-date
+Watched directory hierarchies: [D:\certificate\AppStorysAutoPayManager]

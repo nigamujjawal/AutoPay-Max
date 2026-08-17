@@ -1,0 +1,854 @@
+﻿Initialized native services in: D:\GradleCache\native
+Initialized jansi services in: D:\GradleCache\native
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.4.1/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Path for java installation 'C:\Users\Asus\.jdks\corretto-21.0.2-1' (IntelliJ) auto-detected does not contain a java executable
+Path for java installation 'C:\Users\Asus\.jdks\corretto-21.0.2' (IntelliJ) auto-detected does not contain a java executable
+Directory 'C:\Program Files\Java\jdk1.8.0_202' (Windows Registry) auto-detected used for java installations does not exist
+Directory 'C:\Program Files\Java\jre1.8.0_202' (Windows Registry) auto-detected used for java installations does not exist
+Received JVM installation metadata from 'C:\Program Files\Java\jdk-21': {JAVA_HOME=C:\Program Files\Java\jdk-21, JAVA_VERSION=21.0.2, JAVA_VENDOR=Oracle Corporation, RUNTIME_NAME=Java(TM) SE Runtime Environment, RUNTIME_VERSION=21.0.2+13-LTS-58, VM_NAME=Java HotSpot(TM) 64-Bit Server VM, VM_VERSION=21.0.2+13-LTS-58, VM_VENDOR=Oracle Corporation, OS_ARCH=amd64}
+Starting process 'Gradle build daemon'. Working directory: D:\GradleCache\daemon\9.4.1 Command: C:\Program Files\Java\jdk-21\bin\java.exe --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED -Xmx2048m -Dfile.encoding=UTF-8 -Duser.country=IN -Duser.language=en -Duser.variant -cp D:\GradleCache\wrapper\dists\gradle-9.4.1-bin\arn2x92ynaizyzdaamcbpbhtj\gradle-9.4.1\lib\gradle-daemon-main-9.4.1.jar -javaagent:D:\GradleCache\wrapper\dists\gradle-9.4.1-bin\arn2x92ynaizyzdaamcbpbhtj\gradle-9.4.1\lib\agents\gradle-instrumentation-agent-9.4.1.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 9.4.1
+Successfully started process 'Gradle build daemon'
+An attempt to start the daemon took 1.09 secs.
+The client will now receive all logging from the daemon (pid: 7688). The daemon log file: D:\GradleCache\daemon\9.4.1\daemon-7688.out.log
+Daemon will be stopped at the end of the build 
+Using 12 worker leases.
+Operational build model parameters: {cachingModelBuilding=false, configurationCache=false, configurationCacheDisabledReason=null, configurationCacheParallelLoad=false, configurationCacheParallelStore=false, configureOnDemand=false, invalidateCoupledProjects=false, isolatedProjects=false, modelAsProjectDependency=false, modelBuilding=false, parallelModelBuilding=false, parallelProjectConfiguration=false, parallelProjectExecution=false, resilientModelBuilding=false}
+Received JVM installation metadata from 'C:\Program Files\Java\jdk-21': {JAVA_HOME=C:\Program Files\Java\jdk-21, JAVA_VERSION=21.0.2, JAVA_VENDOR=Oracle Corporation, RUNTIME_NAME=Java(TM) SE Runtime Environment, RUNTIME_VERSION=21.0.2+13-LTS-58, VM_NAME=Java HotSpot(TM) 64-Bit Server VM, VM_VERSION=21.0.2+13-LTS-58, VM_VENDOR=Oracle Corporation, OS_ARCH=amd64}
+Watching the file system is configured to be enabled if available
+Now considering [D:\certificate\AppStorysAutoPayManager] as hierarchies to watch
+File system watching is active
+Starting Build
+Resolved plugin [id: 'org.gradle.toolchains.foojay-resolver-convention', version: '1.0.0']
+Settings evaluated using settings file 'D:\certificate\AppStorysAutoPayManager\settings.gradle.kts'.
+Projects loaded. Root project using build file 'D:\certificate\AppStorysAutoPayManager\build.gradle.kts'.
+Included projects: [root project 'AppStorysAutoPayManager', project ':app']
+
+> Configure project :
+Evaluating root project 'AppStorysAutoPayManager' using build file 'D:\certificate\AppStorysAutoPayManager\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '9.2.1', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '2.1.0', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.plugin.compose', version: '2.1.0', apply: false]
+Resolved plugin [id: 'org.jetbrains.kotlin.kapt', version: '2.1.0', apply: false]
+Resolved plugin [id: 'com.google.dagger.hilt.android', version: '2.51.1', apply: false]
+
+> Configure project :app
+Evaluating project ':app' using build file 'D:\certificate\AppStorysAutoPayManager\app\build.gradle.kts'.
+Resolved plugin [id: 'com.android.application', version: '9.2.1']
+Resolved plugin [id: 'org.jetbrains.kotlin.android', version: '2.1.0']
+Resolved plugin [id: 'org.jetbrains.kotlin.kapt', version: '2.1.0']
+Resolved plugin [id: 'com.google.dagger.hilt.android', version: '2.51.1']
+Resolved plugin [id: 'org.jetbrains.kotlin.plugin.compose', version: '2.1.0']
+WARNING: The option setting 'android.builtInKotlin=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.newDsl=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+Using default execution profile
+Build 986c4051-50bd-44b1-81ea-756aaf318fec is started
+Using Kotlin Gradle Plugin gradle813 variant
+WARNING: API 'applicationVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling applicationVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+WARNING: API 'testVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling testVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+WARNING: API 'unitTestVariants' is obsolete and has been replaced with 'AndroidComponentsExtension'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+The legacy variant API is disabled by default in AGP 9.0, but can be re-enabled by adding 
+    android.newDsl=false
+to this project's gradle.properties file.
+For more information, see http://developer.android.com/build/r/new-dsl.
+
+To determine what is calling unitTestVariants, use -Pandroid.debug.obsoleteApi=true on the command line to display more information.
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+Detected Android Gradle Plugin compose compiler configuration
+All projects evaluated.
+Task name matched 'assembleDebug'
+Selected primary task 'assembleDebug' from project :
+Adding -Xuse-inline-scopes-numbers Kotlin compiler flag for task :app:compileDebugKotlin
+Tasks to be executed: [task ':app:preBuild', task ':app:preDebugBuild', task ':app:mergeDebugNativeDebugMetadata', task ':app:checkKotlinGradlePluginConfigurationErrors', task ':app:generateDebugResources', task ':app:packageDebugResources', task ':app:processDebugNavigationResources', task ':app:parseDebugLocalResources', task ':app:generateDebugRFile', task ':app:kaptGenerateStubsDebugKotlin', task ':app:kaptDebugKotlin', task ':app:compileDebugKotlin', task ':app:javaPreCompileDebug', task ':app:compileDebugJavaWithJavac', task ':app:generateDebugAssets', task ':app:mergeDebugAssets', task ':app:compressDebugAssets', task ':app:generateDebugGlobalSynthetics', task ':app:hiltAggregateDepsDebug', task ':app:hiltJavaCompileDebug', task ':app:processDebugJavaRes', task ':app:mergeDebugJavaResource', task ':app:checkDebugDuplicateClasses', task ':app:desugarDebugFileDependencies', task ':app:mergeExtDexDebug', task ':app:mergeLibDexDebug', task ':app:checkDebugAarMetadata', task ':app:mapDebugSourceSetPaths', task ':app:compileDebugNavigationResources', task ':app:mergeDebugResources', task ':app:createDebugCompatibleScreenManifests', task ':app:extractDeepLinksDebug', task ':app:processDebugMainManifest', task ':app:processDebugManifest', task ':app:processDebugManifestForPackage', task ':app:processDebugResources', task ':app:transformDebugClassesWithAsm', task ':app:dexBuilderDebug', task ':app:mergeProjectDexDebug', task ':app:mergeDebugJniLibFolders', task ':app:mergeDebugNativeLibs', task ':app:stripDebugDebugSymbols', task ':app:validateSigningDebug', task ':app:writeDebugAppMetadata', task ':app:writeDebugSigningConfigVersions', task ':app:packageDebug', task ':app:createDebugApkListingFileRedirect', task ':app:assembleDebug']
+Tasks that were excluded: []
+Resolve mutations for :app:preBuild (Thread[#73,Execution worker,5,main]) started.
+:app:preBuild (Thread[#73,Execution worker,5,main]) started.
+
+> Task :app:preBuild UP-TO-DATE
+Skipping task ':app:preBuild' as it has no actions.
+Resolve mutations for :app:preDebugBuild (Thread[#73,Execution worker,5,main]) started.
+:app:preDebugBuild (Thread[#73,Execution worker,5,main]) started.
+
+> Task :app:preDebugBuild UP-TO-DATE
+Skipping task ':app:preDebugBuild' as it has no actions.
+Resolve mutations for :app:mergeDebugNativeDebugMetadata (Thread[#73,Execution worker,5,main]) started.
+:app:mergeDebugNativeDebugMetadata (Thread[#72,included builds,5,main]) started.
+
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+Skipping task ':app:mergeDebugNativeDebugMetadata' as it has no source files and no previous output files.
+Resolve mutations for :app:checkKotlinGradlePluginConfigurationErrors (Thread[#72,included builds,5,main]) started.
+:app:checkKotlinGradlePluginConfigurationErrors (Thread[#72,included builds,5,main]) started.
+
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+Skipping task ':app:checkKotlinGradlePluginConfigurationErrors' as task onlyIf 'errorDiagnostics are present' is false.
+Resolve mutations for :app:generateDebugResources (Thread[#72,included builds,5,main]) started.
+:app:generateDebugResources (Thread[#72,included builds,5,main]) started.
+
+> Task :app:generateDebugResources UP-TO-DATE
+Caching disabled for task ':app:generateDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugResources' as it is up-to-date.
+Resolve mutations for :app:packageDebugResources (Thread[#72,included builds,5,main]) started.
+:app:packageDebugResources (Thread[#72,included builds,5,main]) started.
+
+> Task :app:packageDebugResources UP-TO-DATE
+Caching disabled for task ':app:packageDebugResources' because:
+  Build cache is disabled
+Skipping task ':app:packageDebugResources' as it is up-to-date.
+Resolve mutations for :app:processDebugNavigationResources (Thread[#72,included builds,5,main]) started.
+:app:processDebugNavigationResources (Thread[#72,included builds,5,main]) started.
+
+> Task :app:processDebugNavigationResources UP-TO-DATE
+Caching disabled for task ':app:processDebugNavigationResources' because:
+  Build cache is disabled
+Skipping task ':app:processDebugNavigationResources' as it is up-to-date.
+Resolve mutations for :app:parseDebugLocalResources (Thread[#72,included builds,5,main]) started.
+:app:parseDebugLocalResources (Thread[#72,included builds,5,main]) started.
+
+> Task :app:parseDebugLocalResources UP-TO-DATE
+Caching disabled for task ':app:parseDebugLocalResources' because:
+  Build cache is disabled
+Skipping task ':app:parseDebugLocalResources' as it is up-to-date.
+Resolve mutations for :app:generateDebugRFile (Thread[#72,included builds,5,main]) started.
+:app:generateDebugRFile (Thread[#72,included builds,5,main]) started.
+
+> Task :app:generateDebugRFile UP-TO-DATE
+Caching disabled for task ':app:generateDebugRFile' because:
+  Build cache is disabled
+Skipping task ':app:generateDebugRFile' as it is up-to-date.
+Resolve mutations for :app:kaptGenerateStubsDebugKotlin (Thread[#72,included builds,5,main]) started.
+:app:kaptGenerateStubsDebugKotlin (Thread[#72,included builds,5,main]) started.
+
+> Task :app:kaptGenerateStubsDebugKotlin UP-TO-DATE
+Adding -Xuse-inline-scopes-numbers Kotlin compiler flag for task :app:compileDebugAndroidTestKotlin
+GradleBuildProject.Builder should not be accessed through AnalyticsConfiguratorService after AnalyticsService is created. Analytics information of this build might be incomplete.
+Caching disabled for task ':app:kaptGenerateStubsDebugKotlin' because:
+  Build cache is disabled
+Skipping task ':app:kaptGenerateStubsDebugKotlin' as it is up-to-date.
+Resolve mutations for :app:kaptDebugKotlin (Thread[#72,included builds,5,main]) started.
+:app:kaptDebugKotlin (Thread[#72,included builds,5,main]) started.
+Resolve mutations for :app:javaPreCompileDebug (Thread[#83,Execution worker Thread 11,5,main]) started.
+:app:javaPreCompileDebug (Thread[#83,Execution worker Thread 11,5,main]) started.
+Resolve mutations for :app:generateDebugAssets (Thread[#74,Execution worker Thread 2,5,main]) started.
+:app:generateDebugAssets (Thread[#74,Execution worker Thread 2,5,main]) started.
+
+> Task :app:generateDebugAssets UP-TO-DATE
+Skipping task ':app:generateDebugAssets' as it has no actions.
+Resolve mutations for :app:mergeDebugAssets (Thread[#74,Execution worker Thread 2,5,main]) started.
+:app:mergeDebugAssets (Thread[#74,Execution worker Thread 2,5,main]) started.
+
+> Task :app:javaPreCompileDebug
+Caching disabled for task ':app:javaPreCompileDebug' because:
+  Build cache is disabled
+Task ':app:javaPreCompileDebug' is not up-to-date because:
+  No history is available.
+
+> Task :app:mergeDebugAssets
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\5d1b07925dc17e4fd2cf8e55e5dc3ce4\transformed\hilt-android-2.51.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\965f426cdc6ce8592e5de3089d5efed5\transformed\hilt-navigation-1.2.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\0ff0edb0e884aea5baba1efc80685e02\transformed\navigation-runtime-2.8.5 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\11c8e0b794b3e9b3ee544e6bd69c2a5b\transformed\hilt-navigation-compose-1.2.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\200388a906fc58145c918920ebd7cfdf\transformed\biometric-1.1.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\0e84d5138a57d79264e585e56afbd154\transformed\navigation-runtime-ktx-2.8.5 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\18958135a9a3a527c96e50bcc8021217\transformed\navigation-compose-2.8.5 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\468a7a031be146fde011e5126f2baa05\transformed\navigation-common-2.8.5 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\eb49d076b190eff233c44aea96a8cfdf\transformed\navigation-common-ktx-2.8.5 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\b25308623b98f1d1078254cab9237d78\transformed\work-runtime-ktx-2.10.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\01442143ae5c52aaf95f76607e2b37e4\transformed\work-runtime-2.10.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\7eeeadabc264ea5d586a4813f12050e8\transformed\dynamicanimation-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\29b8c8cd184c1359ba1ca1146169a554\transformed\loader-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\8aa0dbb8c3dd313b28c4427179d39506\transformed\transition-1.6.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\a4532cd5c7c9323b0c914ba806cedacd\transformed\animation-core because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\54c68cd4b49313cbab27dc7cb623a2b9\transformed\material-ripple because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\fca956e1163017fcff14651ddfea84b4\transformed\legacy-support-core-utils-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\698209aabeedf391c3d66897b73d19ad\transformed\foundation-layout because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\a3662da8861c41786ee41a2f2e55a1d1\transformed\foundation because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\c46d97a0ee20bc4351286fdbc6df1508\transformed\ui-tooling-data because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\31a674216dca1062341080c65afe2c40\transformed\ui-graphics because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\d70e3a240b79a2c2fb6f39559effd63f\transformed\ui-text because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\d9191b15d18d6980a74cdd3177076a81\transformed\ui-geometry because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\741ae2f2f8cb810f55e893102c72173b\transformed\animation because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\ff7c67132b6d53e00aff133a21838ca5\transformed\ui-test-manifest-1.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\9973b258a9824312c0832f42cf979dcd\transformed\ui-tooling because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\19f3b9728866b90c75cd2390698107d4\transformed\ui-util because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\e24e754cd5e882f855f62e224bfc14ca\transformed\ui-tooling-preview because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\1701d72bf5e795c8064a60e805f652ff\transformed\ui-unit because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\96fa7a1f3125de8e5d0cc6518b57512c\transformed\material3 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\74e65da36ed599ec275bb4b67467cfd5\transformed\lifecycle-livedata-core-ktx-2.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\1848e170baad82b1a92bc7cdd9ec38e5\transformed\lifecycle-process-2.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\73bae135a29dab4b1642e487fff95964\transformed\emoji2-1.4.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\eba948d2410f1162370c25ff48157422\transformed\lifecycle-viewmodel-2.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\80151779f169b33aca68c601154d2f9b\transformed\lifecycle-viewmodel because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\d986407826aadc4b9c2438aa78099b99\transformed\runtime-retain because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\4bae146d34c0baac98785273301d4fc7\transformed\navigationevent-compose because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\9b7cb1875eae8c6207767c45b3416ce2\transformed\savedstate-ktx-1.4.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\b8b9b8da4822e9d94bbe11b866f58bac\transformed\runtime-annotation because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\accb4813229ad09de4f134c93e387307\transformed\appcompat-1.2.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\c7cce4cb1ac92c7cdada8d5cc148bcb8\transformed\navigationevent because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\61f1f1608da41da5f55a6e5ad5fc0bd9\transformed\savedstate because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\a5d6cb6ed16e7204681245a9188a292f\transformed\runtime because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\8d4c88b7c2541ec1e1634b57304a2c65\transformed\savedstate-compose because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\a56ed3b303a0c8e06d24c70c81857fff\transformed\lifecycle-runtime-compose because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\4a6a723b28d9300fcb49bff5f7c6977b\transformed\runtime-saveable because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\f5993242b307fb69f12a5ff9309696b1\transformed\core-ktx-1.19.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\23ab30205bfc9fee63cbc87172b46430\transformed\viewpager-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\d008813e320102ba561d250eb2989e9d\transformed\lifecycle-viewmodel-savedstate because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\727ef71e2c595225729a2b99b86a2b45\transformed\customview-poolingcontainer-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\7c8626a24c40cc8ccba597f5230117d9\transformed\appcompat-resources-1.2.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\422c8ac712a6abc83d35f221b24327e5\transformed\drawerlayout-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\25a69fa9d7b290a3b76b416f71263972\transformed\vectordrawable-animated-1.1.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\62c138cb159841046071b0e3b8585b99\transformed\customview-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\61d89871c414a902a1769c18c10369d0\transformed\vectordrawable-1.1.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\a0ce0c807db5b4746927312f8b96a4e5\transformed\window-1.5.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\20138455e852a6f47aa2eb5f9bd48a84\transformed\autofill-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\e6731f41c967f3b42f8d967f3e91cef5\transformed\window-core because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\8cd63a4cdc9b21534c408911f064d8ff\transformed\graphics-path-1.0.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\c6aac18bb60e49c696081bbfae0e6340\transformed\core-1.19.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\1cb742d0d88934ea8e32fed9f8065b88\transformed\lifecycle-runtime because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\85129ecbc462223cc009eb6ef5b6c47f\transformed\lifecycle-viewmodel-ktx-2.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\94601ca8f22b180ca41b5765c5556278\transformed\ui because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\3e2bfc6456182d8e67708b46794023fc\transformed\material-icons-extended-release because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\a00490d2dc5971ae7cc2d3ada7f199bc\transformed\lifecycle-viewmodel-compose because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\0b13c2cc894c74c7a67412fffad9c8a5\transformed\lifecycle-livedata-core-2.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\7c6cc799e51e0e832239fd4d33c40762\transformed\lifecycle-runtime-ktx because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\e37805d02340e1b4851d940ec3f83885\transformed\lifecycle-livedata-2.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\9db6cbfe11cc04e4e154089ff3158f1a\transformed\lifecycle-service-2.11.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\fc03c3cb082569b9682fd00c1e22da0f\transformed\material-icons-core-release because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\b2104061df553474ff7b8ab9aa77c7fb\transformed\activity-ktx-1.13.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\97c6fd2f1ae7a1f246431c17a6996d41\transformed\activity-1.13.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\67d0a78eca5b1d8f04b05b0423407475\transformed\room-runtime-2.6.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\263139203972fd5be163ab2fe4bd6f08\transformed\sqlite-2.4.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\86a2cecdc0d4653d1efcf19620e7173f\transformed\activity-compose-1.13.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\d3d6a0998de94f68d85fc1f3092e7805\transformed\sqlite-framework-2.4.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\93af745901f2abcd8b04b1def0703490\transformed\room-ktx-2.6.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\84acf077535fb307d1f0bcb6d3809d61\transformed\datastore-core-release because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\71ecd64e9dc40e2c875c8781e0f8efed\transformed\datastore-release because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\bd2d4d80d7eb1247158d8f421724078a\transformed\annotation-experimental-1.4.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\cc3082cde2c592fec2cc4550af2b7be0\transformed\core-viewtree-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\4c3efb3e210dc690d0ff2786489f7552\transformed\profileinstaller-1.4.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\827a3a7a18d5f0574d39ab8f09ee4f0d\transformed\startup-runtime-1.1.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\8f997f9c61d885e6c2d5143c75a44d86\transformed\datastore-preferences-release because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\fbf0f94e98c900c8a23f651b7e13d8cd\transformed\tracing-1.2.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\6d057d37838851ee951c7f4490a9a83e\transformed\tracing-ktx-1.2.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\277706cf4c220b72eb2889be5ecb5553\transformed\interpolator-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\5e620b6ea9478e79a6f8482965e4895c\transformed\core-runtime-2.2.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\9e263888903ed7e17f651c0da0c8a641\transformed\print-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\7e0a6365354fec6dda9d42ff4bcedd8f\transformed\versionedparcelable-1.1.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\a47a8f80befab2cef07e95a0fbb4874a\transformed\dagger-lint-aar-2.51.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\5686e53c35b811445af5c04090d49b30\transformed\cursoradapter-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\6fd72f0cebe1363be47885c7c52f20b2\transformed\localbroadcastmanager-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\68bee0b7b352c435350e81559a1b17d9\transformed\fragment-1.5.1 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for AarTransform: D:\GradleCache\caches\9.4.1\transforms\ef7cf614290f6b9981c5b19d27a485c0\transformed\documentfile-1.0.0 because:
+  Build cache is disabled
+  Caching not enabled.
+Caching disabled for task ':app:mergeDebugAssets' because:
+  Build cache is disabled
+  Simple merging task
+Task ':app:mergeDebugAssets' is not up-to-date because:
+  No history is available.
+The input changes require a full rebuild for incremental task ':app:mergeDebugAssets'.
+Resolve mutations for :app:compressDebugAssets (Thread[#74,Execution worker Thread 2,5,main]) started.
+:app:compressDebugAssets (Thread[#74,Execution worker Thread 2,5,main]) started.
+
+> Task :app:compressDebugAssets
+Caching disabled for task ':app:compressDebugAssets' because:
+  Build cache is disabled
+Task ':app:compressDebugAssets' is not up-to-date because:
+  No history is available.
+The input changes require a full rebuild for incremental task ':app:compressDebugAssets'.
+Resolve mutations for :app:generateDebugGlobalSynthetics (Thread[#74,Execution worker Thread 2,5,main]) started.
+:app:generateDebugGlobalSynthetics (Thread[#74,Execution worker Thread 2,5,main]) started.
+
+> Task :app:kaptDebugKotlin
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\java', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\main\kotlin', not found
+file or directory 'D:\certificate\AppStorysAutoPayManager\app\src\debug\kotlin', not found
+Caching disabled for task ':app:kaptDebugKotlin' because:
+  Build cache is disabled
+Task ':app:kaptDebugKotlin' is not up-to-date because:
+  Task has failed previously.
+The input changes require a full rebuild for incremental task ':app:kaptDebugKotlin'.
+Running kapt annotation processing using the Gradle Worker API
+Using workers NONE isolation mode to run kapt
+
+> Task :app:kaptDebugKotlin FAILED
+
+> Task :app:generateDebugGlobalSynthetics
+Caching disabled for task ':app:generateDebugGlobalSynthetics' because:
+  Build cache is disabled
+Task ':app:generateDebugGlobalSynthetics' is not up-to-date because:
+  No history is available.
+Build 986c4051-50bd-44b1-81ea-756aaf318fec is closed
+.\gradlew : 
+At line:1 char:1
++ .\gradlew assembleDebug --no-daemon --stacktrace --info > assemble_lo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:kaptDebugKotlin'.
+> A failure occurred while executing 
+org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction
+
+* Try:
+> Run with --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:kaptDebugKotlin'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecut
+er.java:135)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:288)
+	at 
+org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:133)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:121)
+	at org.gradle.api.internal.tasks.execution.ProblemsTaskPathTrackingTaskExecuter.execute(ProblemsTaskPathTrackingTaskEx
+ecuter.java:41)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.j
+ava:51)
+	at 
+org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at 
+org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.DefaultNodeExecutor.executeLocalTaskNode(DefaultNodeExecutor.java:55)
+	at org.gradle.execution.plan.DefaultNodeExecutor.execute(DefaultNodeExecutor.java:34)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGrap
+h.java:355)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGrap
+h.java:343)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(Defaul
+tTaskExecutionGraph.java:339)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:84)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExec
+utionGraph.java:339)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExec
+utionGraph.java:328)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:146)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:131)
+	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecu
+tor.java:54)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecu
+tor.java:43)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at 
+org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$11(DefaultBuildLifecycleController.ja
+va:323)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:304)
+	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$9(StateTransitionController.java:215)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:45)
+	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:215)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:314)
+	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphContro
+ller.java:220)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:182)
+	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:199)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:84)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:199)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while 
+executing org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction
+	at 
+org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:289)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.jav
+a:130)
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withoutLocks$2(DefaultWorkerLeaseService.java:350)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:348)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:332)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:337)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:267)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:30)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:27)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:48)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:244)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:227)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:210)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:176)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:167)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:47)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:137)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:134)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:134)
+	at org.gradle.internal.execution.steps.ExecuteStep$Mutable.execute(ExecuteStep.java:80)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:42)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:75)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:51)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:29)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.executeMutable(RemovePreviousOutputsStep.java:39)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:42)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:24)
+	at 
+org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:69)
+	at 
+org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:46)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.executeMutable(ResolveInputChangesStep.java:28)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:76)
+	at org.gradle.internal.Either$Right.fold(Either.java:176)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:74)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:49)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.executeMutable(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:75)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:53)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:35)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishe
+dStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishe
+dStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.j
+ava:70)
+	at org.gradle.internal.execution.steps.ResolveMutableCachingStateStep.executeDelegate(ResolveMutableCachingStateStep.j
+ava:32)
+	at 
+org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:69)
+	at 
+org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:37)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:63)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.executeMutable(ResolveChangesStep.java:34)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:79)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.executeDelegate(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:99)
+	at org.gradle.internal.execution.steps.ValidateStep$Mutable.execute(ValidateStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.executeMutable(CaptureMutableStateBefore
+ExecutionStep.java:86)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecuti
+onStep.java:65)
+	at org.gradle.internal.execution.steps.CaptureMutableStateBeforeExecutionStep.execute(CaptureMutableStateBeforeExecuti
+onStep.java:45)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeWithNonEmptySources(SkipEmptyMutableWorkStep.ja
+va:210)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:85)
+	at org.gradle.internal.execution.steps.SkipEmptyMutableWorkStep.executeMutable(SkipEmptyMutableWorkStep.java:53)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedS
+tep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.ja
+va:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.executeMutable(LoadPreviousExecutionStateStep.ja
+va:23)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:77)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.executeMutable(HandleStaleOutputsStep.java:43)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$executeMutable$0(AssignMutableWorkspaceStep.j
+ava:34)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:305)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:30)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.executeMutable(AssignMutableWorkspaceStep.java:21)
+	at org.gradle.internal.execution.steps.MutableStep.execute(MutableStep.java:26)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationF
+iringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep
+.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep
+.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:56)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:38)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:68)
+	at 
+org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:132)
+	... 61 more
+Caused by: java.lang.reflect.InvocationTargetException
+	at org.jetbrains.kotlin.gradle.internal.KaptExecution.run(KaptWithoutKotlincTask.kt:336)
+	at org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask$KaptExecutionWorkAction.execute(KaptWithoutKotlincTask.
+kt:273)
+	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:68)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:64)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:61)
+	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:102)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:61)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperati
+onRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:58)
+	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:176)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQ
+ueue.java:194)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQue
+ue.java:127)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.ja
+va:169)
+11 actionable tasks: 5 executed, 6 up-to-date
+Watched directory hierarchies: [D:\certificate\AppStorysAutoPayManager]
+	at org.gradle.internal.Factories$1.create(Factories.java:30)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$withLocksAcquired$0(DefaultWorkerLeaseService.java:275)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:273)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:265)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:128)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:133)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue
+.java:164)
+	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java
+:133)
+	... 2 more
+Caused by: java.lang.reflect.InvocationTargetException
+	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:98)
+	at org.jetbrains.kotlin.kapt.base.AnnotationProcessingKt.doAnnotationProcessing(annotationProcessing.kt:37)
+	at org.jetbrains.kotlin.kapt.base.Kapt.kapt(Kapt.kt:46)
+	... 33 more
+Caused by: com.sun.tools.javac.processing.AnnotationProcessingError: java.lang.IllegalArgumentException: Provided 
+Metadata instance has version 2.2.0, while maximum supported version is 2.0.0. To support newer versions, update the 
+kotlinx-metadata-jvm library.
+	... 36 more
+Caused by: java.lang.IllegalArgumentException: Provided Metadata instance has version 2.2.0, while maximum supported 
+version is 2.0.0. To support newer versions, update the kotlinx-metadata-jvm library.
+	at androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.throwIfNotCompatible$kotlinx_metadata_jv
+m(KotlinClassMetadata.kt:609)
+	at androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.checkMetadataVersionForRead(KotlinClassM
+etadata.kt:600)
+	at androidx.room.jarjarred.kotlinx.metadata.jvm.KotlinClassMetadata$Companion.read(KotlinClassMetadata.kt:579)
+	at 
+androidx.room.compiler.processing.javac.kotlin.KmClassContainer$Companion.createFor(KotlinClassMetadataUtils.kt:184)
+	at androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(JavacTypeElement.kt:62)
+	at androidx.room.compiler.processing.javac.JavacTypeElement$kotlinMetadata$2.invoke(JavacTypeElement.kt:61)
+	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+	at androidx.room.compiler.processing.javac.JavacTypeElement.getKotlinMetadata(JavacTypeElement.kt:61)
+	at androidx.room.compiler.processing.javac.JavacTypeElement$superClass$2.invoke(JavacTypeElement.kt:258)
+	at androidx.room.compiler.processing.javac.JavacTypeElement$superClass$2.invoke(JavacTypeElement.kt:246)
+	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:74)
+	at androidx.room.compiler.processing.javac.JavacTypeElement.getSuperClass(JavacTypeElement.kt:246)
+	at androidx.room.compiler.processing.javac.JavacTypeElement.getSuperClass(JavacTypeElement.kt:44)
+	at androidx.room.compiler.processing.DeclarationCollectorKt$collectAllMethods$1.invokeSuspend$collectAllMethodsByName(
+DeclarationCollector.kt:63)
+	at 
+androidx.room.compiler.processing.DeclarationCollectorKt$collectAllMethods$1.invokeSuspend(DeclarationCollector.kt:80)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+	at kotlin.sequences.SequenceBuilderIterator.hasNext(SequenceBuilder.kt:129)
+	at androidx.room.compiler.processing.util.MemoizedSequence$CachedIterator.hasNext(MemoizedSequence.kt:41)
+	at kotlin.sequences.FilteringSequence$iterator$1.calcNext(Sequences.kt:169)
+	at kotlin.sequences.FilteringSequence$iterator$1.hasNext(Sequences.kt:194)
+	at androidx.room.processor.PojoProcessor$DefaultDelegate.onPreProcess(PojoProcessor.kt:1040)
+	at androidx.room.processor.PojoProcessor.doProcess(PojoProcessor.kt:131)
+	at androidx.room.processor.PojoProcessor.access$doProcess(PojoProcessor.kt:56)
+	at androidx.room.processor.PojoProcessor$process$1.invoke(PojoProcessor.kt:112)
+	at androidx.room.processor.PojoProcessor$process$1.invoke(PojoProcessor.kt:109)
+	at androidx.room.processor.cache.Cache$Bucket.get(Cache.kt:53)
+	at androidx.room.processor.PojoProcessor.process(PojoProcessor.kt:109)
+	at androidx.room.processor.TableEntityProcessor.doProcess(TableEntityProcessor.kt:93)
+	at androidx.room.processor.TableEntityProcessor.access$doProcess(TableEntityProcessor.kt:44)
+	at androidx.room.processor.TableEntityProcessor$process$1.invoke(TableEntityProcessor.kt:53)
+	at androidx.room.processor.TableEntityProcessor$process$1.invoke(TableEntityProcessor.kt:52)
+	at androidx.room.processor.cache.Cache$Bucket.get(Cache.kt:53)
+	at androidx.room.processor.TableEntityProcessor.process(TableEntityProcessor.kt:52)
+	at androidx.room.processor.DatabaseProcessor.processEntities(DatabaseProcessor.kt:468)
+	at androidx.room.processor.DatabaseProcessor.doProcess(DatabaseProcessor.kt:69)
+	at androidx.room.processor.DatabaseProcessor.process(DatabaseProcessor.kt:60)
+	at androidx.room.DatabaseProcessingStep$process$databases$1$1.invoke(DatabaseProcessingStep.kt:68)
+	at androidx.room.DatabaseProcessingStep$process$databases$1$1.invoke(DatabaseProcessingStep.kt:64)
+	at androidx.room.processor.Context.collectLogs(Context.kt:192)
+	at androidx.room.DatabaseProcessingStep.process(DatabaseProcessingStep.kt:64)
+	at androidx.room.compiler.processing.CommonProcessorDelegate.processRound(XBasicAnnotationProcessor.kt:130)
+	at androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor.process(JavacBasicAnnotationProcessor.kt:73)
+	at org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor.process(incrementalProcessors.kt:88)
+	at org.jetbrains.kotlin.kapt.base.ProcessorWrapper.process(annotationProcessing.kt:217)
+	... 36 more
+
+
+BUILD FAILED in 18s

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:drawable/dialog_holo_dark_frame">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Smart AutoPay"
+        android:textColor="#8B5CF6"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/widget_monthly_spending"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monthly Spending: ₹0.00"
+        android:textColor="#F8FAFC"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/widget_upcoming_bills"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upcoming Bills: 0"
+        android:textColor="#F8FAFC"
+        android:textSize="12sp"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:id="@+id/widget_today_txns"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Today's Transactions: 0"
+        android:textColor="#F8FAFC"
+        android:textSize="12sp"
+        android:layout_marginTop="4dp" />
+</LinearLayout>
