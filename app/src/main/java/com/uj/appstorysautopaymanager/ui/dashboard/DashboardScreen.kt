@@ -2,6 +2,7 @@ package com.uj.appstorysautopaymanager.ui.dashboard
 
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -424,14 +425,20 @@ fun AutoPayTopHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Icon(painter = painterResource(id = com.uj.appstorysautopaymanager.R.drawable.calendaricon),
-                    contentDescription = "", tint = Color(0xFFFF5E00), modifier = Modifier.size(40.dp))
+                Image(
+                    painter = painterResource(id = com.uj.appstorysautopaymanager.R.drawable.appicon),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                )
 
 //                AutoPayLogoIcon()
+                Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
                     text = "AutoPay Max",
-                    fontSize = 22.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFFF5E00)
                 )
