@@ -45,8 +45,6 @@ fun SettingsScreen(
     var rescanSms by remember { mutableStateOf(true) }
     var autopayReminders by remember { mutableStateOf(true) }
 
-    var userRating by remember { mutableStateOf(5) }
-
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var profileName by remember { mutableStateOf("") }
     var profileUpiId by remember { mutableStateOf("") }
@@ -214,55 +212,12 @@ fun SettingsScreen(
             // Rate the App Card
             item {
                 SettingsCard {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFFFF0EA)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.ThumbUpOffAlt, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(20.dp))
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text("Rate the App", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
-                                Text("Love it? Leave a review!", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
-                                .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(12.dp))
-                                .padding(14.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("How would you rate SoundBox?", fontSize = 12.sp, color = Color(0xFF94A3B8))
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    for (star in 1..5) {
-                                        Icon(
-                                            imageVector = if (star <= userRating) Icons.Default.Star else Icons.Default.StarOutline,
-                                            contentDescription = null,
-                                            tint = if (star <= userRating) Color(0xFFFFC107) else Color(0xFFCBD5E1),
-                                            modifier = Modifier
-                                                .size(28.dp)
-                                                .clickable {
-                                                    userRating = star
-                                                    Toast.makeText(context, "Thank you for rating $star stars!", Toast.LENGTH_SHORT).show()
-                                                }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    SettingsRowItem(
+                        icon = Icons.Default.ThumbUpOffAlt,
+                        title = "Rate the App",
+                        subtitle = "Love it? Leave a review!",
+                        onClick = { openUrl(context, "https://autopay.com/rate") }
+                    )
                 }
             }
 
