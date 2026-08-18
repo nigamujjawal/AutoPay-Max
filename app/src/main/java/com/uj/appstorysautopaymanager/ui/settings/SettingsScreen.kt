@@ -266,6 +266,38 @@ fun SettingsScreen(
                 }
             }
 
+            // Delete Account Button (same theme as Log Out)
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(0xFFFFF1F2))
+                        .border(1.dp, Color(0xFFFECDD3), RoundedCornerShape(14.dp))
+                        .clickable { Toast.makeText(context, "Delete Account clicked", Toast.LENGTH_SHORT).show() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteForever,
+                            contentDescription = "Delete Account",
+                            tint = Color(0xFFE11D48),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "Delete Account",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE11D48)
+                        )
+                    }
+                }
+            }
+
             // Log Out Button (Matches Image 6)
             item {
                 Box(

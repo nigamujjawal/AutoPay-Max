@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -18,11 +19,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.material3.Text
+
 
 data class NotificationItem(
     val id: String,
@@ -151,7 +156,10 @@ fun NotificationsScreen(
                                         text = unreadCount.toString(),
                                         color = Color.White,
                                         fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center,
+                                        lineHeight = 12.sp,
+                                        maxLines = 1
                                     )
                                 }
                             }
@@ -191,7 +199,7 @@ fun NotificationsScreen(
                                 modifier = Modifier
                                     .clip(CircleShape)
                                     .background(if (active) Color(0xFFFF5E00) else Color.White)
-                                    .border(1.dp, if (active) Color(0xFFFF5E00) else Color(0xFFE2E8F0), CircleShape)
+                                    .border(2.dp, if (active) Color(0xFFFF5E00) else Color(0xFFFFF8F0), CircleShape)
                                     .clickable { selectedFilter = tab }
                                     .padding(horizontal = 22.dp, vertical = 8.dp)
                             ) {
@@ -254,14 +262,15 @@ fun NotificationCardRow(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(elevation = 2.dp, shape = RoundedCornerShape(18.dp))
             .clip(RoundedCornerShape(18.dp))
             .background(cardBg)
-            .border(1.dp, cardBorder, RoundedCornerShape(18.dp))
+//            .border(1.dp, cardBorder, RoundedCornerShape(18.dp))
             .padding(16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
             // Left Circle Icon
             Box(
@@ -298,22 +307,16 @@ fun NotificationCardRow(
                 ) {
                     Text(
                         text = item.title,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
                         color = Color(0xFF1E293B),
                         modifier = Modifier.weight(1f)
                     )
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    Column (
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.End
                     ) {
-                        Text(
-                            text = item.timestamp,
-                            fontSize = 12.sp,
-                            color = Color(0xFF94A3B8)
-                        )
-
                         if (item.isUnread) {
                             Box(
                                 modifier = Modifier
@@ -322,10 +325,14 @@ fun NotificationCardRow(
                                     .background(Color(0xFFFF5E00))
                             )
                         }
+
+                        Text(
+                            text = item.timestamp,
+                            fontSize = 10.sp,
+                            color = Color(0xFF94A3B8)
+                        )
                     }
                 }
-
-                Spacer(modifier = Modifier.height(4.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -334,6 +341,7 @@ fun NotificationCardRow(
                 ) {
                     Text(
                         text = item.body,
+                        lineHeight = 15.sp,
                         fontSize = 13.sp,
                         color = Color(0xFF64748B),
                         modifier = Modifier.weight(1f)
