@@ -12,5 +12,7 @@ data class Mandate(
     val nextExpectedDebit: Long,
     val bank: String,
     val status: String,
-    val referenceNumber: String = ""
+    val referenceNumber: String = "",
+    val category: String = "",
+    val paymentApp: String = ""
 )

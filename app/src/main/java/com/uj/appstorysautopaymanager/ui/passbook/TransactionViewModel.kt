@@ -119,22 +119,4 @@ class TransactionViewModel @Inject constructor(
             repository.deleteTransaction(txn)
         }
     }
-
-    fun convertToAutoPay(txn: Transaction, context: Context, preferenceManager: com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager) {
-        viewModelScope.launch {
-            val mandate = com.uj.appstorysautopaymanager.data.local.entity.Mandate(
-                merchant = txn.merchant,
-                amount = txn.amount,
-                frequency = "MONTHLY",
-                nextExpectedDebit = System.currentTimeMillis() + (30L * 24L * 60L * 60L * 1000L),
-                bank = txn.bankName,
-                status = "ACTIVE",
-                referenceNumber = txn.referenceNumber
-            )
-            repository.insertMandate(mandate)
-            repository.updateTransaction(txn.copy(isAutoPay = true))
-            val ttsHelper = com.uj.appstorysautopaymanager.tts.TextToSpeechHelper(context, preferenceManager)
-            ttsHelper.speak("AutoPay set for ${txn.merchant} of ${txn.amount.toInt()} rupees.")
-        }
-    }
 }

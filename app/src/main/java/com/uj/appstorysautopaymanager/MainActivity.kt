@@ -3,6 +3,8 @@ package com.uj.appstorysautopaymanager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -24,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.uj.appstorysautopaymanager.receiver.BootReceiver
+import com.uj.appstorysautopaymanager.ui.autopay.AutoPayScreen
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
 import com.uj.appstorysautopaymanager.ui.dashboard.DashboardScreen
 import com.uj.appstorysautopaymanager.ui.navigation.Screen
@@ -42,9 +45,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
 
-    @javax.inject.Inject
-    lateinit var preferenceManager: com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -57,7 +57,6 @@ class MainActivity : FragmentActivity() {
             val transactionViewModel: TransactionViewModel = hiltViewModel()
 
             val selectedTheme by settingsViewModel.theme.collectAsState()
-            val isOnboarded by settingsViewModel.isOnboarded.collectAsState()
 
             val darkTheme = when (selectedTheme) {
                 "Dark" -> true
@@ -73,9 +72,7 @@ class MainActivity : FragmentActivity() {
                     MainAppContent(
                         settingsViewModel = settingsViewModel,
                         mandateViewModel = mandateViewModel,
-                        transactionViewModel = transactionViewModel,
-                        preferenceManager = preferenceManager,
-                        isOnboarded = isOnboarded
+                        transactionViewModel = transactionViewModel
                     )
                 }
             }
@@ -87,9 +84,7 @@ class MainActivity : FragmentActivity() {
 fun MainAppContent(
     settingsViewModel: SettingsViewModel,
     mandateViewModel: MandateViewModel,
-    transactionViewModel: TransactionViewModel,
-    preferenceManager: com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager,
-    isOnboarded: Boolean
+    transactionViewModel: TransactionViewModel
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -110,9 +105,8 @@ fun MainAppContent(
             if (isMainTabScreen) {
                 Surface(
                     color = Color.White,
-                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp, bottomStart = 30.dp , bottomEnd = 30.dp),
                     shadowElevation = 12.dp,
-                    tonalElevation = 4.dp,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -176,13 +170,17 @@ fun MainAppContent(
         NavHost(
             navController = navController,
             startDestination = Screen.Splash.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None }
         ) {
             // Splash Screen
             composable(Screen.Splash.route) {
                 SplashScreen(
                     onNavigateNext = {
-                        if (isOnboarded) {
+                        if (settingsViewModel.isOnboarded.value) {
                             navController.navigate(Screen.Home.route) {
                                 popUpTo(Screen.Splash.route) { inclusive = true }
                             }
@@ -195,26 +193,29 @@ fun MainAppContent(
                 )
             }
 
-            // Onboarding Screen
-            composable(Screen.Onboarding.route) {
-                OnboardingScreen(
-                    onStartTrialClick = {
-                        navController.navigate(Screen.Permissions.route)
-                    }
-                )
-            }
-
             // Permissions Screen
             composable(Screen.Permissions.route) {
                 PermissionsScreen(
                     onPermissionsCompleted = {
                         settingsViewModel.setIsOnboarded(true)
                         navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Onboarding.route) { inclusive = true }
+                            popUpTo(Screen.Permissions.route) { inclusive = true }
                         }
                     }
                 )
             }
+
+            // Onboarding Screen
+            composable(Screen.Onboarding.route) {
+                OnboardingScreen(
+                    onStartTrialClick = {
+                        navController.navigate(Screen.Permissions.route){
+                            popUpTo(Screen.Onboarding.route){inclusive = true}
+                        }
+                    }
+                )
+            }
+
 
             // Tab 1: Home (AutoPay Records)
             composable(Screen.Home.route) {
@@ -222,7 +223,8 @@ fun MainAppContent(
                     mandateViewModel = mandateViewModel,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
-                    }
+                    },
+                    navController = navController
                 )
             }
 
@@ -230,7 +232,6 @@ fun MainAppContent(
             composable(Screen.Passbook.route) {
                 PassbookScreen(
                     viewModel = transactionViewModel,
-                    preferenceManager = preferenceManager,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
                     }
@@ -267,6 +268,13 @@ fun MainAppContent(
             // Sub-screen 2: Notifications List (Alerts, System & Payment Reminders)
             composable(Screen.Notifications.route) {
                 NotificationsScreen(
+                    navController = navController
+                )
+            }
+
+            composable(Screen.AutoPay.route) {
+                AutoPayScreen(
+                    viewModel = mandateViewModel,
                     navController = navController
                 )
             }

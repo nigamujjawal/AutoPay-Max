@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -25,18 +24,23 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
+import com.uj.appstorysautopaymanager.ui.components.SwipeToDeleteCard
+import com.uj.appstorysautopaymanager.ui.navigation.Screen
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun DashboardScreen(
     mandateViewModel: MandateViewModel,
-    onNotificationsClick: () -> Unit = {}
+    onNotificationsClick: () -> Unit = {},
+    navController: NavController
 ) {
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()
@@ -63,106 +67,115 @@ fun DashboardScreen(
             // App Header (Matches Image 1 & 2)
             AutoPayTopHeader(onNotificationsClick = onNotificationsClick)
 
-            LazyColumn(
+            Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-                contentPadding = PaddingValues(top = 10.dp, bottom = 90.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
+                Spacer(modifier = Modifier.height(10.dp))
+
                 // Hero Card - Total Monthly Spending (Matches Image 1)
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(160.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(
-                                Brush.linearGradient(
-                                    colors = listOf(
-                                        Color(0xFFFF5500),
-                                        Color(0xFFFF7600),
-                                        Color(0xFFFF8500)
-                                    )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(
+                            Brush.linearGradient(
+                                colors = listOf(
+                                    Color(0xFFFF5500),
+                                    Color(0xFFFF7600),
+                                    Color(0xFFFF8500)
                                 )
                             )
-                            .padding(20.dp)
-                    ) {
-                        // Decorative background circles
-                        Canvas(modifier = Modifier.fillMaxSize()) {
-                            drawCircle(
-                                color = Color.White.copy(alpha = 0.15f),
-                                radius = size.width * 0.45f,
-                                center = Offset(size.width * 0.85f, size.height * 0.25f)
-                            )
-                            drawCircle(
-                                color = Color.White.copy(alpha = 0.10f),
-                                radius = size.width * 0.3f,
-                                center = Offset(size.width * 0.95f, size.height * 0.85f)
-                            )
-                        }
+                        )
+                        .padding(20.dp)
+                ) {
+                    // Decorative background circles
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawCircle(
+                            color = Color.White.copy(alpha = 0.15f),
+                            radius = size.width * 0.45f,
+                            center = Offset(size.width * 0.85f, size.height * 0.25f)
+                        )
+                        drawCircle(
+                            color = Color.White.copy(alpha = 0.10f),
+                            radius = size.width * 0.3f,
+                            center = Offset(size.width * 0.95f, size.height * 0.85f)
+                        )
+                    }
 
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "Total Monthly",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "₹ $displayTotal",
+                            fontSize = 38.sp,
+                            fontWeight = FontWeight.Black,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.22f))
+                                .border(1.dp, Color.White.copy(alpha = 0.35f), CircleShape)
+                                .padding(horizontal = 14.dp, vertical = 4.dp)
                         ) {
                             Text(
-                                text = "Total Monthly",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
+                                text = "Across $displayCount autopays",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium,
                                 color = Color.White
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "₹ $displayTotal",
-                                fontSize = 38.sp,
-                                fontWeight = FontWeight.Black,
-                                color = Color.White
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Box(
-                                modifier = Modifier
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.22f))
-                                    .border(1.dp, Color.White.copy(alpha = 0.35f), CircleShape)
-                                    .padding(horizontal = 14.dp, vertical = 4.dp)
-                            ) {
-                                Text(
-                                    text = "Across $displayCount autopays",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color.White
-                                )
-                            }
                         }
                     }
                 }
 
                 // Section Header: Current Auto Payments | See All
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Current Auto Payments",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
-                        )
-                        Text(
-                            text = "See All",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFF5E00)
-                        )
-                    }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp, bottom = 4.dp, start = 20.dp, end = 20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Current Auto Payments",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1E293B)
+                    )
+                    Text(
+                        text = "See All",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFFF5E00)
+                    )
                 }
+            }
 
-                // Auto Payments List
+            // Auto Payments List — only this part scrolls
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 10.dp)
+                    .padding(bottom = 10.dp),
+//                    .clip(RoundedCornerShape(16.dp))
+//                    .background(Color.Gray.copy(alpha = 0.1f)),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                contentPadding = PaddingValues(top = 4.dp, bottom = 50.dp)
+            ) {
                 if (mandates.isEmpty()) {
                     item {
                         Box(
@@ -179,7 +192,7 @@ fun DashboardScreen(
                         }
                     }
                 } else {
-                    items(mandates) { mandate ->
+                    items(mandates, key = { it.id }) { mandate ->
                         AutoPaymentRow(
                             mandate = mandate,
                             onDelete = { mandateViewModel.deleteMandate(mandate) }
@@ -197,7 +210,7 @@ fun DashboardScreen(
                 .shadow(6.dp, CircleShape)
                 .clip(CircleShape)
                 .background(Color(0xFFFF5E00))
-                .clickable { showAddDialog = true }
+                .clickable {navController.navigate(Screen.AutoPay.route)}
                 .padding(horizontal = 20.dp, vertical = 12.dp)
         ) {
             Row(
@@ -334,64 +347,78 @@ fun AutoPaymentRow(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(16.dp))
-            .padding(14.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+    SwipeToDeleteCard(onDelete = onDelete) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color.White)
+                .padding(14.dp)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(44.dp)
-                        .clip(CircleShape)
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(Color(0xFFFF7600), Color(0xFFFF9E40))
-                            )
-                        ),
-                    contentAlignment = Alignment.Center
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = initials,
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.linearGradient(
+                                    colors = listOf(Color(0xFFFF7600), Color(0xFFFF9E40))
+                                )
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = initials,
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column {
+                        Text(
+                            text = mandate.merchant,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1E293B),
+                            maxLines = 1
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "$dueDateStr • ${mandate.frequency}",
+                            fontSize = 12.sp,
+                            color = Color(0xFF94A3B8)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                    }
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.End
+                ) {
                     Text(
-                        text = mandate.merchant,
-                        fontSize = 15.sp,
+                        text = "₹${mandate.amount.toInt()}",
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B),
-                        maxLines = 1
+                        color = Color(0xFFDC2626)
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "$dueDateStr • ${mandate.frequency}",
-                        fontSize = 12.sp,
-                        color = Color(0xFF94A3B8)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
+
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(6.dp))
-                            .background(Color(0xFFFFF0EA))
-                            .padding(horizontal = 8.dp, vertical = 2.dp)
+                            .background(Color.Transparent)
+                            .padding(vertical = 2.dp)
                     ) {
                         Text(
                             text = "Due in $daysUntilDue ${if (daysUntilDue == 1L) "day" else "days"}",
@@ -400,34 +427,6 @@ fun AutoPaymentRow(
                             color = Color(0xFFFF5E00)
                         )
                     }
-                }
-            }
-
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Text(
-                    text = "₹${mandate.amount.toInt()}",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFDC2626)
-                )
-
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFFF0F2))
-                        .clickable { onDelete() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "Delete mandate",
-                        tint = Color(0xFFF87171),
-                        modifier = Modifier.size(16.dp)
-                    )
                 }
             }
         }
@@ -456,10 +455,13 @@ fun AutoPayTopHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                AutoPayLogoIcon()
+                Icon(painter = painterResource(id = com.uj.appstorysautopaymanager.R.drawable.calendaricon),
+                    contentDescription = "", tint = Color(0xFFFF5E00), modifier = Modifier.size(40.dp))
+
+//                AutoPayLogoIcon()
 
                 Text(
-                    text = "AutoPay Manager",
+                    text = "AutoPay Max",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFFF5E00)

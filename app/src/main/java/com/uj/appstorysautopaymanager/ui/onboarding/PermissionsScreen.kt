@@ -113,7 +113,7 @@ fun PermissionsScreen(
 
             Text(
                 text = "AutoPay Alerts needs three permissions so we can read bank SMS, remind you before each debit, and keep working in the background.",
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 color = Color(0xFF64748B),
                 textAlign = TextAlign.Center,
                 lineHeight = 20.sp
@@ -230,7 +230,7 @@ fun PermissionCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(Color(0xFFFFF9F5))
-            .border(1.dp, Color(0xFFFFEAD9), RoundedCornerShape(16.dp))
+            .clip(shape = RoundedCornerShape(16.dp))
             .padding(16.dp)
     ) {
         Row(
@@ -262,7 +262,7 @@ fun PermissionCard(
                 ) {
                     Text(
                         text = title,
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B)
                     )

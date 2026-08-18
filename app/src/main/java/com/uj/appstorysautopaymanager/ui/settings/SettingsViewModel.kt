@@ -49,7 +49,7 @@ class SettingsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 1)
 
     val isOnboarded: StateFlow<Boolean> = preferenceManager.isOnboardedFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val voiceEngine: StateFlow<String> = preferenceManager.voiceEngineFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "Male Voice")
