@@ -245,6 +245,19 @@ fun MainAppContent(
                     mandateViewModel = mandateViewModel,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
+                    },
+                    onSeeAllClick = {
+                        // Same popUpTo/launchSingleTop/restoreState contract as the bottom tab
+                        // bar's own tab-switch clicks (below) - this must behave like "switch to
+                        // the Passbook tab", not a one-off push, or it corrupts the saved-state
+                        // back stack the tab bar relies on to restore Home afterward.
+                        navController.navigate(Screen.Passbook.route) {
+                            popUpTo(Screen.Home.route) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }

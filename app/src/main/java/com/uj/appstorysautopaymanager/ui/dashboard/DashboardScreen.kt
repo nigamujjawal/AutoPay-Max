@@ -36,7 +36,8 @@ import java.util.*
 @Composable
 fun DashboardScreen(
     mandateViewModel: MandateViewModel,
-    onNotificationsClick: () -> Unit = {}
+    onNotificationsClick: () -> Unit = {},
+    onSeeAllClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()
@@ -153,6 +154,7 @@ fun DashboardScreen(
                     )
                     Text(
                         text = "See All",
+                        modifier = Modifier.clickable{onSeeAllClick()},
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFFFF5E00)
