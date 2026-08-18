@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -342,9 +343,9 @@ fun PassbookTransactionRow(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp))
                 .clip(RoundedCornerShape(16.dp))
                 .background(Color.White)
-                .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(16.dp))
                 .padding(14.dp)
         ) {
             Row(

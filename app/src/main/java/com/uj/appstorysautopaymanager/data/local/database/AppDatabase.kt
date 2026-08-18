@@ -60,11 +60,11 @@ abstract class AppDatabase : RoomDatabase() {
                     db.execSQL("INSERT INTO categories (name, iconName, isSystem) VALUES ('Others', 'Category', 1)")
 
                     // Default AutoPay Mandates matching Image 4
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Netflix', 630.0, 'Manual', 1786500000000, 'HDFC Bank', 'ACTIVE', 'MAN1001')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Spotify', 480.0, 'Automatic', 1786759200000, 'ICICI Bank', 'ACTIVE', 'MAN1002')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Amazon Prime', 999.0, 'Manual', 1787191200000, 'SBI Bank', 'ACTIVE', 'MAN1003')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Hulu', 720.0, 'Automatic', 1787623200000, 'Axis Bank', 'ACTIVE', 'MAN1004')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Disney+', 899.0, 'Manual', 1788055200000, 'Kotak Bank', 'ACTIVE', 'MAN1005')")
+                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber, category, paymentApp) VALUES ('Netflix', 630.0, 'Manual', 1786500000000, 'HDFC Bank', 'ACTIVE', 'MAN1001', 'OTT', '')")
+                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber, category, paymentApp) VALUES ('Spotify', 480.0, 'Automatic', 1786759200000, 'ICICI Bank', 'ACTIVE', 'MAN1002', 'Music', '')")
+                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber, category, paymentApp) VALUES ('Amazon Prime', 999.0, 'Manual', 1787191200000, 'SBI Bank', 'ACTIVE', 'MAN1003', 'OTT', '')")
+                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber, category, paymentApp) VALUES ('Hulu', 720.0, 'Automatic', 1787623200000, 'Axis Bank', 'ACTIVE', 'MAN1004', 'OTT', '')")
+                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber, category, paymentApp) VALUES ('Disney+', 899.0, 'Manual', 1788055200000, 'Kotak Bank', 'ACTIVE', 'MAN1005', 'OTT', '')")
 
                     // Default Passbook Transactions matching Image 5
                     db.execSQL("INSERT INTO transactions (smsId, merchant, amount, date, bankName, accountNumber, referenceNumber, transactionType, category, smsBody, isAutoPay) VALUES ('sms_1', 'State Bank of India . XX...', 27.0, 1783900800000, 'SBI BANK', 'XX1234', 'REF001', 'DEBIT', 'Others', 'Rs.27 debited from SBI account', 1)")

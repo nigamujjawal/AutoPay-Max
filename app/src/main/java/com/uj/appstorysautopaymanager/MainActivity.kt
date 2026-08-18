@@ -3,13 +3,15 @@ package com.uj.appstorysautopaymanager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,7 +38,7 @@ import com.uj.appstorysautopaymanager.ui.onboarding.SplashScreen
 import com.uj.appstorysautopaymanager.ui.passbook.PassbookScreen
 import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
 import com.uj.appstorysautopaymanager.ui.notification.NotificationsScreen
-import com.uj.appstorysautopaymanager.ui.settings.AppSettingsScreen
+import com.uj.appstorysautopaymanager.ui.settings.VoiceBehaviour
 import com.uj.appstorysautopaymanager.ui.settings.SettingsScreen
 import com.uj.appstorysautopaymanager.ui.settings.SettingsViewModel
 import com.uj.appstorysautopaymanager.ui.theme.*
@@ -102,7 +104,15 @@ fun MainAppContent(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            if (isMainTabScreen) {
+            // AnimatedVisibility (not a plain `if`) so this show/hide goes through the same
+            // Transition-settling machinery NavHost's destination swap uses — that keeps the
+            // bar's appearance in lockstep with the content instead of popping in a frame
+            // before/after it, which is what caused the splash→dashboard glitch.
+            AnimatedVisibility(
+                visible = isMainTabScreen,
+                enter = EnterTransition.None,
+                exit = ExitTransition.None
+            ) {
                 Surface(
                     color = Color.White,
                     shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp, bottomStart = 30.dp , bottomEnd = 30.dp),
@@ -143,13 +153,13 @@ fun MainAppContent(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
+                                    Spacer(modifier = Modifier.height(8.dp))
                                     Icon(
                                         imageVector = screen.icon,
                                         contentDescription = screen.title,
                                         tint = if (selected) Color(0xFFFF5E00) else Color(0xFF94A3B8),
                                         modifier = Modifier.size(24.dp)
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = screen.title,
                                         color = if (selected) Color(0xFFFF5E00) else Color(0xFF94A3B8),
@@ -163,6 +173,18 @@ fun MainAppContent(
                         }
                     }
                 }
+            }
+        },
+        floatingActionButton = {
+            if (currentRoute == Screen.Home.route) {
+                ExtendedFloatingActionButton(
+                    shape = RoundedCornerShape(50.dp),
+                    onClick = { navController.navigate(Screen.AutoPay.route) },
+                    containerColor = Color(0xFFFF5E00),
+                    contentColor = Color.White,
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
+                    text = { Text("Add", fontWeight = FontWeight.Bold) }
+                )
             }
         },
         modifier = Modifier.fillMaxSize()
@@ -223,8 +245,7 @@ fun MainAppContent(
                     mandateViewModel = mandateViewModel,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
-                    },
-                    navController = navController
+                    }
                 )
             }
 
@@ -259,7 +280,7 @@ fun MainAppContent(
 
             // Sub-screen 1: App Settings (Voice, Language, Alert Customization)
             composable(Screen.AppSettings.route) {
-                AppSettingsScreen(
+                VoiceBehaviour(
                     navController = navController,
                     settingsViewModel = settingsViewModel
                 )

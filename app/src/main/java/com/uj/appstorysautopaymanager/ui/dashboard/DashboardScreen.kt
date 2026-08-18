@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
@@ -19,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -28,19 +26,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
 import com.uj.appstorysautopaymanager.ui.components.SwipeToDeleteCard
-import com.uj.appstorysautopaymanager.ui.navigation.Screen
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun DashboardScreen(
     mandateViewModel: MandateViewModel,
-    onNotificationsClick: () -> Unit = {},
-    navController: NavController
+    onNotificationsClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()
@@ -145,7 +140,7 @@ fun DashboardScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 4.dp, start = 20.dp, end = 20.dp),
+                        .padding(top = 8.dp, bottom = 4.dp, start = 5.dp, end = 5.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -170,9 +165,8 @@ fun DashboardScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(horizontal = 10.dp)
-                    .padding(bottom = 10.dp),
-//                    .clip(RoundedCornerShape(16.dp))
-//                    .background(Color.Gray.copy(alpha = 0.1f)),
+                    .padding(bottom = 10.dp)
+                    .clip(RoundedCornerShape(16.dp)),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(top = 4.dp, bottom = 50.dp)
             ) {
@@ -199,31 +193,6 @@ fun DashboardScreen(
                         )
                     }
                 }
-            }
-        }
-
-        // Floating Action Button (+ Add) (Pill shape floating cleanly above bottom bar)
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 20.dp, end = 20.dp)
-                .shadow(6.dp, CircleShape)
-                .clip(CircleShape)
-                .background(Color(0xFFFF5E00))
-                .clickable {navController.navigate(Screen.AutoPay.route)}
-                .padding(horizontal = 20.dp, vertical = 12.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White, modifier = Modifier.size(20.dp))
-                Text(
-                    text = "Add",
-                    color = Color.White,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold
-                )
             }
         }
 
@@ -370,7 +339,7 @@ fun AutoPaymentRow(
                             .clip(CircleShape)
                             .background(
                                 Brush.linearGradient(
-                                    colors = listOf(Color(0xFFFF7600), Color(0xFFFF9E40))
+                                    colors = listOf(Color(0xFFFF7600).copy(alpha = 0.3f), Color(0xFFFF9E40).copy(alpha = 1.0f))
                                 )
                             ),
                         contentAlignment = Alignment.Center
