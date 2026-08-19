@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsNone
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -446,18 +445,11 @@ fun AutoPayTopHeader(
                 )
             }
 
-            // Right Icons (Search & Bell with dot)
+            // Right Icons (Bell with dot)
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search",
-                    tint = Color(0xFF64748B),
-                    modifier = Modifier.size(24.dp)
-                )
-
                 Box(
                     modifier = Modifier.clickable { onNotificationsClick() }
                 ) {

@@ -1,5 +1,7 @@
 package com.uj.appstorysautopaymanager
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,9 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -38,6 +42,7 @@ import com.uj.appstorysautopaymanager.ui.onboarding.SplashScreen
 import com.uj.appstorysautopaymanager.ui.passbook.PassbookScreen
 import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
 import com.uj.appstorysautopaymanager.ui.notification.NotificationsScreen
+import com.uj.appstorysautopaymanager.ui.notification.NotificationsViewModel
 import com.uj.appstorysautopaymanager.ui.settings.VoiceBehaviour
 import com.uj.appstorysautopaymanager.ui.settings.SettingsScreen
 import com.uj.appstorysautopaymanager.ui.settings.SettingsViewModel
@@ -52,6 +57,7 @@ class MainActivity : FragmentActivity() {
         enableEdgeToEdge()
 
         BootReceiver.scheduleBillReminders(this)
+        BootReceiver.scheduleMandateReminders(this)
 
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
@@ -91,6 +97,15 @@ fun MainAppContent(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current
+
+    // Backfill from the device's existing SMS inbox (SmsReceiver only catches SMS
+    // that arrive after install/permission-grant, not history already on the device).
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+            transactionViewModel.scanSmsInbox(context)
+        }
+    }
 
     // EXACT 3 TABS AS REQUESTED: Home (AutoPay Records), Passbook, Settings
     val navigationItems = listOf(
@@ -220,6 +235,9 @@ fun MainAppContent(
                 PermissionsScreen(
                     onPermissionsCompleted = {
                         settingsViewModel.setIsOnboarded(true)
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+                            transactionViewModel.scanSmsInbox(context)
+                        }
                         navController.navigate(Screen.Home.route) {
                             popUpTo(Screen.Permissions.route) { inclusive = true }
                         }
@@ -276,6 +294,7 @@ fun MainAppContent(
             composable(Screen.Settings.route) {
                 SettingsScreen(
                     viewModel = settingsViewModel,
+                    transactionViewModel = transactionViewModel,
                     onLogoutClick = {
                         settingsViewModel.setIsOnboarded(false)
                         navController.navigate(Screen.Onboarding.route) {
@@ -301,8 +320,10 @@ fun MainAppContent(
 
             // Sub-screen 2: Notifications List (Alerts, System & Payment Reminders)
             composable(Screen.Notifications.route) {
+                val notificationsViewModel: NotificationsViewModel = hiltViewModel()
                 NotificationsScreen(
-                    navController = navController
+                    navController = navController,
+                    viewModel = notificationsViewModel
                 )
             }
 

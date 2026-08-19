@@ -4,6 +4,7 @@ import android.content.Context
 import com.uj.appstorysautopaymanager.data.local.dao.BillDao
 import com.uj.appstorysautopaymanager.data.local.dao.CategoryDao
 import com.uj.appstorysautopaymanager.data.local.dao.MandateDao
+import com.uj.appstorysautopaymanager.data.local.dao.NotificationDao
 import com.uj.appstorysautopaymanager.data.local.dao.TransactionDao
 import com.uj.appstorysautopaymanager.data.local.database.AppDatabase
 import dagger.Module
@@ -41,5 +42,10 @@ object DatabaseModule {
     @Provides
     fun provideCategoryDao(database: AppDatabase): CategoryDao {
         return database.categoryDao()
+    }
+
+    @Provides
+    fun provideNotificationDao(database: AppDatabase): NotificationDao {
+        return database.notificationDao()
     }
 }

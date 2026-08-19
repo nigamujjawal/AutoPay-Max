@@ -30,6 +30,8 @@ class PreferenceManager @Inject constructor(
         val VOICE_VOLUME_KEY = floatPreferencesKey("voice_volume")
         val PLAY_CHIME_FIRST_KEY = booleanPreferencesKey("play_chime_first")
         val ALERT_TONE_KEY = stringPreferencesKey("alert_tone")
+        val IS_PUSH_NOTIFICATIONS_ENABLED_KEY = booleanPreferencesKey("is_push_notifications_enabled")
+        val IS_AUTOPAY_REMINDERS_ENABLED_KEY = booleanPreferencesKey("is_autopay_reminders_enabled")
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { it[THEME_KEY] ?: "Light" }
@@ -46,6 +48,8 @@ class PreferenceManager @Inject constructor(
     val voiceVolumeFlow: Flow<Float> = context.dataStore.data.map { it[VOICE_VOLUME_KEY] ?: 100f }
     val playChimeFirstFlow: Flow<Boolean> = context.dataStore.data.map { it[PLAY_CHIME_FIRST_KEY] ?: true }
     val alertToneFlow: Flow<String> = context.dataStore.data.map { it[ALERT_TONE_KEY] ?: "Cashier" }
+    val isPushNotificationsEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_PUSH_NOTIFICATIONS_ENABLED_KEY] ?: true }
+    val isAutopayRemindersEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_AUTOPAY_REMINDERS_ENABLED_KEY] ?: true }
 
     suspend fun setTheme(theme: String) {
         context.dataStore.edit { it[THEME_KEY] = theme }
@@ -101,5 +105,13 @@ class PreferenceManager @Inject constructor(
 
     suspend fun setAlertTone(tone: String) {
         context.dataStore.edit { it[ALERT_TONE_KEY] = tone }
+    }
+
+    suspend fun setPushNotificationsEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[IS_PUSH_NOTIFICATIONS_ENABLED_KEY] = enabled }
+    }
+
+    suspend fun setAutopayRemindersEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[IS_AUTOPAY_REMINDERS_ENABLED_KEY] = enabled }
     }
 }

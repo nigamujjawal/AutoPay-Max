@@ -63,6 +63,12 @@ class SettingsViewModel @Inject constructor(
     val alertTone: StateFlow<String> = preferenceManager.alertToneFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "Cashier")
 
+    val isPushNotificationsEnabled: StateFlow<Boolean> = preferenceManager.isPushNotificationsEnabledFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
+    val isAutopayRemindersEnabled: StateFlow<Boolean> = preferenceManager.isAutopayRemindersEnabledFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
     private val _backupStatus = MutableSharedFlow<String>()
     val backupStatus = _backupStatus.asSharedFlow()
 
@@ -81,6 +87,8 @@ class SettingsViewModel @Inject constructor(
     fun setVoiceVolume(value: Float) = viewModelScope.launch { preferenceManager.setVoiceVolume(value) }
     fun setPlayChimeFirst(value: Boolean) = viewModelScope.launch { preferenceManager.setPlayChimeFirst(value) }
     fun setAlertTone(value: String) = viewModelScope.launch { preferenceManager.setAlertTone(value) }
+    fun setPushNotificationsEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setPushNotificationsEnabled(value) }
+    fun setAutopayRemindersEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setAutopayRemindersEnabled(value) }
 
     fun exportBackup(context: Context, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {

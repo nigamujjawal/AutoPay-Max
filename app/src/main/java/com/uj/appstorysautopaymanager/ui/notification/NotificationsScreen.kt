@@ -27,64 +27,60 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.material3.Text
+import com.uj.appstorysautopaymanager.data.local.entity.NotificationEntity
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 data class NotificationItem(
-    val id: String,
+    val id: Long,
     val title: String,
     val body: String,
     val timestamp: String,
     val category: String, // "Payments" or "System"
     val dateGroup: String, // "Today", "Yesterday", "Earlier"
     val isWarning: Boolean = false,
-    var isUnread: Boolean = true
+    val isUnread: Boolean = true
 )
+
+private fun NotificationEntity.toItem(): NotificationItem {
+    val dayFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    val todayStr = dayFormat.format(Date())
+    val yesterdayStr = dayFormat.format(Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }.time)
+    val entryDayStr = dayFormat.format(Date(timestamp))
+    val dateGroup = when (entryDayStr) {
+        todayStr -> "Today"
+        yesterdayStr -> "Yesterday"
+        else -> "Earlier"
+    }
+    return NotificationItem(
+        id = id,
+        title = title,
+        body = body,
+        timestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp)),
+        category = category,
+        dateGroup = dateGroup,
+        isWarning = isWarning,
+        isUnread = isUnread
+    )
+}
 
 @Composable
 fun NotificationsScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: NotificationsViewModel
 ) {
     var selectedFilter by remember { mutableStateOf("All") }
 
-    val initialNotifications = remember {
-        mutableStateListOf(
-            NotificationItem(
-                id = "1",
-                title = "Netflix autopay due tomorrow",
-                body = "₹630 will be debited from your SBI account on 12 Aug 2026.",
-                timestamp = "8:57 am",
-                category = "Payments",
-                dateGroup = "Today",
-                isWarning = true,
-                isUnread = true
-            ),
-            NotificationItem(
-                id = "2",
-                title = "Autopay detected: Spotify",
-                body = "New monthly mandate of ₹119 via GPay was auto-detected from your SMS.",
-                timestamp = "Yesterday",
-                category = "Payments",
-                dateGroup = "Yesterday",
-                isWarning = false,
-                isUnread = true
-            ),
-            NotificationItem(
-                id = "3",
-                title = "Credit card bill alert",
-                body = "Your monthly bill of ₹2,350 is due on 11 Aug 2026.",
-                timestamp = "Three days ago",
-                category = "Payments",
-                dateGroup = "Earlier",
-                isWarning = false,
-                isUnread = false
-            )
-        )
-    }
+    val notifications by viewModel.notifications.collectAsState()
+    val items = remember(notifications) { notifications.map { it.toItem() } }
 
-    val unreadCount = initialNotifications.count { it.isUnread }
+    val unreadCount = items.count { it.isUnread }
 
-    val filteredList = remember(selectedFilter, initialNotifications.toList()) {
-        if (selectedFilter == "All") initialNotifications else initialNotifications.filter { it.category == selectedFilter }
+    val filteredList = remember(selectedFilter, items) {
+        if (selectedFilter == "All") items else items.filter { it.category == selectedFilter }
     }
 
     val groupedList = remember(filteredList) {
@@ -171,11 +167,7 @@ fun NotificationsScreen(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFFFF5E00),
-                        modifier = Modifier.clickable {
-                            initialNotifications.indices.forEach { idx ->
-                                initialNotifications[idx] = initialNotifications[idx].copy(isUnread = false)
-                            }
-                        }
+                        modifier = Modifier.clickable { viewModel.markAllRead() }
                     )
                 }
             }
@@ -241,7 +233,7 @@ fun NotificationsScreen(
                         items(items) { item ->
                             NotificationCardRow(
                                 item = item,
-                                onDismiss = { initialNotifications.remove(item) }
+                                onDismiss = { viewModel.dismiss(item.id) }
                             )
                         }
                     }

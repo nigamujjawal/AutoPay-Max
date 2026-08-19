@@ -379,13 +379,20 @@ fun PassbookTransactionRow(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
-                        Text(
-                            text = txn.merchant,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B),
-                            maxLines = 1
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = txn.merchant,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF1E293B),
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f, fill = false)
+                            )
+                            TransactionTypeLabel(isAutoPay = txn.isAutoPay)
+                        }
                         Text(
                             text = "${txn.bankName} • $formattedDate",
                             fontSize = 12.sp,
@@ -402,6 +409,29 @@ fun PassbookTransactionRow(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun TransactionTypeLabel(isAutoPay: Boolean) {
+    val (bg, textColor, label) = if (isAutoPay) {
+        Triple(Color(0xFFFFF0EA), Color(0xFFFF5E00), "Automatic")
+    } else {
+        Triple(Color(0xFFF1F5F9), Color(0xFF64748B), "Normal")
+    }
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(20.dp))
+            .background(bg)
+            .border(1.dp, textColor.copy(alpha = 0.35f), RoundedCornerShape(20.dp))
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+    ) {
+        Text(
+            text = label,
+            color = textColor,
+            fontSize = 9.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 

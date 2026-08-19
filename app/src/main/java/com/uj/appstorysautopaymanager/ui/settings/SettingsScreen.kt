@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.uj.appstorysautopaymanager.ui.dashboard.AutoPayTopHeader
+import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
 
 private fun openUrl(context: android.content.Context, url: String) {
     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
@@ -31,6 +32,7 @@ private fun openUrl(context: android.content.Context, url: String) {
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
+    transactionViewModel: TransactionViewModel,
     onLogoutClick: () -> Unit,
     onNavigateToAppSettings: () -> Unit = {},
     onNotificationsClick: () -> Unit = {}
@@ -40,10 +42,9 @@ fun SettingsScreen(
     val isVoiceAlertsEnabled by viewModel.isVoiceAlertsEnabled.collectAsState()
     val speechSpeed by viewModel.speechSpeed.collectAsState()
     val speechLanguage by viewModel.speechLanguage.collectAsState()
-
-    var pushNotifications by remember { mutableStateOf(true) }
-    var rescanSms by remember { mutableStateOf(true) }
-    var autopayReminders by remember { mutableStateOf(true) }
+    val pushNotifications by viewModel.isPushNotificationsEnabled.collectAsState()
+    val autopayReminders by viewModel.isAutopayRemindersEnabled.collectAsState()
+    val isScanning by transactionViewModel.isScanning.collectAsState()
 
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var profileName by remember { mutableStateOf("") }
@@ -135,7 +136,7 @@ fun SettingsScreen(
                             title = "Push Notifications",
                             subtitle = "Payment & system alerts",
                             checked = pushNotifications,
-                            onCheckedChange = { pushNotifications = it }
+                            onCheckedChange = { viewModel.setPushNotificationsEnabled(it) }
                         )
 
                         Divider(color = Color(0xFFF1F5F9))
@@ -143,9 +144,11 @@ fun SettingsScreen(
                         SettingsSwitchItem(
                             icon = Icons.Default.Sync,
                             title = "Re-scan SMS",
-                            subtitle = "Re-runs the 6-month backfill",
-                            checked = rescanSms,
-                            onCheckedChange = { rescanSms = it }
+                            subtitle = if (isScanning) "Scanning..." else "Tap to re-scan your SMS inbox now",
+                            checked = isScanning,
+                            onCheckedChange = { checked ->
+                                if (checked && !isScanning) transactionViewModel.scanSmsInbox(context)
+                            }
                         )
 
                         Divider(color = Color(0xFFF1F5F9))
@@ -153,9 +156,9 @@ fun SettingsScreen(
                         SettingsSwitchItem(
                             icon = Icons.Default.NotificationsActive,
                             title = "Autopay Reminders",
-                            subtitle = "Heads-up reminders 2-3 days before",
+                            subtitle = "Heads-up reminder 2 days before",
                             checked = autopayReminders,
-                            onCheckedChange = { autopayReminders = it }
+                            onCheckedChange = { viewModel.setAutopayRemindersEnabled(it) }
                         )
 
                         Divider(color = Color(0xFFF1F5F9))

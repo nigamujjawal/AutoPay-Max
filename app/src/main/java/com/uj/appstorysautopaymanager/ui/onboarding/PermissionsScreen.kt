@@ -1,8 +1,10 @@
 package com.uj.appstorysautopaymanager.ui.onboarding
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -21,11 +23,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 
 @Composable
 fun PermissionsScreen(
@@ -45,9 +51,26 @@ fun PermissionsScreen(
         } else true
     }
 
+    fun checkNotificationAccessGranted(): Boolean =
+        NotificationManagerCompat.getEnabledListenerPackages(context).contains(context.packageName)
+
     var smsGranted by remember { mutableStateOf(checkSmsGranted()) }
     var notificationGranted by remember { mutableStateOf(checkNotificationGranted()) }
     var scanningGranted by remember { mutableStateOf(true) }
+    var notificationAccessGranted by remember { mutableStateOf(checkNotificationAccessGranted()) }
+
+    // Notification access can only be toggled in system Settings, not via a runtime permission
+    // dialog - re-check when the user comes back to the app instead of via a launcher callback.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                notificationAccessGranted = checkNotificationAccessGranted()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     val multiplePermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -161,6 +184,19 @@ fun PermissionsScreen(
                 isGranted = scanningGranted,
                 onAllowClick = {
                     scanningGranted = true
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Permission Card 4: Automatic payment detection (Notification access)
+            PermissionCard(
+                icon = Icons.Default.AccountBalanceWallet,
+                title = "Automatic payment detection",
+                description = "Read payment notifications from apps like Paytm, GPay, and PhonePe to catch autopays and transfers your bank SMS might miss.",
+                isGranted = notificationAccessGranted,
+                onAllowClick = {
+                    context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
                 }
             )
 
