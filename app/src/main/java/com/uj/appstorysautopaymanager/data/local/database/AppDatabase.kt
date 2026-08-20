@@ -6,11 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.uj.appstorysautopaymanager.data.local.dao.AuthTokenDao
 import com.uj.appstorysautopaymanager.data.local.dao.BillDao
 import com.uj.appstorysautopaymanager.data.local.dao.CategoryDao
 import com.uj.appstorysautopaymanager.data.local.dao.MandateDao
 import com.uj.appstorysautopaymanager.data.local.dao.NotificationDao
 import com.uj.appstorysautopaymanager.data.local.dao.TransactionDao
+import com.uj.appstorysautopaymanager.data.local.entity.AuthTokenEntity
 import com.uj.appstorysautopaymanager.data.local.entity.Bill
 import com.uj.appstorysautopaymanager.data.local.entity.Category
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
@@ -22,8 +24,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Provider
 
 @Database(
-    entities = [Bill::class, Transaction::class, Mandate::class, Category::class, NotificationEntity::class],
-    version = 4,
+    entities = [Bill::class, Transaction::class, Mandate::class, Category::class, NotificationEntity::class, AuthTokenEntity::class],
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -32,6 +34,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun mandateDao(): MandateDao
     abstract fun categoryDao(): CategoryDao
     abstract fun notificationDao(): NotificationDao
+    abstract fun authTokenDao(): AuthTokenDao
 
     companion object {
         private val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -71,13 +74,26 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """CREATE TABLE IF NOT EXISTS auth_token (
+                        uid TEXT PRIMARY KEY NOT NULL,
+                        phoneNumber TEXT NOT NULL,
+                        idToken TEXT NOT NULL,
+                        issuedAt INTEGER NOT NULL
+                    )"""
+                )
+            }
+        }
+
         fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "autopay_manager_db"
             )
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)

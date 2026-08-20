@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.uj.appstorysautopaymanager" />
+                  <option name="mobileSdkAppId" value="1:549749421894:android:36cfef69ee98e213d09747" />
+                  <option name="projectId" value="autopay-max" />
+                  <option name="projectNumber" value="549749421894" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

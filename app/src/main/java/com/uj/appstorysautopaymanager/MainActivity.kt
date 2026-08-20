@@ -32,6 +32,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.uj.appstorysautopaymanager.receiver.BootReceiver
+import com.uj.appstorysautopaymanager.ui.auth.AuthViewModel
+import com.uj.appstorysautopaymanager.ui.auth.LoginScreen
 import com.uj.appstorysautopaymanager.ui.autopay.AutoPayScreen
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
 import com.uj.appstorysautopaymanager.ui.dashboard.DashboardScreen
@@ -63,6 +65,7 @@ class MainActivity : FragmentActivity() {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val mandateViewModel: MandateViewModel = hiltViewModel()
             val transactionViewModel: TransactionViewModel = hiltViewModel()
+            val authViewModel: AuthViewModel = hiltViewModel()
 
             val selectedTheme by settingsViewModel.theme.collectAsState()
 
@@ -80,7 +83,8 @@ class MainActivity : FragmentActivity() {
                     MainAppContent(
                         settingsViewModel = settingsViewModel,
                         mandateViewModel = mandateViewModel,
-                        transactionViewModel = transactionViewModel
+                        transactionViewModel = transactionViewModel,
+                        authViewModel = authViewModel
                     )
                 }
             }
@@ -92,7 +96,8 @@ class MainActivity : FragmentActivity() {
 fun MainAppContent(
     settingsViewModel: SettingsViewModel,
     mandateViewModel: MandateViewModel,
-    transactionViewModel: TransactionViewModel
+    transactionViewModel: TransactionViewModel,
+    authViewModel: AuthViewModel
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -217,14 +222,13 @@ fun MainAppContent(
             composable(Screen.Splash.route) {
                 SplashScreen(
                     onNavigateNext = {
-                        if (settingsViewModel.isOnboarded.value) {
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Splash.route) { inclusive = true }
-                            }
-                        } else {
-                            navController.navigate(Screen.Onboarding.route) {
-                                popUpTo(Screen.Splash.route) { inclusive = true }
-                            }
+                        val target = when {
+                            !settingsViewModel.isOnboarded.value -> Screen.Onboarding.route
+                            !authViewModel.isAuthenticated.value -> Screen.Login.route
+                            else -> Screen.Home.route
+                        }
+                        navController.navigate(target) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
                         }
                     }
                 )
@@ -249,8 +253,20 @@ fun MainAppContent(
             composable(Screen.Onboarding.route) {
                 OnboardingScreen(
                     onStartTrialClick = {
-                        navController.navigate(Screen.Permissions.route){
+                        navController.navigate(Screen.Login.route){
                             popUpTo(Screen.Onboarding.route){inclusive = true}
+                        }
+                    }
+                )
+            }
+
+            // Login Screen (OTP sign-in)
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    authViewModel = authViewModel,
+                    onSuccess = {
+                        navController.navigate(Screen.Permissions.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
                         }
                     }
                 )
@@ -296,8 +312,8 @@ fun MainAppContent(
                     viewModel = settingsViewModel,
                     transactionViewModel = transactionViewModel,
                     onLogoutClick = {
-                        settingsViewModel.setIsOnboarded(false)
-                        navController.navigate(Screen.Onboarding.route) {
+                        authViewModel.signOut()
+                        navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Home.route) { inclusive = true }
                         }
                     },

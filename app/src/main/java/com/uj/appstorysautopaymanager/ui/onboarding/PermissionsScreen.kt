@@ -77,6 +77,12 @@ fun PermissionsScreen(
     ) { permissions ->
         smsGranted = checkSmsGranted()
         notificationGranted = checkNotificationGranted()
+        // Notification access can't be requested in that same runtime-permission dialog above -
+        // it only has a system Settings toggle. Chain it right after, same as tapping the
+        // fourth card's own "Allow" button would.
+        if (!checkNotificationAccessGranted()) {
+            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        }
         onPermissionsCompleted()
     }
 
@@ -300,8 +306,11 @@ fun PermissionCard(
                         text = title,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFF1E293B)
+                        color = Color(0xFF1E293B),
+                        modifier = Modifier.weight(1f, fill = false)
                     )
+
+                    Spacer(modifier = Modifier.width(8.dp))
 
                     Button(
                         onClick = onAllowClick,
