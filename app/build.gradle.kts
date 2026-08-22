@@ -20,6 +20,10 @@ val localProperties = Properties().apply {
 }
 val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL")
     ?: error("Missing API_BASE_URL in local.properties - add it as API_BASE_URL=<backend base url>")
+val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID")
+    ?: error("Missing APPSTORYS_APP_ID in local.properties - add it as APPSTORYS_APP_ID=<app id>")
+val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID")
+    ?: error("Missing APPSTORYS_ACCOUNT_ID in local.properties - add it as APPSTORYS_ACCOUNT_ID=<account id>")
 
 android {
     namespace = "com.uj.appstorysautopaymanager"
@@ -34,6 +38,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_BASE_URL", "\"$soundBoxApiBaseUrl\"")
+        buildConfigField("String", "APPSTORYS_APP_ID", "\"$appStorysAppId\"")
+        buildConfigField("String", "APPSTORYS_ACCOUNT_ID", "\"$appStorysAccountId\"")
     }
 
     buildTypes {

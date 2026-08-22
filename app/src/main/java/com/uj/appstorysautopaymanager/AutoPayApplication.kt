@@ -27,8 +27,8 @@ class AutoPayApplication : Application() {
         // until one of the two identify paths below actually runs.
         AppStorys.initialize(
             this,
-            appId = "9e034160-11d6-40d3-8b3c-def211d57258",
-            accountId = "c25c2e4a-8f2a-4155-96bf-a676b9706d86",
+            appId = BuildConfig.APPSTORYS_APP_ID,
+            accountId = BuildConfig.APPSTORYS_ACCOUNT_ID,
             userId = "",
             navigateToScreen = {
              navigateToScreen(it)
