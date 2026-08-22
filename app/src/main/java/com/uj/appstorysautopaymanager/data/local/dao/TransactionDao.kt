@@ -21,11 +21,16 @@ interface TransactionDao {
     @Query("DELETE FROM transactions")
     suspend fun deleteAllTransactions()
 
-    @Delete
-    suspend fun deleteTransaction(transaction: Transaction)
-
     @Query("SELECT EXISTS(SELECT 1 FROM transactions WHERE smsId = :smsId)")
     suspend fun exists(smsId: String): Boolean
+
+    // amount > 0 excludes mandate-revoke bookkeeping rows (recorded with amount 0.0) - those
+    // aren't real payments and shouldn't be pushed to the backend.
+    @Query("SELECT * FROM transactions WHERE synced = 0 AND amount > 0")
+    suspend fun getUnsyncedTransactions(): List<Transaction>
+
+    @Query("UPDATE transactions SET synced = 1, backendPaymentId = :backendPaymentId WHERE id = :id")
+    suspend fun markSynced(id: Long, backendPaymentId: String)
 
     // Cross-source dedup (SMS vs. UPI app notification reporting the same real payment):
     // amount + type + a time window is the best available key, since notification text is too

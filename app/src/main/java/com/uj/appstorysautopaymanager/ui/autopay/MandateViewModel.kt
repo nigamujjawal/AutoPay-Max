@@ -39,12 +39,6 @@ class MandateViewModel @Inject constructor(
         }
     }
 
-    fun deleteMandate(mandate: Mandate) {
-        viewModelScope.launch {
-            repository.deleteMandate(mandate)
-        }
-    }
-
     fun toggleMandateStatus(mandate: Mandate) {
         viewModelScope.launch {
             val newStatus = if (mandate.status == "ACTIVE") "CANCELLED" else "ACTIVE"

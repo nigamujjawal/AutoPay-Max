@@ -2,6 +2,7 @@ package com.uj.appstorysautopaymanager.ui.onboarding
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -87,12 +89,14 @@ fun SplashScreen(
                         .background(Color(0xFFFFF0E6)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarMonth,
-                        contentDescription = null,
-                        tint = Color(0xFFFF5E00),
-                        modifier = Modifier.size(36.dp)
-                    )
+//                    Icon(
+//                        imageVector = Icons.Default.CalendarMonth,
+//                        contentDescription = null,
+//                        tint = Color(0xFFFF5E00),
+//                        modifier = Modifier.size(36.dp)
+//                    )
+                    Image(painter = painterResource(id = com.uj.appstorysautopaymanager.R.mipmap.ic_launcher_round), contentDescription = "App Logo",
+                        Modifier.size(36.dp))
                 }
             }
 
@@ -100,7 +104,7 @@ fun SplashScreen(
 
             // Title & Subtitle
             Text(
-                text = "AutoPay Manager",
+                text = "AutoPay Max",
                 color = Color.White,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold

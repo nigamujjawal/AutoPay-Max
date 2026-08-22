@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.material3.Text
+import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.NotificationEntity
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -91,6 +92,7 @@ fun NotificationsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .appstorys("notifications_screen")
     ) {
         Column(
             modifier = Modifier.fillMaxSize()

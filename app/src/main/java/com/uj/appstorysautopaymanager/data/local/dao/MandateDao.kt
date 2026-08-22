@@ -15,9 +15,6 @@ interface MandateDao {
     @Update
     suspend fun updateMandate(mandate: Mandate)
 
-    @Delete
-    suspend fun deleteMandate(mandate: Mandate)
-
     @Query("SELECT * FROM mandates WHERE referenceNumber = :ref LIMIT 1")
     suspend fun getMandateByRef(ref: String): Mandate?
 

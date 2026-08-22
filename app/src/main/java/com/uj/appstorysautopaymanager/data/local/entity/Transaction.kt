@@ -17,5 +17,8 @@ data class Transaction(
     val transactionType: String,
     val category: String,
     val smsBody: String,
-    val isAutoPay: Boolean = false
+    val isAutoPay: Boolean = false,
+    // SoundBox backend sync bookkeeping - set once POST /payments succeeds for this row.
+    val synced: Boolean = false,
+    val backendPaymentId: String? = null
 )

@@ -29,6 +29,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appversal.appstorys.AppStorys
+import com.appversal.appstorys.utils.appstorys
 import kotlinx.coroutines.delay
 
 private val CreamBg = Color(0xFFFAF3E7)
@@ -56,11 +58,14 @@ fun LoginScreen(
         if (isAuthenticated) onSuccess()
     }
 
+    AppStorys.getScreenCampaigns("login_screen",listOf())
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(CreamBg)
             .padding(top = 100.dp)
+            .appstorys("login_screen")
     ) {
         if (step is LoginStep.EnterOtp) {
             IconButton(

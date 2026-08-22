@@ -1,5 +1,6 @@
 package com.uj.appstorysautopaymanager.ui.dashboard
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -26,9 +27,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appversal.appstorys.AppStorys
+import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
-import com.uj.appstorysautopaymanager.ui.components.SwipeToDeleteCard
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -52,8 +54,16 @@ fun DashboardScreen(
     val displayTotal = totalMonthlyCost.toInt()
     val displayCount = activeCount
 
+    AppStorys.getScreenCampaigns("DashboardScreen",listOf())
+    // TEMPORARY - remove once test-user capture is confirmed working. setUserId() assigns
+    // internally inside a launched coroutine, so this is only reliable read well after login
+    // (which is true here - Dashboard is only reached post-login). Whatever this logs is the
+    // exact string that must be registered as the Test User ID on the dashboard.
+    Log.d("AppStorys", "Active AppStorys userId: ${AppStorys.getUserId()}")
+
     Box(
         modifier = Modifier
+            .appstorys("dashboard_container")
             .fillMaxSize()
             .background(Color.White)
     ) {
@@ -189,10 +199,7 @@ fun DashboardScreen(
                     }
                 } else {
                     items(mandates, key = { it.id }) { mandate ->
-                        AutoPaymentRow(
-                            mandate = mandate,
-                            onDelete = { mandateViewModel.deleteMandate(mandate) }
-                        )
+                        AutoPaymentRow(mandate = mandate)
                     }
                 }
             }
@@ -297,8 +304,7 @@ fun DashboardScreen(
 
 @Composable
 fun AutoPaymentRow(
-    mandate: Mandate,
-    onDelete: () -> Unit = {}
+    mandate: Mandate
 ) {
     val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     val dueDateStr = df.format(Date(mandate.nextExpectedDebit))
@@ -318,14 +324,13 @@ fun AutoPaymentRow(
         }
     }
 
-    SwipeToDeleteCard(onDelete = onDelete) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
-                .padding(14.dp)
-        ) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(14.dp)
+    ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -402,7 +407,6 @@ fun AutoPaymentRow(
             }
         }
     }
-}
 
 @Composable
 fun AutoPayTopHeader(

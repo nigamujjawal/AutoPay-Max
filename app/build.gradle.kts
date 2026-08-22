@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +9,17 @@ plugins {
     alias(libs.plugins.google.devtools.ksp)
     alias(libs.plugins.google.services)
 }
+
+// Backend base URL lives only in the gitignored local.properties, never in a committed file -
+// keeps it out of source control while still being available to the app via BuildConfig.
+val localProperties = Properties().apply {
+    val localFile = rootProject.file("local.properties")
+    if (localFile.exists()) {
+        load(FileInputStream(localFile))
+    }
+}
+val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL")
+    ?: error("Missing API_BASE_URL in local.properties - add it as API_BASE_URL=<backend base url>")
 
 android {
     namespace = "com.uj.appstorysautopaymanager"
@@ -19,6 +33,7 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_BASE_URL", "\"$soundBoxApiBaseUrl\"")
     }
 
     buildTypes {
@@ -39,6 +54,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -79,6 +95,12 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.kotlinx.coroutines.play.services)
 
+    // Networking (SoundBox backend)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
@@ -86,4 +108,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation("com.github.appversal:AppStorys-Android-SDK-Downgraded:3.9.5")
 }

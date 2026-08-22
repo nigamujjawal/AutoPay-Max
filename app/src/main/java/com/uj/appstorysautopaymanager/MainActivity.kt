@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.appversal.appstorys.AppStorys
 import com.uj.appstorysautopaymanager.receiver.BootReceiver
 import com.uj.appstorysautopaymanager.ui.auth.AuthViewModel
 import com.uj.appstorysautopaymanager.ui.auth.LoginScreen
@@ -48,6 +49,7 @@ import com.uj.appstorysautopaymanager.ui.notification.NotificationsViewModel
 import com.uj.appstorysautopaymanager.ui.settings.VoiceBehaviour
 import com.uj.appstorysautopaymanager.ui.settings.SettingsScreen
 import com.uj.appstorysautopaymanager.ui.settings.SettingsViewModel
+import com.uj.appstorysautopaymanager.ui.profile.ProfileViewModel
 import com.uj.appstorysautopaymanager.ui.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -80,12 +82,21 @@ class MainActivity : FragmentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainAppContent(
-                        settingsViewModel = settingsViewModel,
-                        mandateViewModel = mandateViewModel,
-                        transactionViewModel = transactionViewModel,
-                        authViewModel = authViewModel
-                    )
+                    // overlayElements() must sit above everything else in the stack (per the SDK
+                    // docs) - it's what actually renders Banner/Floater/Modals/BottomSheet/
+                    // Tooltips/Spotlight/ScratchCard/Survey AND the test-user "Capture Screen"
+                    // button. None of that can ever appear without this being called somewhere -
+                    // it wasn't wired in anywhere before now. One Box, drawn last so it's on top;
+                    // called once here rather than per-screen since this is a single-Activity app.
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        MainAppContent(
+                            settingsViewModel = settingsViewModel,
+                            mandateViewModel = mandateViewModel,
+                            transactionViewModel = transactionViewModel,
+                            authViewModel = authViewModel
+                        )
+                        AppStorys.overlayElements(activity = this@MainActivity)
+                    }
                 }
             }
         }
@@ -103,6 +114,18 @@ fun MainAppContent(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
+
+    // AppStorys campaign navigation. Every navigateToScreen call in the SDK fires from a click
+    // inside an actively-composed overlay (tooltip/banner/widget tap) - there's no path where it
+    // can happen while this Composable isn't alive, so a direct callback is enough; no Intent/
+    // onNewIntent restart plumbing needed. Registered on compose, cleared on dispose so
+    // AutoPayApplication never holds a reference to a dead NavController.
+    // The name string is whatever's configured on the AppStorys dashboard for that campaign - it
+    // must exactly match one of the Screen.*.route values in ui/navigation/Screen.kt.
+    DisposableEffect(navController) {
+        AutoPayApplication.navigateToScreenHandler = { name -> navController.navigate(name) }
+        onDispose { AutoPayApplication.navigateToScreenHandler = null }
+    }
 
     // Backfill from the device's existing SMS inbox (SmsReceiver only catches SMS
     // that arrive after install/permission-grant, not history already on the device).
@@ -308,9 +331,11 @@ fun MainAppContent(
 
             // Tab 3: Settings
             composable(Screen.Settings.route) {
+                val profileViewModel: ProfileViewModel = hiltViewModel()
                 SettingsScreen(
                     viewModel = settingsViewModel,
                     transactionViewModel = transactionViewModel,
+                    profileViewModel = profileViewModel,
                     onLogoutClick = {
                         authViewModel.signOut()
                         navController.navigate(Screen.Login.route) {

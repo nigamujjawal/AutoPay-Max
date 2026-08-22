@@ -101,13 +101,23 @@ object SmsParser {
             }
         }
 
-        // 3. Extract Bank Name - also checks the SMS sender address (e.g. a shortcode sender
-        // like "VM-BOBSMS" can name the bank even when the message body itself doesn't).
+        // 3. Extract Bank Name - checks the SMS sender address first, then falls back to the
+        // body text. DLT-registered bank sender headers glue the bank code straight onto the
+        // rest with no separator (e.g. "VM-BOBSMS", "AD-BOBTXN"), so a plain substring check is
+        // used there - a \b...\b word-boundary match (needed below to avoid misfiring on body
+        // prose) would never match "bob" inside "BOBSMS", since there's no boundary between the
+        // "B" and the "S".
         var bankName = "Unknown Bank"
-        val bankPattern = Pattern.compile("(?i)\\b(hdfc|icici|sbi|axis|kotak|pnb|bob|hsbc|citi|canara|yesbank|unionb|paytm|phonepe|iob)\\b")
-        val bankMatcher = bankPattern.matcher("$senderAddress $smsBody")
-        if (bankMatcher.find()) {
-            bankName = bankMatcher.group(1)?.uppercase() ?: "Unknown Bank"
+        val bankCodes = listOf("hdfc", "icici", "sbi", "axis", "kotak", "pnb", "bob", "hsbc", "citi", "canara", "yesbank", "unionb", "paytm", "phonepe", "iob")
+        val senderBankCode = bankCodes.firstOrNull { senderAddress.contains(it, ignoreCase = true) }
+        if (senderBankCode != null) {
+            bankName = senderBankCode.uppercase()
+        } else {
+            val bankPattern = Pattern.compile("(?i)\\b(hdfc|icici|sbi|axis|kotak|pnb|bob|hsbc|citi|canara|yesbank|unionb|paytm|phonepe|iob)\\b")
+            val bankMatcher = bankPattern.matcher(smsBody)
+            if (bankMatcher.find()) {
+                bankName = bankMatcher.group(1)?.uppercase() ?: "Unknown Bank"
+            }
         }
 
         // 4. Extract Masked Account Number

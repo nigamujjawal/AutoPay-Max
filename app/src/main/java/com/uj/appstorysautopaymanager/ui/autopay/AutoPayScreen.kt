@@ -23,6 +23,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.appversal.appstorys.AppStorys
+import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -59,10 +61,13 @@ fun AutoPayScreen(
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val isValid = merchant.isNotBlank() && (amountText.toDoubleOrNull() ?: 0.0) > 0.0
 
+    AppStorys.getScreenCampaigns("autopay_screen",listOf())
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .appstorys("autopay_screen")
     ) {
         // Orange header
         Surface(color = OrangeAccent, shadowElevation = 0.dp, modifier = Modifier.fillMaxWidth()) {

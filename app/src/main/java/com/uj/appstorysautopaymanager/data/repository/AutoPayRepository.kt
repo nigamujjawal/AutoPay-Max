@@ -1,5 +1,6 @@
 package com.uj.appstorysautopaymanager.data.repository
 
+import android.content.Context
 import com.uj.appstorysautopaymanager.data.local.dao.BillDao
 import com.uj.appstorysautopaymanager.data.local.dao.CategoryDao
 import com.uj.appstorysautopaymanager.data.local.dao.MandateDao
@@ -10,12 +11,15 @@ import com.uj.appstorysautopaymanager.data.local.entity.Category
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import com.uj.appstorysautopaymanager.data.local.entity.NotificationEntity
 import com.uj.appstorysautopaymanager.data.local.entity.Transaction
+import com.uj.appstorysautopaymanager.worker.PaymentSyncWorker
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AutoPayRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val billDao: BillDao,
     private val transactionDao: TransactionDao,
     private val mandateDao: MandateDao,
@@ -33,23 +37,23 @@ class AutoPayRepository @Inject constructor(
 
     // Transactions
     val allTransactions: Flow<List<Transaction>> = transactionDao.getAllTransactions()
-    suspend fun insertTransaction(transaction: Transaction): Long = transactionDao.insertTransaction(transaction)
     suspend fun updateTransaction(transaction: Transaction) = transactionDao.updateTransaction(transaction)
     suspend fun getTransactionBySmsId(smsId: String): Transaction? = transactionDao.getTransactionBySmsId(smsId)
     suspend fun exists(smsId: String): Boolean = transactionDao.exists(smsId)
     suspend fun deleteAllTransactions() = transactionDao.deleteAllTransactions()
-    suspend fun deleteTransaction(transaction: Transaction) = transactionDao.deleteTransaction(transaction)
+    suspend fun getUnsyncedTransactions(): List<Transaction> = transactionDao.getUnsyncedTransactions()
+    suspend fun markTransactionSynced(id: Long, backendPaymentId: String) = transactionDao.markSynced(id, backendPaymentId)
 
-    // Cross-source choke point for non-autopay transactions: SmsReceiver, TransactionViewModel's
-    // inbox backfill, and UpiNotificationListenerService all route regular (non-mandate) inserts
-    // through here so the same real payment reported by both a bank SMS and a UPI app
-    // notification (in either order) doesn't show twice in Passbook.
-    //
-    // Matched by amount + type within a 5-minute window, restricted to the *other* source (SMS
-    // vs. notification) - notification text is too short to carry a reference number to match
-    // on precisely, and only a cross-source pair is actually "the same payment reported twice";
-    // two same-source hits close together are far more likely to be genuinely different
-    // transactions (see findNearbyTransaction).
+    // Room is the source of truth - every transaction lands here first, then this kicks off a
+    // best-effort push to the SoundBox backend. Only fires on an actual new row (IGNORE conflict
+    // strategy returns -1 when smsId already existed, nothing new to sync in that case).
+    suspend fun insertTransaction(transaction: Transaction): Long {
+        val id = transactionDao.insertTransaction(transaction)
+        if (id != -1L) PaymentSyncWorker.enqueue(context)
+        return id
+    }
+
+
     suspend fun applyTransactionEvent(transaction: Transaction): Long {
         val windowMillis = 5L * 60L * 1000L
         val isNotifSource = transaction.smsId.startsWith("notif_")
@@ -62,7 +66,9 @@ class AutoPayRepository @Inject constructor(
             isNotifSource
         )
         if (existing == null) {
-            return transactionDao.insertTransaction(transaction)
+            val id = transactionDao.insertTransaction(transaction)
+            if (id != -1L) PaymentSyncWorker.enqueue(context)
+            return id
         }
         if (isPlaceholderMerchant(existing.merchant) && !isPlaceholderMerchant(transaction.merchant)) {
             transactionDao.updateTransaction(existing.copy(merchant = transaction.merchant, category = transaction.category))
@@ -77,22 +83,7 @@ class AutoPayRepository @Inject constructor(
     val allMandates: Flow<List<Mandate>> = mandateDao.getAllMandates()
     suspend fun insertMandate(mandate: Mandate): Long = mandateDao.insertMandate(mandate)
     suspend fun updateMandate(mandate: Mandate) = mandateDao.updateMandate(mandate)
-    suspend fun deleteMandate(mandate: Mandate) = mandateDao.deleteMandate(mandate)
     suspend fun getMandateByRef(ref: String): Mandate? = mandateDao.getMandateByRef(ref)
-
-    // Single choke point for both SmsReceiver (live) and TransactionViewModel (inbox backfill):
-    // a revoke event cancels the existing active mandate for that merchant rather than
-    // inserting its own separate CANCELLED row (which would leave the original stuck active);
-    // a create event updates an already-active mandate for that merchant instead of adding a
-    // duplicate row, e.g. when both the bank's and Paytm's own confirmation SMS arrive for it.
-    //
-    // Returns false when this event just reconfirmed an already-known mandate state (a second
-    // "created" SMS for a merchant that's already active - e.g. the bank's and Paytm's own
-    // confirmation both landing for the same real setup). Callers use that to skip adding a
-    // second Passbook entry for what is, to the user, the same event reported twice. A revoke
-    // always returns true and gets its own Passbook entry even if no matching active mandate
-    // was found - that could just mean its "created" SMS was never in the inbox, not that this
-    // revoke is redundant, so it's kept rather than risking silently dropping real information.
     suspend fun applyMandateEvent(mandate: Mandate): Boolean {
         if (mandate.status == "CANCELLED") {
             mandateDao.cancelActiveMandatesByMerchant(mandate.merchant)

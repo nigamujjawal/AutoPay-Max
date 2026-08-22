@@ -22,8 +22,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appversal.appstorys.AppStorys
+import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.ui.dashboard.AutoPayTopHeader
 import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
+import com.uj.appstorysautopaymanager.ui.profile.ProfileUiEvent
+import com.uj.appstorysautopaymanager.ui.profile.ProfileViewModel
 
 private fun openUrl(context: android.content.Context, url: String) {
     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
@@ -33,6 +37,7 @@ private fun openUrl(context: android.content.Context, url: String) {
 fun SettingsScreen(
     viewModel: SettingsViewModel,
     transactionViewModel: TransactionViewModel,
+    profileViewModel: ProfileViewModel,
     onLogoutClick: () -> Unit,
     onNavigateToAppSettings: () -> Unit = {},
     onNotificationsClick: () -> Unit = {}
@@ -46,14 +51,27 @@ fun SettingsScreen(
     val autopayReminders by viewModel.isAutopayRemindersEnabled.collectAsState()
     val isScanning by transactionViewModel.isScanning.collectAsState()
 
+    val profileState by profileViewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        profileViewModel.event.collect { event ->
+            when (event) {
+                is ProfileUiEvent.ShowMessage -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var profileName by remember { mutableStateOf("") }
     var profileUpiId by remember { mutableStateOf("") }
+
+    AppStorys.getScreenCampaigns("settings_screen",listOf())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFFAFAFA))
+            .appstorys("settings_screen")
     ) {
         // App Top Header (Same as Home & Passbook)
         AutoPayTopHeader(onNotificationsClick = onNotificationsClick)
@@ -75,7 +93,11 @@ fun SettingsScreen(
                         icon = Icons.Default.Edit,
                         title = "Edit Profile",
                         subtitle = "Update your name & business info",
-                        onClick = { showEditProfileDialog = true }
+                        onClick = {
+                            profileName = profileState.profile?.name.orEmpty()
+                            profileUpiId = profileState.profile?.upiId.orEmpty()
+                            showEditProfileDialog = true
+                        }
                     )
                 }
             }
@@ -85,6 +107,9 @@ fun SettingsScreen(
                 SettingsSectionHeader("Subscription")
             }
             item {
+                // Static placeholder until Razorpay checkout is integrated - do not wire this to
+                // SubscriptionViewModel/CreateSubscriptionUseCase yet, there's no real payment
+                // collection step behind it.
                 SubscriptionCard {
                     Row(
                         modifier = Modifier
@@ -329,9 +354,9 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         showEditProfileDialog = false
-                        Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
-//                        add what happens after clicking save
+                        profileViewModel.saveProfile(name = profileName, upiId = profileUpiId)
                     },
+                    enabled = !profileState.isSaving,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
                 ) {
                     Text("Save", color = Color.White, fontWeight = FontWeight.Bold)

@@ -134,9 +134,4 @@ class TransactionViewModel @Inject constructor(
         }
     }
 
-    fun deleteTransaction(txn: Transaction) {
-        viewModelScope.launch {
-            repository.deleteTransaction(txn)
-        }
-    }
 }

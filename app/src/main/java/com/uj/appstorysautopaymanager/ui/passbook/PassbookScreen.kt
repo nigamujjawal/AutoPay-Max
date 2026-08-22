@@ -25,8 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appversal.appstorys.AppStorys
+import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.Transaction
-import com.uj.appstorysautopaymanager.ui.components.SwipeToDeleteCard
 import com.uj.appstorysautopaymanager.ui.dashboard.AutoPayTopHeader
 import java.text.SimpleDateFormat
 import java.util.*
@@ -66,10 +67,13 @@ fun PassbookScreen(
         }
     }
 
+    AppStorys.getScreenCampaigns("passbook_screen",listOf())
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .appstorys("passbook_screen")
     ) {
         // App Top Header (Same as Home & Settings)
         AutoPayTopHeader(onNotificationsClick = onNotificationsClick)
@@ -257,19 +261,19 @@ fun PassbookScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                Box(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(Color.White)
-                        .border(1.dp, Color(0xFFE2E8F0), CircleShape)
-                        .padding(horizontal = 14.dp, vertical = 8.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("All time", fontSize = 12.sp, color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color(0xFF64748B), modifier = Modifier.size(16.dp))
-                    }
-                }
+//                Box(
+//                    modifier = Modifier
+//                        .clip(CircleShape)
+//                        .background(Color.White)
+//                        .border(1.dp, Color(0xFFE2E8F0), CircleShape)
+//                        .padding(horizontal = 14.dp, vertical = 8.dp)
+//                ) {
+//                    Row(verticalAlignment = Alignment.CenterVertically) {
+//                        Text("All time", fontSize = 12.sp, color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
+//                        Spacer(modifier = Modifier.width(4.dp))
+//                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color(0xFF64748B), modifier = Modifier.size(16.dp))
+//                    }
+//                }
             }
         }
 
@@ -310,10 +314,7 @@ fun PassbookScreen(
                     }
 
                     items(txns, key = { it.id }) { txn ->
-                        PassbookTransactionRow(
-                            txn = txn,
-                            onDelete = { viewModel.deleteTransaction(txn) }
-                        )
+                        PassbookTransactionRow(txn = txn)
                     }
                 }
             }
@@ -323,8 +324,7 @@ fun PassbookScreen(
 
 @Composable
 fun PassbookTransactionRow(
-    txn: Transaction,
-    onDelete: () -> Unit
+    txn: Transaction
 ) {
     val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     val formattedDate = df.format(Date(txn.date))
@@ -339,15 +339,14 @@ fun PassbookTransactionRow(
         }
     }
 
-    SwipeToDeleteCard(onDelete = onDelete) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp))
-                .clip(RoundedCornerShape(16.dp))
-                .background(Color.White)
-                .padding(14.dp)
-        ) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.White)
+            .padding(14.dp)
+    ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -410,7 +409,6 @@ fun PassbookTransactionRow(
             }
         }
     }
-}
 
 @Composable
 fun TransactionTypeLabel(isAutoPay: Boolean) {

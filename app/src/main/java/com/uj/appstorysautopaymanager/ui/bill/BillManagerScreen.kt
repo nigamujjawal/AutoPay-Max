@@ -22,6 +22,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appversal.appstorys.AppStorys
+import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.Bill
 import com.uj.appstorysautopaymanager.ui.components.*
 import com.uj.appstorysautopaymanager.ui.theme.*
@@ -42,6 +44,8 @@ fun BillManagerScreen(
     var showAddDialog by remember { mutableStateOf(false) }
     var selectedBillForEdit by remember { mutableStateOf<Bill?>(null) }
 
+    AppStorys.getScreenCampaigns("bill_manager_screen",listOf())
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -57,6 +61,7 @@ fun BillManagerScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .appstorys("bill_manager_screen")
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 20.dp)

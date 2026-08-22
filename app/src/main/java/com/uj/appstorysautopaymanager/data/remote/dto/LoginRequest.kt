@@ -1,4 +1,5 @@
 package com.uj.appstorysautopaymanager.data.remote.dto
 
-class LoginRequest {
-}
+data class LoginRequest(
+    val id_token : String
+)
