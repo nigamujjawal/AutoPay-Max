@@ -29,7 +29,7 @@ class MandateViewModel @Inject constructor(
             repository.insertMandate(mandate)
             val ttsHelper = com.uj.appstorysautopaymanager.tts.TextToSpeechHelper(context, preferenceManager)
             val merchantName = mandate.merchant.ifEmpty { "Subscription" }
-            ttsHelper.speak("AutoPay set for $merchantName of ${mandate.amount.toInt()} rupees.")
+            ttsHelper.speak(com.uj.appstorysautopaymanager.tts.AnnouncementKind.AUTOPAY_SET, merchantName, mandate.amount.toInt())
         }
     }
 

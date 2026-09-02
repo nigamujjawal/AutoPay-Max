@@ -1,6 +1,7 @@
 package com.uj.appstorysautopaymanager.data.remote
 
 import android.app.Activity
+import android.util.Log
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -16,6 +17,8 @@ import kotlinx.coroutines.tasks.await
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
+private const val TAG = "AuthFlow"
+
 class FirebasePhoneAuthDataSource @Inject constructor(
     private val firebaseAuth: FirebaseAuth
 ) {
@@ -26,6 +29,7 @@ class FirebasePhoneAuthDataSource @Inject constructor(
             val producerScope = this
             val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                 override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                    Log.d(TAG, "onCodeSent verificationId=$verificationId")
                     resendToken = token
                     trySend(OtpRequestState.CodeSent(verificationId))
                 }
@@ -33,13 +37,27 @@ class FirebasePhoneAuthDataSource @Inject constructor(
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                     // SMS auto-retrieval fired - complete sign-in here so no PhoneAuthCredential
                     // (a Firebase type) ever has to cross into the domain layer.
+                    Log.d(TAG, "onVerificationCompleted (auto-retrieval/instant verification fired)")
                     producerScope.launch {
+                        // Was: runCatching { ... } with the Result thrown away, so a real
+                        // signInWithCredential failure (expired/invalid credential, network error)
+                        // still unconditionally sent AutoVerified - the repository would then find
+                        // no signed-in FirebaseUser and report a generic failure, or worse, exchange
+                        // a stale previous session. Report the real outcome instead.
                         runCatching { firebaseAuth.signInWithCredential(credential).await() }
-                        trySend(OtpRequestState.AutoVerified)
+                            .onSuccess {
+                                Log.d(TAG, "signInWithCredential (auto) succeeded uid=${it.user?.uid}")
+                                trySend(OtpRequestState.AutoVerified)
+                            }
+                            .onFailure {
+                                Log.e(TAG, "signInWithCredential (auto) failed", it)
+                                trySend(OtpRequestState.Failed(it.message ?: "Auto sign-in failed"))
+                            }
                     }
                 }
 
                 override fun onVerificationFailed(e: FirebaseException) {
+                    Log.e(TAG, "onVerificationFailed", e)
                     trySend(OtpRequestState.Failed(e.message ?: "Verification failed"))
                 }
             }
@@ -64,4 +82,9 @@ class FirebasePhoneAuthDataSource @Inject constructor(
     }
 
     fun signOut() = firebaseAuth.signOut()
+
+    // Auto-retrieval (onVerificationCompleted) signs the user into Firebase right here, before the
+    // repository ever sees it - this is how the repository reaches that same freshly-signed-in
+    // user afterwards to run the backend exchange.
+    fun currentUser(): FirebaseUser? = firebaseAuth.currentUser
 }

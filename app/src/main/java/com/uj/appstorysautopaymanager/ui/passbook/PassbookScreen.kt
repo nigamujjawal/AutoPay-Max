@@ -35,6 +35,7 @@ import java.util.*
 @Composable
 fun PassbookScreen(
     viewModel: TransactionViewModel,
+    currencySymbol: String = "₹",
     onNotificationsClick: () -> Unit = {}
 ) {
     val transactions by viewModel.filteredTransactions.collectAsState()
@@ -156,8 +157,8 @@ fun PassbookScreen(
                     ) {
                         Text(
                             text = if (showAmount) {
-                                if (netFlow < 0) "-₹${kotlin.math.abs(netFlow).toInt()}" else "₹${netFlow.toInt()}"
-                            } else "₹ ••••••",
+                                if (netFlow < 0) "-$currencySymbol${kotlin.math.abs(netFlow).toInt()}" else "$currencySymbol${netFlow.toInt()}"
+                            } else "$currencySymbol ••••••",
                             fontSize = 38.sp,
                             fontWeight = FontWeight.Black,
                             color = Color.White
@@ -196,7 +197,7 @@ fun PassbookScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 Text("Credits", fontSize = 11.sp, color = Color.White.copy(alpha = 0.85f))
-                                Text("₹${totalCredits.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text("$currencySymbol${totalCredits.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             }
                         }
 
@@ -219,7 +220,7 @@ fun PassbookScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 Text("Debits", fontSize = 11.sp, color = Color.White.copy(alpha = 0.85f))
-                                Text("₹${totalDebits.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text("$currencySymbol${totalDebits.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
                             }
                         }
                     }
@@ -314,7 +315,7 @@ fun PassbookScreen(
                     }
 
                     items(txns, key = { it.id }) { txn ->
-                        PassbookTransactionRow(txn = txn)
+                        PassbookTransactionRow(txn = txn, currencySymbol = currencySymbol)
                     }
                 }
             }
@@ -324,7 +325,8 @@ fun PassbookScreen(
 
 @Composable
 fun PassbookTransactionRow(
-    txn: Transaction
+    txn: Transaction,
+    currencySymbol: String = "₹"
 ) {
     val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     val formattedDate = df.format(Date(txn.date))
@@ -401,7 +403,7 @@ fun PassbookTransactionRow(
                 }
 
                 Text(
-                    text = "${if (txn.transactionType == "CREDIT") "+" else "-"}₹${txn.amount.toInt()}",
+                    text = "${if (txn.transactionType == "CREDIT") "+" else "-"}$currencySymbol${txn.amount.toInt()}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (txn.transactionType == "CREDIT") Color(0xFF10B981) else Color(0xFFDC2626)

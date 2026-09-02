@@ -31,12 +31,14 @@ import com.appversal.appstorys.AppStorys
 import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
+import com.uj.appstorysautopaymanager.util.matchAutoPayApp
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun DashboardScreen(
     mandateViewModel: MandateViewModel,
+    currencySymbol: String = "₹",
     onNotificationsClick: () -> Unit = {},
     onSeeAllClick: () -> Unit = {}
 ) {
@@ -124,7 +126,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "₹ $displayTotal",
+                            text = "$currencySymbol $displayTotal",
                             fontSize = 38.sp,
                             fontWeight = FontWeight.Black,
                             color = Color.White
@@ -199,7 +201,7 @@ fun DashboardScreen(
                     }
                 } else {
                     items(mandates, key = { it.id }) { mandate ->
-                        AutoPaymentRow(mandate = mandate)
+                        AutoPaymentRow(mandate = mandate, currencySymbol = currencySymbol)
                     }
                 }
             }
@@ -234,7 +236,7 @@ fun DashboardScreen(
                         OutlinedTextField(
                             value = amountText,
                             onValueChange = { amountText = it },
-                            label = { Text("Monthly Amount (₹)") },
+                            label = { Text("Monthly Amount ($currencySymbol)") },
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color(0xFFFF5E00),
@@ -304,7 +306,8 @@ fun DashboardScreen(
 
 @Composable
 fun AutoPaymentRow(
-    mandate: Mandate
+    mandate: Mandate,
+    currencySymbol: String = "₹"
 ) {
     val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     val dueDateStr = df.format(Date(mandate.nextExpectedDebit))
@@ -323,6 +326,10 @@ fun AutoPaymentRow(
             clean.take(2).uppercase()
         }
     }
+
+    // High-frequency autopay merchants (streaming/telecom/food/insurance/investing) get a
+    // recognizable brand-colored badge; anything else falls back to the generic gradient+initials.
+    val matchedApp = remember(mandate.merchant) { matchAutoPayApp(mandate.merchant) }
 
     Box(
         modifier = Modifier
@@ -344,19 +351,34 @@ fun AutoPaymentRow(
                         modifier = Modifier
                             .size(44.dp)
                             .clip(CircleShape)
-                            .background(
-                                Brush.linearGradient(
-                                    colors = listOf(Color(0xFFFF7600).copy(alpha = 0.3f), Color(0xFFFF9E40).copy(alpha = 1.0f))
-                                )
+                            .then(
+                                if (matchedApp != null) {
+                                    Modifier.background(matchedApp.color)
+                                } else {
+                                    Modifier.background(
+                                        Brush.linearGradient(
+                                            colors = listOf(Color(0xFFFF7600).copy(alpha = 0.3f), Color(0xFFFF9E40).copy(alpha = 1.0f))
+                                        )
+                                    )
+                                }
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = initials,
-                            color = Color.White,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        if (matchedApp != null) {
+                            Icon(
+                                painter = painterResource(id = matchedApp.iconRes),
+                                contentDescription = matchedApp.displayName,
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+                            Text(
+                                text = initials,
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -384,7 +406,7 @@ fun AutoPaymentRow(
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = "₹${mandate.amount.toInt()}",
+                        text = "$currencySymbol${mandate.amount.toInt()}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFFDC2626)

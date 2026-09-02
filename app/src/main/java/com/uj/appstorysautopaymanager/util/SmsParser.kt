@@ -10,7 +10,16 @@ object SmsParser {
     // com.uj.appstoryssoundbox's sibling parser.
     private val PLUS_CREDIT_PATTERN = Pattern.compile("(?i)\\+\\s*(?:₹|rs\\.?|inr)")
 
+    // TRAI's DLT registration rules require every real transactional SMS (bank/UPI) to originate
+    // from a 6-character alphanumeric sender header (e.g. "VM-HDFCBK", "AD-SBIINB", or just
+    // "HDFCBK") - never a plain phone number. That's the one signal available here that an
+    // attacker can't fake by simply texting the victim from a real phone: this rejects exactly
+    // that spoof (e.g. "Received Rs.500 from X" sent from an ordinary 10-digit number).
+    private val PLAIN_PHONE_NUMBER_SENDER = Pattern.compile("^\\+?\\d{7,15}$")
+
     fun parseSms(smsBody: String, smsDate: Long, smsId: String, senderAddress: String = ""): ParsedResult? {
+        if (PLAIN_PHONE_NUMBER_SENDER.matcher(senderAddress.trim()).matches()) return null
+
         val lowercaseBody = smsBody.lowercase()
 
         // 1. Detect if it's a financial transaction (credit/debit/autopay/mandate)

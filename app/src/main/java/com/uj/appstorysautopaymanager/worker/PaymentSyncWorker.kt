@@ -10,6 +10,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.uj.appstorysautopaymanager.common.Resource
 import com.uj.appstorysautopaymanager.data.repository.AutoPayRepository
+import com.uj.appstorysautopaymanager.domain.auth.repository.AuthRepository
 import com.uj.appstorysautopaymanager.domain.payment.usecase.GetPaymentHistoryUseCase
 import com.uj.appstorysautopaymanager.domain.payment.usecase.SavePaymentUseCase
 import dagger.hilt.EntryPoint
@@ -36,6 +37,7 @@ class PaymentSyncWorker(
     @InstallIn(SingletonComponent::class)
     interface PaymentSyncWorkerEntryPoint {
         fun repository(): AutoPayRepository
+        fun authRepository(): AuthRepository
         fun getPaymentHistoryUseCase(): GetPaymentHistoryUseCase
         fun savePaymentUseCase(): SavePaymentUseCase
     }
@@ -46,8 +48,17 @@ class PaymentSyncWorker(
             PaymentSyncWorkerEntryPoint::class.java
         )
         val repository = entryPoint.repository()
+        val authRepository = entryPoint.authRepository()
         val getPaymentHistory = entryPoint.getPaymentHistoryUseCase()
         val savePayment = entryPoint.savePaymentUseCase()
+
+        // The SMS-inbox backfill scan (MainActivity, runs on every cold start) enqueues this
+        // worker for every transaction it inserts - including before login, since that scan isn't
+        // gated on auth state either. Without this check, a fresh/logged-out run hits /payments
+        // with no token, 401s, and (before AuthInterceptor's own fix) forced a spurious
+        // navigate-to-Login even mid-OTP-entry. Nothing to sync yet without a session - the next
+        // insert after a real login re-enqueues this anyway.
+        if (authRepository.getStoredUser() == null) return Result.success()
 
         val unsynced = repository.getUnsyncedTransactions()
         if (unsynced.isEmpty()) return Result.success()

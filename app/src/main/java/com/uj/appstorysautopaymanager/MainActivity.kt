@@ -114,6 +114,9 @@ fun MainAppContent(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
+    // Set from LoginScreen's country picker (auto-detected or manually chosen) - Dashboard and
+    // Passbook read this instead of hardcoding a currency symbol.
+    val currencySymbol by settingsViewModel.currency.collectAsState()
 
     // AppStorys campaign navigation. Every navigateToScreen call in the SDK fires from a click
     // inside an actively-composed overlay (tooltip/banner/widget tap) - there's no path where it
@@ -125,6 +128,17 @@ fun MainAppContent(
     DisposableEffect(navController) {
         AutoPayApplication.navigateToScreenHandler = { name -> navController.navigate(name) }
         onDispose { AutoPayApplication.navigateToScreenHandler = null }
+    }
+
+    // Forced logout on a 401 from any backend call (see AuthInterceptor/SessionExpiredNotifier) -
+    // this can fire from any screen, not just Home, so the whole back stack is cleared rather
+    // than reusing the manual logout button's popUpTo(Home).
+    LaunchedEffect(Unit) {
+        authViewModel.sessionExpired.collect {
+            navController.navigate(Screen.Login.route) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
     }
 
     // Backfill from the device's existing SMS inbox (SmsReceiver only catches SMS
@@ -287,6 +301,7 @@ fun MainAppContent(
             composable(Screen.Login.route) {
                 LoginScreen(
                     authViewModel = authViewModel,
+                    settingsViewModel = settingsViewModel,
                     onSuccess = {
                         navController.navigate(Screen.Permissions.route) {
                             popUpTo(Screen.Login.route) { inclusive = true }
@@ -300,6 +315,7 @@ fun MainAppContent(
             composable(Screen.Home.route) {
                 DashboardScreen(
                     mandateViewModel = mandateViewModel,
+                    currencySymbol = currencySymbol,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
                     },
@@ -323,6 +339,7 @@ fun MainAppContent(
             composable(Screen.Passbook.route) {
                 PassbookScreen(
                     viewModel = transactionViewModel,
+                    currencySymbol = currencySymbol,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
                     }

@@ -4,6 +4,7 @@ import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
 import com.uj.appstorysautopaymanager.data.repository.AutoPayRepository
+import com.uj.appstorysautopaymanager.tts.AnnouncementKind
 import com.uj.appstorysautopaymanager.tts.TextToSpeechHelper
 import com.uj.appstorysautopaymanager.util.NotificationHelper
 import com.uj.appstorysautopaymanager.util.UpiNotificationParser
@@ -56,14 +57,12 @@ class UpiNotificationListenerService : NotificationListenerService() {
                 repository.applyTransactionEvent(result.transaction)
             }
 
-            val speakText = if (result.mandate != null || result.transaction.isAutoPay) {
-                "AutoPay set for ${result.transaction.merchant} of ${result.transaction.amount.toInt()} rupees."
-            } else if (result.transaction.transactionType == "CREDIT") {
-                "Received ${result.transaction.amount.toInt()} rupees from ${result.transaction.merchant}."
-            } else {
-                "Paid ${result.transaction.amount.toInt()} rupees to ${result.transaction.merchant}."
+            val kind = when {
+                result.mandate != null || result.transaction.isAutoPay -> AnnouncementKind.AUTOPAY_SET
+                result.transaction.transactionType == "CREDIT" -> AnnouncementKind.CREDIT_RECEIVED
+                else -> AnnouncementKind.DEBIT_PAID
             }
-            ttsHelper.speak(speakText)
+            ttsHelper.speak(kind, result.transaction.merchant, result.transaction.amount.toInt())
 
             val isCredit = result.transaction.transactionType == "CREDIT"
             NotificationHelper.notify(

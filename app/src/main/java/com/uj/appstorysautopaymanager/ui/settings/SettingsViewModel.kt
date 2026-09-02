@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
 import com.uj.appstorysautopaymanager.data.repository.AutoPayRepository
 import com.uj.appstorysautopaymanager.util.ExportHelper
+import com.uj.appstorysautopaymanager.util.NotificationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -26,9 +27,6 @@ class SettingsViewModel @Inject constructor(
 
     val currency: StateFlow<String> = preferenceManager.currencyFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "₹")
-
-    val language: StateFlow<String> = preferenceManager.languageFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "English")
 
     val pinCode: StateFlow<String> = preferenceManager.pinCodeFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
@@ -76,7 +74,6 @@ class SettingsViewModel @Inject constructor(
 
     fun setTheme(value: String) = viewModelScope.launch { preferenceManager.setTheme(value) }
     fun setCurrency(value: String) = viewModelScope.launch { preferenceManager.setCurrency(value) }
-    fun setLanguage(value: String) = viewModelScope.launch { preferenceManager.setLanguage(value) }
     fun setPinCode(value: String) = viewModelScope.launch { preferenceManager.setPinCode(value) }
     fun setBiometricEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setBiometricEnabled(value) }
     fun setVoiceAlertsEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setVoiceAlertsEnabled(value) }
@@ -89,6 +86,19 @@ class SettingsViewModel @Inject constructor(
     fun setAlertTone(value: String) = viewModelScope.launch { preferenceManager.setAlertTone(value) }
     fun setPushNotificationsEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setPushNotificationsEnabled(value) }
     fun setAutopayRemindersEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setAutopayRemindersEnabled(value) }
+
+    // Fires through the same choke point every real alert uses (system banner + Notifications-
+    // screen entry), so "Play Test Alert Tone" exercises the real push path, not a fake preview.
+    fun sendTestNotification(context: Context) = viewModelScope.launch {
+        NotificationHelper.notify(
+            context = context,
+            repository = repository,
+            preferenceManager = preferenceManager,
+            title = "Test upi payment",
+            body = "Received 100 from rahul kumar",
+            category = "Payments"
+        )
+    }
 
     fun exportBackup(context: Context, uri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {

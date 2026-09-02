@@ -26,13 +26,17 @@ object UpiNotificationParser {
     // com.google.android.gms - too broad, fires for unrelated system notifications - and non-UPI
     // apps like Truecaller/SMS clients that SoundBox's own package map also lists but never
     // parses payments from.)
+    //
+    // WhatsApp/WhatsApp Business were removed (spoof hole, not an oversight): every other package
+    // here only ever shows notification text the app itself generates from its own backend event -
+    // WhatsApp is a free-text messaging surface where any contact can type "Received Rs.500 from
+    // X" in a normal chat message and have it parsed as a real UPI credit. If WhatsApp Pay ever
+    // needs tracking, it needs its own narrowly-scoped pattern, not blanket trust of chat text.
     private val GENERIC_TRACKED_PACKAGES = setOf(
         "com.amazon.mShop.android.shopping", // Amazon Pay
         "com.freecharge.android",
         "com.mobikwik_new",
-        "com.dreamplug.androidapp", // CRED
-        "com.whatsapp",
-        "com.whatsapp.w4b"
+        "com.dreamplug.androidapp" // CRED
     )
 
     private val TRACKED_PACKAGES: Set<String> = setOf(
