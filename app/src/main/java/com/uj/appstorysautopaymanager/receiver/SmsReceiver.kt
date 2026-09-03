@@ -13,6 +13,7 @@ import com.uj.appstorysautopaymanager.util.SmsParser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -67,15 +68,16 @@ class SmsReceiver : BroadcastReceiver() {
                 ttsHelper.speak(kind, result.transaction.merchant, result.transaction.amount.toInt())
 
                 val isCredit = result.transaction.transactionType == "CREDIT"
+                val currencySymbol = preferenceManager.currencyFlow.first()
                 NotificationHelper.notify(
                     context = context,
                     repository = repository,
                     preferenceManager = preferenceManager,
                     title = if (isCredit) "Payment Received" else "Transaction Detected",
                     body = if (isCredit) {
-                        "₹${result.transaction.amount} credited from ${result.transaction.merchant}"
+                        "$currencySymbol${result.transaction.amount} credited from ${result.transaction.merchant}"
                     } else {
-                        "₹${result.transaction.amount} debited for ${result.transaction.merchant}"
+                        "$currencySymbol${result.transaction.amount} debited for ${result.transaction.merchant}"
                     },
                     category = "Payments"
                 )

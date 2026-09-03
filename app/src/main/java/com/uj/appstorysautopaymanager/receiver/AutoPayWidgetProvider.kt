@@ -10,6 +10,7 @@ import com.uj.appstorysautopaymanager.MainActivity
 import com.uj.appstorysautopaymanager.R
 import com.uj.appstorysautopaymanager.data.local.dao.BillDao
 import com.uj.appstorysautopaymanager.data.local.dao.TransactionDao
+import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -27,6 +28,7 @@ class AutoPayWidgetProvider : AppWidgetProvider() {
     interface WidgetEntryPoint {
         fun transactionDao(): TransactionDao
         fun billDao(): BillDao
+        fun preferenceManager(): PreferenceManager
     }
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {

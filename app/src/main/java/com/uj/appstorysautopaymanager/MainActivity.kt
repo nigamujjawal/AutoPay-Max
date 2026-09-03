@@ -114,8 +114,8 @@ fun MainAppContent(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
-    // Set from LoginScreen's country picker (auto-detected or manually chosen) - Dashboard and
-    // Passbook read this instead of hardcoding a currency symbol.
+    // Set from LoginScreen's country picker (auto-detected or manually chosen) - Dashboard,
+    // Passbook, and AutoPay read this instead of hardcoding a currency symbol.
     val currencySymbol by settingsViewModel.currency.collectAsState()
 
     // AppStorys campaign navigation. Every navigateToScreen call in the SDK fires from a click
@@ -388,7 +388,8 @@ fun MainAppContent(
             composable(Screen.AutoPay.route) {
                 AutoPayScreen(
                     viewModel = mandateViewModel,
-                    navController = navController
+                    navController = navController,
+                    currencySymbol = currencySymbol
                 )
             }
         }

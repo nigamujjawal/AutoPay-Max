@@ -41,4 +41,10 @@ interface TransactionDao {
     // for one payment reported twice - only a cross-source pair gets merged.
     @Query("SELECT * FROM transactions WHERE amount = :amount AND transactionType = :type AND date BETWEEN :fromDate AND :toDate AND (substr(smsId, 1, 6) = 'notif_') != :isNotifSource ORDER BY ABS(date - :date) ASC LIMIT 1")
     suspend fun findNearbyTransaction(amount: Double, type: String, fromDate: Long, toDate: Long, date: Long, isNotifSource: Boolean): Transaction?
+
+    // Recurring-mandate heuristic (see AutoPayRepository.detectRecurringMandate): the 3 most
+    // recent same-merchant, same-amount debits, newest first. Includes whatever row was just
+    // inserted before this is called, so 3 results = this occurrence + 2 priors.
+    @Query("SELECT * FROM transactions WHERE merchant = :merchant COLLATE NOCASE AND amount = :amount AND transactionType = 'DEBIT' ORDER BY date DESC LIMIT 3")
+    suspend fun getRecentSameMerchantAmount(merchant: String, amount: Double): List<Transaction>
 }

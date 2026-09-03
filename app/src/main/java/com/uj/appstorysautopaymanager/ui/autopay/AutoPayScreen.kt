@@ -57,7 +57,8 @@ private fun frequencyOffsetMillis(frequency: String): Long {
 @Composable
 fun AutoPayScreen(
     viewModel: MandateViewModel,
-    navController: NavController
+    navController: NavController,
+    currencySymbol: String = "₹"
 ) {
     val context = LocalContext.current
     val categories by viewModel.categories.collectAsState()
@@ -142,7 +143,7 @@ fun AutoPayScreen(
             AutoPayField(
                 value = amountText,
                 onValueChange = { amountText = it.filter { c -> c.isDigit() || c == '.' } },
-                placeholder = "Amount (₹)",
+                placeholder = "Amount ($currencySymbol)",
                 keyboardType = KeyboardType.Number
             )
 

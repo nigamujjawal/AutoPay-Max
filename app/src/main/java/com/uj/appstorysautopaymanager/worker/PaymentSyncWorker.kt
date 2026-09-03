@@ -9,6 +9,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.uj.appstorysautopaymanager.common.Resource
+import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
 import com.uj.appstorysautopaymanager.data.repository.AutoPayRepository
 import com.uj.appstorysautopaymanager.domain.auth.repository.AuthRepository
 import com.uj.appstorysautopaymanager.domain.payment.usecase.GetPaymentHistoryUseCase
@@ -17,6 +18,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.first
 
 // Room is the source of truth for transactions (SmsReceiver, UpiNotificationListenerService, and
 // TransactionViewModel's inbox backfill all write there first, via AutoPayRepository, which
@@ -40,6 +42,7 @@ class PaymentSyncWorker(
         fun authRepository(): AuthRepository
         fun getPaymentHistoryUseCase(): GetPaymentHistoryUseCase
         fun savePaymentUseCase(): SavePaymentUseCase
+        fun preferenceManager(): PreferenceManager
     }
 
     override suspend fun doWork(): Result {
@@ -51,6 +54,7 @@ class PaymentSyncWorker(
         val authRepository = entryPoint.authRepository()
         val getPaymentHistory = entryPoint.getPaymentHistoryUseCase()
         val savePayment = entryPoint.savePaymentUseCase()
+        val currencyCode = entryPoint.preferenceManager().currencyCodeFlow.first()
 
         // The SMS-inbox backfill scan (MainActivity, runs on every cold start) enqueues this
         // worker for every transaction it inserts - including before login, since that scan isn't
@@ -86,7 +90,7 @@ class PaymentSyncWorker(
             // not a guess: there's no separate provider field anywhere upstream.
             val result = savePayment(
                 amount = txn.amount,
-                currency = "INR",
+                currency = currencyCode,
                 provider = txn.bankName.lowercase(),
                 transactionId = transactionId,
                 payeeName = txn.merchant,

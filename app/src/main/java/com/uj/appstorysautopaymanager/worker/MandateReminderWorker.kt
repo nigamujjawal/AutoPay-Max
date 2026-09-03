@@ -40,6 +40,7 @@ class MandateReminderWorker(
 
         if (!preferenceManager.isAutopayRemindersEnabledFlow.first()) return Result.success()
 
+        val currencySymbol = preferenceManager.currencyFlow.first()
         val mandates = mandateDao.getAllMandates().first() // already filtered to status = 'ACTIVE'
         val now = System.currentTimeMillis()
 
@@ -52,7 +53,7 @@ class MandateReminderWorker(
                 repository = repository,
                 preferenceManager = preferenceManager,
                 title = "Upcoming AutoPay",
-                body = "${mandate.merchant} autopay of ₹${mandate.amount.toInt()} is due in 2 days.",
+                body = "${mandate.merchant} autopay of $currencySymbol${mandate.amount.toInt()} is due in 2 days.",
                 category = "Payments",
                 isWarning = true,
                 notificationId = mandate.id.toInt()

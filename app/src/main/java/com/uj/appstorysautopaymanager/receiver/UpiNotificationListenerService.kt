@@ -8,9 +8,11 @@ import com.uj.appstorysautopaymanager.tts.AnnouncementKind
 import com.uj.appstorysautopaymanager.tts.TextToSpeechHelper
 import com.uj.appstorysautopaymanager.util.NotificationHelper
 import com.uj.appstorysautopaymanager.util.UpiNotificationParser
+import com.uj.appstorysautopaymanager.util.UsBankNotificationParser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +26,9 @@ class UpiNotificationListenerService : NotificationListenerService() {
     lateinit var preferenceManager: PreferenceManager
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        if (!UpiNotificationParser.isTracked(sbn.packageName)) return
+        val isUpiSource = UpiNotificationParser.isTracked(sbn.packageName)
+        val isUsBankSource = !isUpiSource && UsBankNotificationParser.isTracked(sbn.packageName)
+        if (!isUpiSource && !isUsBankSource) return
 
         val extras = sbn.notification.extras
         val title = extras.getCharSequence(android.app.Notification.EXTRA_TITLE)?.toString() ?: ""
@@ -43,7 +47,9 @@ class UpiNotificationListenerService : NotificationListenerService() {
         CoroutineScope(Dispatchers.IO).launch {
             if (repository.exists(notifId)) return@launch
 
-            val result = UpiNotificationParser.parse(packageName, title, text, postedAt, notifId) ?: return@launch
+            val result = (if (isUpiSource) UpiNotificationParser.parse(packageName, title, text, postedAt, notifId)
+                          else UsBankNotificationParser.parse(packageName, title, text, postedAt, notifId))
+                ?: return@launch
 
             if (result.mandate != null) {
                 // See AutoPayRepository.applyMandateEvent: a reconfirmation of an already-known
@@ -65,15 +71,16 @@ class UpiNotificationListenerService : NotificationListenerService() {
             ttsHelper.speak(kind, result.transaction.merchant, result.transaction.amount.toInt())
 
             val isCredit = result.transaction.transactionType == "CREDIT"
+            val currencySymbol = preferenceManager.currencyFlow.first()
             NotificationHelper.notify(
                 context = applicationContext,
                 repository = repository,
                 preferenceManager = preferenceManager,
                 title = if (isCredit) "Payment Received" else "Transaction Detected",
                 body = if (isCredit) {
-                    "₹${result.transaction.amount} credited from ${result.transaction.merchant}"
+                    "$currencySymbol${result.transaction.amount} credited from ${result.transaction.merchant}"
                 } else {
-                    "₹${result.transaction.amount} debited for ${result.transaction.merchant}"
+                    "$currencySymbol${result.transaction.amount} debited for ${result.transaction.merchant}"
                 },
                 category = "Payments"
             )

@@ -8,6 +8,7 @@ import com.appversal.appstorys.AppStorys
 import com.uj.appstorysautopaymanager.domain.auth.usecase.GetStoredUserUseCase
 import com.uj.appstorysautopaymanager.util.SmsPatternConfig
 import com.uj.appstorysautopaymanager.util.UpiPatternConfig
+import com.uj.appstorysautopaymanager.util.UsBankPatternConfig
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,11 +49,12 @@ class AutoPayApplication : Application() {
 
         createNotificationChannel()
 
-        // Fire-and-forget: SmsParser/UpiNotificationParser fall back to their hardcoded defaults
-        // until this completes, so cold-start parsing never blocks on either - see
-        // SmsPatternConfig/UpiPatternConfig.
+        // Fire-and-forget: SmsParser/UpiNotificationParser/UsBankNotificationParser fall back to
+        // their hardcoded defaults (US bank one: an empty, always-no-match set) until this
+        // completes, so cold-start parsing never blocks on any of them.
         SmsPatternConfig.refresh()
         UpiPatternConfig.refresh()
+        UsBankPatternConfig.refresh()
     }
 
     // Application has no NavController of its own, so this just forwards to whatever

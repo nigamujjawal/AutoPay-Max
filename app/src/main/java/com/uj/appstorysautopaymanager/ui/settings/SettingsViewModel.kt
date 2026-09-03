@@ -28,6 +28,9 @@ class SettingsViewModel @Inject constructor(
     val currency: StateFlow<String> = preferenceManager.currencyFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "₹")
 
+    val currencyCode: StateFlow<String> = preferenceManager.currencyCodeFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "INR")
+
     val pinCode: StateFlow<String> = preferenceManager.pinCodeFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
@@ -74,6 +77,7 @@ class SettingsViewModel @Inject constructor(
 
     fun setTheme(value: String) = viewModelScope.launch { preferenceManager.setTheme(value) }
     fun setCurrency(value: String) = viewModelScope.launch { preferenceManager.setCurrency(value) }
+    fun setCurrencyCode(value: String) = viewModelScope.launch { preferenceManager.setCurrencyCode(value) }
     fun setPinCode(value: String) = viewModelScope.launch { preferenceManager.setPinCode(value) }
     fun setBiometricEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setBiometricEnabled(value) }
     fun setVoiceAlertsEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setVoiceAlertsEnabled(value) }

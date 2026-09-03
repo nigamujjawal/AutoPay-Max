@@ -59,51 +59,58 @@ private val PlaceholderColor = Color(0xFFAEAEBE)
 // real apps do, rather than inventing disambiguating prefixes nobody local actually uses; Gulf
 // currencies (Bahrain/Kuwait/Oman/Qatar/Saudi) use their ISO code instead since none of them
 // have a widely-recognized single-character symbol.
+// currencyCode is the actual ISO 4217 code (unambiguous, unlike currencySymbol - "$" alone can't
+// tell the backend USD from AUD from MXN) - PaymentSyncWorker sends this to the backend's
+// `currency` field instead of the old hardcoded "INR". The single combined US/Canada row is a
+// known simplification carried over from the dial-code merge above: both get "USD", so a
+// Canadian user's payments would sync as USD, not CAD - not fixed here since disambiguating them
+// needs a second signal beyond dial code, out of scope for a currency-field fix.
 private data class CountryCode(
     val iso: String,
     val dialCode: String,
     val displayName: String,
     val digitCount: Int,
-    val currencySymbol: String
+    val currencySymbol: String,
+    val currencyCode: String
 )
 
 private val COUNTRY_CODES = listOf(
-    CountryCode("IN", "+91", "India", 10, "₹"),
-    CountryCode("AU", "+61", "Australia", 9, "$"),
-    CountryCode("BH", "+973", "Bahrain", 8, "BHD"),
-    CountryCode("BD", "+880", "Bangladesh", 10, "৳"),
-    CountryCode("BR", "+55", "Brazil", 11, "R$"),
-    CountryCode("CN", "+86", "China", 11, "¥"),
-    CountryCode("EG", "+20", "Egypt", 10, "E£"),
-    CountryCode("FR", "+33", "France", 9, "€"),
-    CountryCode("DE", "+49", "Germany", 10, "€"),
-    CountryCode("HK", "+852", "Hong Kong", 8, "HK$"),
-    CountryCode("ID", "+62", "Indonesia", 10, "Rp"),
-    CountryCode("IE", "+353", "Ireland", 9, "€"),
-    CountryCode("IT", "+39", "Italy", 10, "€"),
-    CountryCode("JP", "+81", "Japan", 10, "¥"),
-    CountryCode("KE", "+254", "Kenya", 9, "KSh"),
-    CountryCode("KW", "+965", "Kuwait", 8, "KWD"),
-    CountryCode("MY", "+60", "Malaysia", 9, "RM"),
-    CountryCode("MX", "+52", "Mexico", 10, "$"),
-    CountryCode("NP", "+977", "Nepal", 10, "NPR"),
-    CountryCode("NL", "+31", "Netherlands", 9, "€"),
-    CountryCode("NZ", "+64", "New Zealand", 9, "NZ$"),
-    CountryCode("NG", "+234", "Nigeria", 10, "₦"),
-    CountryCode("OM", "+968", "Oman", 8, "OMR"),
-    CountryCode("PK", "+92", "Pakistan", 10, "Rs"),
-    CountryCode("PH", "+63", "Philippines", 10, "₱"),
-    CountryCode("QA", "+974", "Qatar", 8, "QAR"),
-    CountryCode("SA", "+966", "Saudi Arabia", 9, "SAR"),
-    CountryCode("SG", "+65", "Singapore", 8, "S$"),
-    CountryCode("ZA", "+27", "South Africa", 9, "R"),
-    CountryCode("KR", "+82", "South Korea", 10, "₩"),
-    CountryCode("ES", "+34", "Spain", 9, "€"),
-    CountryCode("LK", "+94", "Sri Lanka", 9, "Rs"),
-    CountryCode("TH", "+66", "Thailand", 9, "฿"),
-    CountryCode("AE", "+971", "United Arab Emirates", 9, "AED"),
-    CountryCode("GB", "+44", "United Kingdom", 10, "£"),
-    CountryCode("US", "+1", "United States / Canada", 10, "$")
+    CountryCode("IN", "+91", "India", 10, "₹", "INR"),
+    CountryCode("AU", "+61", "Australia", 9, "$", "AUD"),
+    CountryCode("BH", "+973", "Bahrain", 8, "BHD", "BHD"),
+    CountryCode("BD", "+880", "Bangladesh", 10, "৳", "BDT"),
+    CountryCode("BR", "+55", "Brazil", 11, "R$", "BRL"),
+    CountryCode("CN", "+86", "China", 11, "¥", "CNY"),
+    CountryCode("EG", "+20", "Egypt", 10, "E£", "EGP"),
+    CountryCode("FR", "+33", "France", 9, "€", "EUR"),
+    CountryCode("DE", "+49", "Germany", 10, "€", "EUR"),
+    CountryCode("HK", "+852", "Hong Kong", 8, "HK$", "HKD"),
+    CountryCode("ID", "+62", "Indonesia", 10, "Rp", "IDR"),
+    CountryCode("IE", "+353", "Ireland", 9, "€", "EUR"),
+    CountryCode("IT", "+39", "Italy", 10, "€", "EUR"),
+    CountryCode("JP", "+81", "Japan", 10, "¥", "JPY"),
+    CountryCode("KE", "+254", "Kenya", 9, "KSh", "KES"),
+    CountryCode("KW", "+965", "Kuwait", 8, "KWD", "KWD"),
+    CountryCode("MY", "+60", "Malaysia", 9, "RM", "MYR"),
+    CountryCode("MX", "+52", "Mexico", 10, "$", "MXN"),
+    CountryCode("NP", "+977", "Nepal", 10, "NPR", "NPR"),
+    CountryCode("NL", "+31", "Netherlands", 9, "€", "EUR"),
+    CountryCode("NZ", "+64", "New Zealand", 9, "NZ$", "NZD"),
+    CountryCode("NG", "+234", "Nigeria", 10, "₦", "NGN"),
+    CountryCode("OM", "+968", "Oman", 8, "OMR", "OMR"),
+    CountryCode("PK", "+92", "Pakistan", 10, "Rs", "PKR"),
+    CountryCode("PH", "+63", "Philippines", 10, "₱", "PHP"),
+    CountryCode("QA", "+974", "Qatar", 8, "QAR", "QAR"),
+    CountryCode("SA", "+966", "Saudi Arabia", 9, "SAR", "SAR"),
+    CountryCode("SG", "+65", "Singapore", 8, "S$", "SGD"),
+    CountryCode("ZA", "+27", "South Africa", 9, "R", "ZAR"),
+    CountryCode("KR", "+82", "South Korea", 10, "₩", "KRW"),
+    CountryCode("ES", "+34", "Spain", 9, "€", "EUR"),
+    CountryCode("LK", "+94", "Sri Lanka", 9, "Rs", "LKR"),
+    CountryCode("TH", "+66", "Thailand", 9, "฿", "THB"),
+    CountryCode("AE", "+971", "United Arab Emirates", 9, "AED", "AED"),
+    CountryCode("GB", "+44", "United Kingdom", 10, "£", "GBP"),
+    CountryCode("US", "+1", "United States / Canada", 10, "$", "USD")
 )
 private val DEFAULT_COUNTRY = COUNTRY_CODES.first { it.iso == "IN" }
 
@@ -166,7 +173,10 @@ fun LoginScreen(
                     isLoading = isLoading,
                     errorMessage = errorMessage,
                     onSendOtp = { phoneNumber -> authViewModel.sendOtp(phoneNumber, activity) },
-                    onCountrySelected = { currencySymbol -> settingsViewModel.setCurrency(currencySymbol) }
+                    onCountrySelected = { currencySymbol, currencyCode ->
+                        settingsViewModel.setCurrency(currencySymbol)
+                        settingsViewModel.setCurrencyCode(currencyCode)
+                    }
                 )
                 is LoginStep.EnterOtp -> OtpEntryStep(
                     phoneNumber = currentStep.phoneNumber,
@@ -205,7 +215,7 @@ private fun PhoneEntryStep(
     isLoading: Boolean,
     errorMessage: String?,
     onSendOtp: (String) -> Unit,
-    onCountrySelected: (currencySymbol: String) -> Unit = {}
+    onCountrySelected: (currencySymbol: String, currencyCode: String) -> Unit = { _, _ -> }
 ) {
     val context = LocalContext.current
     var phoneDigits by remember { mutableStateOf("") }
@@ -215,7 +225,7 @@ private fun PhoneEntryStep(
     // Fires on the auto-detected country too, not just a manual pick - Dashboard/Passbook read
     // this currency setting, so it needs a value from the moment this screen is first shown.
     LaunchedEffect(selectedCountry) {
-        onCountrySelected(selectedCountry.currencySymbol)
+        onCountrySelected(selectedCountry.currencySymbol, selectedCountry.currencyCode)
     }
 
     IconBadge(Icons.Default.Phone)

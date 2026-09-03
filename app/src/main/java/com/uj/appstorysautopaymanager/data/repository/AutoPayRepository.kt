@@ -67,7 +67,10 @@ class AutoPayRepository @Inject constructor(
         )
         if (existing == null) {
             val id = transactionDao.insertTransaction(transaction)
-            if (id != -1L) PaymentSyncWorker.enqueue(context)
+            if (id != -1L) {
+                PaymentSyncWorker.enqueue(context)
+                if (transaction.transactionType == "DEBIT") detectRecurringMandate(transaction)
+            }
             return id
         }
         if (isPlaceholderMerchant(existing.merchant) && !isPlaceholderMerchant(transaction.merchant)) {
@@ -78,6 +81,35 @@ class AutoPayRepository @Inject constructor(
 
     private fun isPlaceholderMerchant(merchant: String): Boolean =
         merchant == "Merchant" || merchant == "UPI Credit" || merchant.contains("@")
+
+    // ponytail: naive heuristic (fixed ~monthly window, exact same merchant+amount, DEBIT only) -
+    // the only signal available for sources with no explicit "autopay/mandate created" event, e.g.
+    // US bank/P2P notifications (UsBankNotificationParser) vs. NPCI's e-mandate SMS template in
+    // India (see sms_upi_parsing_pipeline). Only reached for transactions applyTransactionEvent
+    // already decided are genuinely new (not a cross-source dedup merge), so this never fires
+    // twice for one real payment, and never fires at all for a source that already sets
+    // isAutoPay=true (those skip applyTransactionEvent entirely - see SmsReceiver/
+    // UpiNotificationListenerService's mandate branch). Known false-positive risk: 3 manual
+    // same-amount payments to the same payee (e.g. rent via a P2P app) reads identically to a
+    // real autopay - upgrade path: weekly/yearly windows, amount-drift tolerance, or a real
+    // "recurring" signal once one exists for that source (e.g. Plaid's Recurring Transactions).
+    private suspend fun detectRecurringMandate(transaction: Transaction) {
+        if (isPlaceholderMerchant(transaction.merchant)) return
+        val recent = transactionDao.getRecentSameMerchantAmount(transaction.merchant, transaction.amount)
+        if (recent.size < 3 || !isMonthlySpaced(recent.map { it.date })) return
+
+        applyMandateEvent(
+            Mandate(
+                merchant = transaction.merchant,
+                amount = transaction.amount,
+                frequency = "MONTHLY",
+                nextExpectedDebit = transaction.date + (30L * 24L * 60L * 60L * 1000L),
+                bank = transaction.bankName,
+                status = "ACTIVE",
+                referenceNumber = transaction.referenceNumber
+            )
+        )
+    }
 
     // Mandates
     val allMandates: Flow<List<Mandate>> = mandateDao.getAllMandates()
@@ -119,3 +151,12 @@ class AutoPayRepository @Inject constructor(
     suspend fun deleteNotification(notification: NotificationEntity) = notificationDao.deleteNotification(notification)
     suspend fun deleteNotificationById(id: Long) = notificationDao.deleteById(id)
 }
+
+// Pure (no Room/Android dependency) so it's directly unit-testable - see detectRecurringMandate
+// above for how it's used. Loose (20-40 day) rather than a tight 28-31 day window - billing dates
+// drift around weekends/holidays/month length, and this heuristic only runs after 3 real
+// occurrences already agree, so a wider window doesn't meaningfully add false positives.
+internal val MONTHLY_GAP_RANGE = (20L * 24L * 60L * 60L * 1000L)..(40L * 24L * 60L * 60L * 1000L)
+
+internal fun isMonthlySpaced(datesNewestFirst: List<Long>): Boolean =
+    datesNewestFirst.zipWithNext { newer, older -> newer - older }.all { it in MONTHLY_GAP_RANGE }

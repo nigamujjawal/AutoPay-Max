@@ -33,7 +33,8 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BillManagerScreen(
-    viewModel: BillViewModel
+    viewModel: BillViewModel,
+    currencySymbol: String = "₹"
 ) {
     val bills by viewModel.filteredBills.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -165,6 +166,7 @@ fun BillManagerScreen(
                     items(bills) { bill ->
                         BillRow(
                             bill = bill,
+                            currencySymbol = currencySymbol,
                             onMarkPaid = { viewModel.markPaid(bill) },
                             onDuplicate = { viewModel.duplicateBill(bill) },
                             onDelete = { viewModel.deleteBill(bill) },
@@ -203,6 +205,7 @@ fun BillManagerScreen(
 @Composable
 fun BillRow(
     bill: Bill,
+    currencySymbol: String = "₹",
     onMarkPaid: () -> Unit,
     onDuplicate: () -> Unit,
     onDelete: () -> Unit,
@@ -246,7 +249,7 @@ fun BillRow(
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "₹%,.2f".format(bill.amount),
+                    text = "$currencySymbol%,.2f".format(bill.amount),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Black,
                     color = TextWhite
