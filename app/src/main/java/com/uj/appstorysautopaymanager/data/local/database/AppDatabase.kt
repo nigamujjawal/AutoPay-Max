@@ -4,14 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.uj.appstorysautopaymanager.data.local.dao.AuthTokenDao
 import com.uj.appstorysautopaymanager.data.local.dao.BillDao
 import com.uj.appstorysautopaymanager.data.local.dao.CategoryDao
 import com.uj.appstorysautopaymanager.data.local.dao.MandateDao
+import com.uj.appstorysautopaymanager.data.local.dao.NotificationDao
 import com.uj.appstorysautopaymanager.data.local.dao.TransactionDao
+import com.uj.appstorysautopaymanager.data.local.entity.AuthTokenEntity
 import com.uj.appstorysautopaymanager.data.local.entity.Bill
 import com.uj.appstorysautopaymanager.data.local.entity.Category
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
+import com.uj.appstorysautopaymanager.data.local.entity.NotificationEntity
 import com.uj.appstorysautopaymanager.data.local.entity.Transaction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,8 +24,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Provider
 
 @Database(
-    entities = [Bill::class, Transaction::class, Mandate::class, Category::class],
-    version = 1,
+    entities = [Bill::class, Transaction::class, Mandate::class, Category::class, NotificationEntity::class, AuthTokenEntity::class],
+    version = 8,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -28,14 +33,87 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun transactionDao(): TransactionDao
     abstract fun mandateDao(): MandateDao
     abstract fun categoryDao(): CategoryDao
+    abstract fun notificationDao(): NotificationDao
+    abstract fun authTokenDao(): AuthTokenDao
 
     companion object {
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE mandates ADD COLUMN category TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE mandates ADD COLUMN paymentApp TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        // Drops exact-smsId duplicate rows (safe: identical smsId can only mean the same
+        // physical SMS was inserted twice, e.g. a redelivered SMS_RECEIVED broadcast) before
+        // enforcing uniqueness so the CREATE UNIQUE INDEX below can't fail on existing data.
+        // Does NOT catch duplicates from the older address+timestamp smsId scheme, where the
+        // live-received and inbox-backfill copies of the same SMS got two different smsId
+        // strings - those need a fresh scan (smsId is now content-based, see SmsReceiver /
+        // TransactionViewModel) to stop recurring; a data clear/reinstall flushes old ones.
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DELETE FROM transactions WHERE id NOT IN (SELECT MIN(id) FROM transactions GROUP BY smsId)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_transactions_smsId ON transactions(smsId)")
+            }
+        }
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """CREATE TABLE IF NOT EXISTS notifications (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        title TEXT NOT NULL,
+                        body TEXT NOT NULL,
+                        timestamp INTEGER NOT NULL,
+                        category TEXT NOT NULL,
+                        isWarning INTEGER NOT NULL,
+                        isUnread INTEGER NOT NULL
+                    )"""
+                )
+            }
+        }
+
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """CREATE TABLE IF NOT EXISTS auth_token (
+                        uid TEXT PRIMARY KEY NOT NULL,
+                        phoneNumber TEXT NOT NULL,
+                        idToken TEXT NOT NULL,
+                        issuedAt INTEGER NOT NULL
+                    )"""
+                )
+            }
+        }
+
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE auth_token ADD COLUMN accessToken TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE auth_token ADD COLUMN refreshToken TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE transactions ADD COLUMN synced INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE transactions ADD COLUMN backendPaymentId TEXT")
+            }
+        }
+
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE auth_token ADD COLUMN name TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "autopay_manager_db"
             )
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
@@ -49,21 +127,6 @@ abstract class AppDatabase : RoomDatabase() {
                     db.execSQL("INSERT INTO categories (name, iconName, isSystem) VALUES ('Water', 'WaterDrop', 1)")
                     db.execSQL("INSERT INTO categories (name, iconName, isSystem) VALUES ('Insurance', 'Shield', 1)")
                     db.execSQL("INSERT INTO categories (name, iconName, isSystem) VALUES ('Others', 'Category', 1)")
-
-                    // Default AutoPay Mandates matching Image 4
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Netflix', 630.0, 'Manual', 1786500000000, 'HDFC Bank', 'ACTIVE', 'MAN1001')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Spotify', 480.0, 'Automatic', 1786759200000, 'ICICI Bank', 'ACTIVE', 'MAN1002')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Amazon Prime', 999.0, 'Manual', 1787191200000, 'SBI Bank', 'ACTIVE', 'MAN1003')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Hulu', 720.0, 'Automatic', 1787623200000, 'Axis Bank', 'ACTIVE', 'MAN1004')")
-                    db.execSQL("INSERT INTO mandates (merchant, amount, frequency, nextExpectedDebit, bank, status, referenceNumber) VALUES ('Disney+', 899.0, 'Manual', 1788055200000, 'Kotak Bank', 'ACTIVE', 'MAN1005')")
-
-                    // Default Passbook Transactions matching Image 5
-                    db.execSQL("INSERT INTO transactions (smsId, merchant, amount, date, bankName, accountNumber, referenceNumber, transactionType, category, smsBody, isAutoPay) VALUES ('sms_1', 'State Bank of India . XX...', 27.0, 1783900800000, 'SBI BANK', 'XX1234', 'REF001', 'DEBIT', 'Others', 'Rs.27 debited from SBI account', 1)")
-                    db.execSQL("INSERT INTO transactions (smsId, merchant, amount, date, bankName, accountNumber, referenceNumber, transactionType, category, smsBody, isAutoPay) VALUES ('sms_2', 'State Bank of India . XX...', 27.0, 1783814400000, 'SBI BANK', 'XX1234', 'REF002', 'DEBIT', 'Others', 'Rs.27 debited from SBI account', 1)")
-                    db.execSQL("INSERT INTO transactions (smsId, merchant, amount, date, bankName, accountNumber, referenceNumber, transactionType, category, smsBody, isAutoPay) VALUES ('sms_3', 'HDFC Bank . AB...', 15.0, 1783641600000, 'HDFC BANK', 'AB5678', 'REF003', 'DEBIT', 'Others', 'Rs.15 debited from HDFC account', 1)")
-                    db.execSQL("INSERT INTO transactions (smsId, merchant, amount, date, bankName, accountNumber, referenceNumber, transactionType, category, smsBody, isAutoPay) VALUES ('sms_4', 'HDFC Bank . AB...', 15.0, 1783641600000, 'HDFC BANK', 'AB5678', 'REF004', 'DEBIT', 'Others', 'Rs.15 debited from HDFC account', 1)")
-                    db.execSQL("INSERT INTO transactions (smsId, merchant, amount, date, bankName, accountNumber, referenceNumber, transactionType, category, smsBody, isAutoPay) VALUES ('sms_5', 'ICICI Bank . CD...', 22.0, 1783382400000, 'ICICI BANK', 'CD9012', 'REF005', 'DEBIT', 'Others', 'Rs.22 debited from ICICI account', 1)")
-                    db.execSQL("INSERT INTO transactions (smsId, merchant, amount, date, bankName, accountNumber, referenceNumber, transactionType, category, smsBody, isAutoPay) VALUES ('sms_6', 'Axis Bank . EF...', 30.0, 1783123200000, 'AXIS BANK', 'EF3456', 'REF006', 'DEBIT', 'Others', 'Rs.30 debited from Axis account', 1)")
                 }
             })
             .build()

@@ -1,0 +1,55 @@
+package com.uj.appstorysautopaymanager.data.repository
+
+import com.uj.appstorysautopaymanager.common.Resource
+import com.uj.appstorysautopaymanager.common.safeApiCall
+import com.uj.appstorysautopaymanager.data.local.dao.AuthTokenDao
+import com.uj.appstorysautopaymanager.data.remote.AutoPayApi
+import com.uj.appstorysautopaymanager.data.remote.dto.UpdateUserRequest
+import com.uj.appstorysautopaymanager.data.remote.dto.UserDto
+import com.uj.appstorysautopaymanager.domain.profile.model.UserProfile
+import com.uj.appstorysautopaymanager.domain.profile.repository.ProfileRepository
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class ProfileRepositoryImpl @Inject constructor(
+    private val api: AutoPayApi,
+    private val tokenDao: AuthTokenDao
+) : ProfileRepository {
+
+    override suspend fun getUserProfile(): Resource<UserProfile> = safeApiCall {
+        val token = tokenDao.getToken()
+        api.getUser().toDomain(name = token?.name.orEmpty())
+    }
+
+    // name is purely local (Room), upiId is the only field still sent to the backend. Each is
+    // independent - saving just a name doesn't touch the network at all.
+    override suspend fun updateUserProfile(
+        name: String?,
+        upiId: String?
+    ): Resource<Unit> {
+        if (name != null) {
+            tokenDao.getToken()?.let { tokenDao.updateName(it.uid, name) }
+        }
+        if (upiId == null) return Resource.Success(Unit)
+        return safeApiCall {
+            api.updateUser(UpdateUserRequest(upi_id = upiId))
+            Unit
+        }
+    }
+
+    private fun UserDto.toDomain(name: String) = UserProfile(
+        id = id,
+        firebaseUid = firebase_uid,
+        phoneNumber = phone_number,
+        name = name,
+        upiId = upi_id,
+        provider = provider,
+        subscriptionId = subscription_id,
+        subscriptionStatus = subscription_status,
+        subscriptionEndsAt = subscription_endsAt,
+        lastLogin = last_login,
+        createdAt = created_at,
+        updatedAt = updated_at
+    )
+}

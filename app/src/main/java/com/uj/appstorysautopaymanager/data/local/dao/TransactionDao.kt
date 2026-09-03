@@ -21,9 +21,24 @@ interface TransactionDao {
     @Query("DELETE FROM transactions")
     suspend fun deleteAllTransactions()
 
-    @Delete
-    suspend fun deleteTransaction(transaction: Transaction)
-
     @Query("SELECT EXISTS(SELECT 1 FROM transactions WHERE smsId = :smsId)")
     suspend fun exists(smsId: String): Boolean
+
+    // amount > 0 excludes mandate-revoke bookkeeping rows (recorded with amount 0.0) - those
+    // aren't real payments and shouldn't be pushed to the backend.
+    @Query("SELECT * FROM transactions WHERE synced = 0 AND amount > 0")
+    suspend fun getUnsyncedTransactions(): List<Transaction>
+
+    @Query("UPDATE transactions SET synced = 1, backendPaymentId = :backendPaymentId WHERE id = :id")
+    suspend fun markSynced(id: Long, backendPaymentId: String)
+
+    // Cross-source dedup (SMS vs. UPI app notification reporting the same real payment):
+    // amount + type + a time window is the best available key, since notification text is too
+    // short to carry a reference number to match on. Restricted to the *other* source
+    // (isNotifSource flips which side we're looking for, via the "notif_" smsId prefix) so two
+    // genuinely separate transactions of the same amount arriving close together through the
+    // same channel (e.g. two notification-only payments, no SMS for either) aren't mistaken
+    // for one payment reported twice - only a cross-source pair gets merged.
+    @Query("SELECT * FROM transactions WHERE amount = :amount AND transactionType = :type AND date BETWEEN :fromDate AND :toDate AND (substr(smsId, 1, 6) = 'notif_') != :isNotifSource ORDER BY ABS(date - :date) ASC LIMIT 1")
+    suspend fun findNearbyTransaction(amount: Double, type: String, fromDate: Long, toDate: Long, date: Long, isNotifSource: Boolean): Transaction?
 }

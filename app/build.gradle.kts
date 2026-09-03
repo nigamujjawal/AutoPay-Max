@@ -1,10 +1,26 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.google.services)
 }
+
+// Backend base URL lives only in the gitignored local.properties, never in a committed file -
+// keeps it out of source control while still being available to the app via BuildConfig.
+val localProperties = Properties().apply {
+    val localFile = rootProject.file("local.properties")
+    if (localFile.exists()) {
+        load(FileInputStream(localFile))
+    }
+}
+val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL") ?: "https://api.example.com/"
+val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID") ?: "dummy_app_id"
+val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID") ?: "dummy_account_id"
 
 android {
     namespace = "com.uj.appstorysautopaymanager"
@@ -18,6 +34,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_BASE_URL", "\"$soundBoxApiBaseUrl\"")
+        buildConfigField("String", "APPSTORYS_APP_ID", "\"$appStorysAppId\"")
+        buildConfigField("String", "APPSTORYS_ACCOUNT_ID", "\"$appStorysAccountId\"")
     }
 
     buildTypes {
@@ -38,6 +57,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -72,6 +92,18 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.biometric)
 
+    // Firebase (Phone/OTP auth)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.analytics)
+    implementation(libs.kotlinx.coroutines.play.services)
+
+    // Networking (SoundBox backend)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
@@ -79,4 +111,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation("com.github.appversal:AppStorys-Android-SDK-Downgraded:3.9.5")
+
+    // Google Play Billing Library
+    implementation("com.android.billingclient:billing-ktx:7.0.0")
 }

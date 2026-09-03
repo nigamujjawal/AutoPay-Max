@@ -1,7 +1,8 @@
 package com.uj.appstorysautopaymanager.ui.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,11 +22,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appversal.appstorys.AppStorys
+import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.ui.dashboard.AutoPayTopHeader
+import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
+import com.uj.appstorysautopaymanager.ui.profile.ProfileUiEvent
+import com.uj.appstorysautopaymanager.ui.profile.ProfileViewModel
+
+private fun openUrl(context: android.content.Context, url: String) {
+    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+}
 
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
+    transactionViewModel: TransactionViewModel,
+    profileViewModel: ProfileViewModel,
     onLogoutClick: () -> Unit,
     onNavigateToAppSettings: () -> Unit = {},
     onNotificationsClick: () -> Unit = {}
@@ -35,27 +47,31 @@ fun SettingsScreen(
     val isVoiceAlertsEnabled by viewModel.isVoiceAlertsEnabled.collectAsState()
     val speechSpeed by viewModel.speechSpeed.collectAsState()
     val speechLanguage by viewModel.speechLanguage.collectAsState()
+    val pushNotifications by viewModel.isPushNotificationsEnabled.collectAsState()
+    val autopayReminders by viewModel.isAutopayRemindersEnabled.collectAsState()
+    val isScanning by transactionViewModel.isScanning.collectAsState()
 
-    var pushNotifications by remember { mutableStateOf(true) }
-    var rescanSms by remember { mutableStateOf(true) }
-    var autopayReminders by remember { mutableStateOf(true) }
+    val profileState by profileViewModel.state.collectAsState()
 
-    var expandedFaqIndex by remember { mutableStateOf(0) } // 0 means first question expanded
-    var faqSectionExpanded by remember { mutableStateOf(true) }
-    var userRating by remember { mutableStateOf(5) }
+    LaunchedEffect(Unit) {
+        profileViewModel.event.collect { event ->
+            when (event) {
+                is ProfileUiEvent.ShowMessage -> Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
-    val faqs = listOf(
-        "How do I set up SoundBox?" to "Install the app, grant notification access, and ensure your UPI apps show notifications. SoundBox will announce every payment automatically.",
-        "Why am I not getting payment alerts?" to "Ensure SMS & Notification permissions are granted and your phone's media volume is turned up.",
-        "Can I use SoundBox without internet?" to "Yes! Text-to-Speech voice announcements work completely offline without an internet connection.",
-        "How do I change announcement language?" to "Navigate to App Settings under Preferences to choose English (US), English (India), or Hindi.",
-        "Is my payment data safe?" to "Your financial SMS and mandate records are stored securely on your local device."
-    )
+    var showEditProfileDialog by remember { mutableStateOf(false) }
+    var profileName by remember { mutableStateOf("") }
+    var profileUpiId by remember { mutableStateOf("") }
+
+    AppStorys.getScreenCampaigns("settings_screen",listOf())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFFAFAFA))
+            .appstorys("settings_screen")
     ) {
         // App Top Header (Same as Home & Passbook)
         AutoPayTopHeader(onNotificationsClick = onNotificationsClick)
@@ -77,7 +93,11 @@ fun SettingsScreen(
                         icon = Icons.Default.Edit,
                         title = "Edit Profile",
                         subtitle = "Update your name & business info",
-                        onClick = { Toast.makeText(context, "Edit Profile clicked", Toast.LENGTH_SHORT).show() }
+                        onClick = {
+                            profileName = profileState.profile?.name.orEmpty()
+                            profileUpiId = profileState.profile?.upiId.orEmpty()
+                            showEditProfileDialog = true
+                        }
                     )
                 }
             }
@@ -87,7 +107,10 @@ fun SettingsScreen(
                 SettingsSectionHeader("Subscription")
             }
             item {
-                SettingsCard {
+                // Static placeholder until Razorpay checkout is integrated - do not wire this to
+                // SubscriptionViewModel/CreateSubscriptionUseCase yet, there's no real payment
+                // collection step behind it.
+                SubscriptionCard {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -107,7 +130,7 @@ fun SettingsScreen(
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("AutoPay Premium", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+                                Text("AutoPay Premium", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.Red)
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text("Premium active • Renews Jul 2027", fontSize = 11.sp, color = Color(0xFFFF6B00), fontWeight = FontWeight.SemiBold)
                             }
@@ -116,7 +139,7 @@ fun SettingsScreen(
                         Box(
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .background(Color(0xFFFFF9F5))
+                                .background(Color.White)
                                 .border(1.dp, Color(0xFFFFE0D1), CircleShape)
                                 .padding(horizontal = 14.dp, vertical = 6.dp)
                         ) {
@@ -138,7 +161,7 @@ fun SettingsScreen(
                             title = "Push Notifications",
                             subtitle = "Payment & system alerts",
                             checked = pushNotifications,
-                            onCheckedChange = { pushNotifications = it }
+                            onCheckedChange = { viewModel.setPushNotificationsEnabled(it) }
                         )
 
                         Divider(color = Color(0xFFF1F5F9))
@@ -146,9 +169,11 @@ fun SettingsScreen(
                         SettingsSwitchItem(
                             icon = Icons.Default.Sync,
                             title = "Re-scan SMS",
-                            subtitle = "Re-runs the 6-month backfill",
-                            checked = rescanSms,
-                            onCheckedChange = { rescanSms = it }
+                            subtitle = if (isScanning) "Scanning..." else "Tap to re-scan your SMS inbox now",
+                            checked = isScanning,
+                            onCheckedChange = { checked ->
+                                if (checked && !isScanning) transactionViewModel.scanSmsInbox(context)
+                            }
                         )
 
                         Divider(color = Color(0xFFF1F5F9))
@@ -156,9 +181,9 @@ fun SettingsScreen(
                         SettingsSwitchItem(
                             icon = Icons.Default.NotificationsActive,
                             title = "Autopay Reminders",
-                            subtitle = "Heads-up reminders 2-3 days before",
+                            subtitle = "Heads-up reminder 2 days before",
                             checked = autopayReminders,
-                            onCheckedChange = { autopayReminders = it }
+                            onCheckedChange = { viewModel.setAutopayRemindersEnabled(it) }
                         )
 
                         Divider(color = Color(0xFFF1F5F9))
@@ -175,7 +200,7 @@ fun SettingsScreen(
 
                         SettingsRowItem(
                             icon = Icons.Default.Tune,
-                            title = "App Settings",
+                            title = "Voice & Behaviour",
                             subtitle = "Voice, speed, language, Audio",
                             onClick = { onNavigateToAppSettings() }
                         )
@@ -191,219 +216,67 @@ fun SettingsScreen(
             // Help & FAQ Card
             item {
                 SettingsCard {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { faqSectionExpanded = !faqSectionExpanded },
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .clip(CircleShape)
-                                        .background(Color(0xFFFFF0EA)),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(Icons.Default.HelpOutline, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(20.dp))
-                                }
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text("Help & FAQ", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
-                            }
-                            Icon(
-                                imageVector = if (faqSectionExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                contentDescription = null,
-                                tint = Color(0xFF94A3B8)
-                            )
-                        }
-
-                        if (faqSectionExpanded) {
-                            Spacer(modifier = Modifier.height(12.dp))
-                            faqs.forEachIndexed { index, (question, answer) ->
-                                val isExpanded = expandedFaqIndex == index
-
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 6.dp)
-                                ) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable { expandedFaqIndex = if (isExpanded) -1 else index }
-                                            .padding(vertical = 4.dp),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = question,
-                                            fontSize = 13.sp,
-                                            fontWeight = if (isExpanded) FontWeight.Bold else FontWeight.SemiBold,
-                                            color = if (isExpanded) Color(0xFFFF6B00) else Color(0xFF334155),
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        Icon(
-                                            imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                            contentDescription = null,
-                                            tint = Color(0xFFCBD5E1),
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-
-                                    AnimatedVisibility(visible = isExpanded) {
-                                        Text(
-                                            text = answer,
-                                            fontSize = 12.sp,
-                                            color = Color(0xFF64748B),
-                                            lineHeight = 16.sp,
-                                            modifier = Modifier.padding(top = 4.dp, bottom = 8.dp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    SettingsRowItem(
+                        icon = Icons.Default.HelpOutline,
+                        title = "Help & FAQ",
+                        subtitle = "Browse answers on our help center",
+                        onClick = { openUrl(context, "https://autopay.com/help") }
+                    )
                 }
             }
 
             // Contact Support Card
             item {
                 SettingsCard {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFFFF0EA)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.ChatBubbleOutline, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(20.dp))
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text("Contact Support", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
-                                Text("Our team typically responds within 2-4 hours.", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            // Live Chat Button
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFFF6B00))
-                                    .clickable { Toast.makeText(context, "Opening Live Chat...", Toast.LENGTH_SHORT).show() }
-                                    .padding(vertical = 12.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(Icons.Default.ChatBubble, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text("Live Chat", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                                    Text("Instant", fontSize = 10.sp, color = Color.White.copy(alpha = 0.8f))
-                                }
-                            }
-
-                            // Email Button
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFFFF0EA))
-                                    .clickable { Toast.makeText(context, "Email support@autopay.com", Toast.LENGTH_SHORT).show() }
-                                    .padding(vertical = 12.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(Icons.Default.MailOutline, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text("Email", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF6B00))
-                                    Text("support@", fontSize = 10.sp, color = Color(0xFF94A3B8))
-                                }
-                            }
-
-                            // Call Button
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(Color(0xFFFFF0EA))
-                                    .clickable { Toast.makeText(context, "Calling Helpline...", Toast.LENGTH_SHORT).show() }
-                                    .padding(vertical = 12.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(Icons.Default.PhoneInTalk, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(20.dp))
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text("Call", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF6B00))
-                                    Text("10am-6pm", fontSize = 10.sp, color = Color(0xFF94A3B8))
-                                }
-                            }
-                        }
-                    }
+                    SettingsRowItem(
+                        icon = Icons.Default.ChatBubbleOutline,
+                        title = "Contact Support",
+                        subtitle = "Our team typically responds within 2-4 hours.",
+                        onClick = { openUrl(context, "https://autopay.com/support") }
+                    )
                 }
             }
 
             // Rate the App Card
             item {
                 SettingsCard {
-                    Column(modifier = Modifier.padding(14.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFFFF0EA)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(Icons.Default.ThumbUpOffAlt, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(20.dp))
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text("Rate the App", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
-                                Text("Love it? Leave a review!", fontSize = 11.sp, color = Color(0xFF94A3B8))
-                            }
-                        }
+                    SettingsRowItem(
+                        icon = Icons.Default.ThumbUpOffAlt,
+                        title = "Rate the App",
+                        subtitle = "Love it? Leave a review!",
+                        onClick = { openUrl(context, "https://autopay.com/rate") }
+                    )
+                }
+            }
 
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
-                                .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(12.dp))
-                                .padding(14.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("How would you rate SoundBox?", fontSize = 12.sp, color = Color(0xFF94A3B8))
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    for (star in 1..5) {
-                                        Icon(
-                                            imageVector = if (star <= userRating) Icons.Default.Star else Icons.Default.StarOutline,
-                                            contentDescription = null,
-                                            tint = if (star <= userRating) Color(0xFFFFC107) else Color(0xFFCBD5E1),
-                                            modifier = Modifier
-                                                .size(28.dp)
-                                                .clickable {
-                                                    userRating = star
-                                                    Toast.makeText(context, "Thank you for rating $star stars!", Toast.LENGTH_SHORT).show()
-                                                }
-                                        )
-                                    }
-                                }
-                            }
-                        }
+            // Delete Account Button (same theme as Log Out)
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(0xFFFFF1F2))
+                        .border(1.dp, Color(0xFFFECDD3), RoundedCornerShape(14.dp))
+                        .clickable { Toast.makeText(context, "Delete Account clicked", Toast.LENGTH_SHORT).show() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DeleteForever,
+                            contentDescription = "Delete Account",
+                            tint = Color(0xFFE11D48),
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Text(
+                            text = "Delete Account",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFE11D48)
+                        )
                     }
                 }
             }
@@ -441,6 +314,61 @@ fun SettingsScreen(
             }
         }
     }
+
+    if (showEditProfileDialog) {
+        AlertDialog(
+            onDismissRequest = { showEditProfileDialog = false },
+            containerColor = Color.White,
+            title = {
+                Text("Edit Profile", fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    OutlinedTextField(
+                        shape = RoundedCornerShape(20.dp),
+                        value = profileName,
+                        onValueChange = { profileName = it },
+                        placeholder = { Text("Name") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFFFF6B00),
+                            unfocusedBorderColor = Color.Black
+                        )
+                    )
+                    OutlinedTextField(
+                        shape = RoundedCornerShape(20.dp),
+                        value = profileUpiId,
+                        onValueChange = { profileUpiId = it },
+                        placeholder = { Text("UPI ID") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFFFF6B00),
+                            unfocusedBorderColor = Color.Black
+                        )
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showEditProfileDialog = false
+                        profileViewModel.saveProfile(name = profileName, upiId = profileUpiId)
+                    },
+                    enabled = !profileState.isSaving,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
+                ) {
+                    Text("Save", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showEditProfileDialog = false }) {
+                    Text("Cancel", color = Color(0xFF64748B))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -461,7 +389,20 @@ fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(16.dp))
+            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp))
+    ) {
+        Column(content = content)
+    }
+}
+
+@Composable
+fun SubscriptionCard(content: @Composable ColumnScope.() -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFFFFF9F5))
+            .border(1.dp, Color(0xFFFFE0D1), RoundedCornerShape(20.dp))
     ) {
         Column(content = content)
     }
@@ -495,11 +436,9 @@ fun SettingsRowItem(
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
-                Spacer(modifier = Modifier.height(2.dp))
                 Text(subtitle, fontSize = 11.sp, color = Color(0xFF94A3B8))
             }
         }
-        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = Color(0xFFCBD5E1), modifier = Modifier.size(20.dp))
     }
 }
 

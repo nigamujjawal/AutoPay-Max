@@ -1,9 +1,10 @@
 package com.uj.appstorysautopaymanager.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "transactions")
+@Entity(tableName = "transactions", indices = [Index(value = ["smsId"], unique = true)])
 data class Transaction(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val smsId: String,
@@ -16,5 +17,8 @@ data class Transaction(
     val transactionType: String,
     val category: String,
     val smsBody: String,
-    val isAutoPay: Boolean = false
+    val isAutoPay: Boolean = false,
+    // SoundBox backend sync bookkeeping - set once POST /payments succeeds for this row.
+    val synced: Boolean = false,
+    val backendPaymentId: String? = null
 )

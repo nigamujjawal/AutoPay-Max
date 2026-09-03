@@ -1,29 +1,41 @@
 package com.uj.appstorysautopaymanager
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.appversal.appstorys.AppStorys
 import com.uj.appstorysautopaymanager.receiver.BootReceiver
+import com.uj.appstorysautopaymanager.ui.auth.AuthViewModel
+import com.uj.appstorysautopaymanager.ui.auth.LoginScreen
+import com.uj.appstorysautopaymanager.ui.autopay.AutoPayScreen
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
 import com.uj.appstorysautopaymanager.ui.dashboard.DashboardScreen
 import com.uj.appstorysautopaymanager.ui.navigation.Screen
@@ -33,31 +45,31 @@ import com.uj.appstorysautopaymanager.ui.onboarding.SplashScreen
 import com.uj.appstorysautopaymanager.ui.passbook.PassbookScreen
 import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
 import com.uj.appstorysautopaymanager.ui.notification.NotificationsScreen
-import com.uj.appstorysautopaymanager.ui.settings.AppSettingsScreen
+import com.uj.appstorysautopaymanager.ui.notification.NotificationsViewModel
+import com.uj.appstorysautopaymanager.ui.settings.VoiceBehaviour
 import com.uj.appstorysautopaymanager.ui.settings.SettingsScreen
 import com.uj.appstorysautopaymanager.ui.settings.SettingsViewModel
+import com.uj.appstorysautopaymanager.ui.profile.ProfileViewModel
 import com.uj.appstorysautopaymanager.ui.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
 
-    @javax.inject.Inject
-    lateinit var preferenceManager: com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         BootReceiver.scheduleBillReminders(this)
+        BootReceiver.scheduleMandateReminders(this)
 
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val mandateViewModel: MandateViewModel = hiltViewModel()
             val transactionViewModel: TransactionViewModel = hiltViewModel()
+            val authViewModel: AuthViewModel = hiltViewModel()
 
             val selectedTheme by settingsViewModel.theme.collectAsState()
-            val isOnboarded by settingsViewModel.isOnboarded.collectAsState()
 
             val darkTheme = when (selectedTheme) {
                 "Dark" -> true
@@ -70,13 +82,21 @@ class MainActivity : FragmentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainAppContent(
-                        settingsViewModel = settingsViewModel,
-                        mandateViewModel = mandateViewModel,
-                        transactionViewModel = transactionViewModel,
-                        preferenceManager = preferenceManager,
-                        isOnboarded = isOnboarded
-                    )
+                    // overlayElements() must sit above everything else in the stack (per the SDK
+                    // docs) - it's what actually renders Banner/Floater/Modals/BottomSheet/
+                    // Tooltips/Spotlight/ScratchCard/Survey AND the test-user "Capture Screen"
+                    // button. None of that can ever appear without this being called somewhere -
+                    // it wasn't wired in anywhere before now. One Box, drawn last so it's on top;
+                    // called once here rather than per-screen since this is a single-Activity app.
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        MainAppContent(
+                            settingsViewModel = settingsViewModel,
+                            mandateViewModel = mandateViewModel,
+                            transactionViewModel = transactionViewModel,
+                            authViewModel = authViewModel
+                        )
+                        AppStorys.overlayElements(activity = this@MainActivity)
+                    }
                 }
             }
         }
@@ -88,12 +108,32 @@ fun MainAppContent(
     settingsViewModel: SettingsViewModel,
     mandateViewModel: MandateViewModel,
     transactionViewModel: TransactionViewModel,
-    preferenceManager: com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager,
-    isOnboarded: Boolean
+    authViewModel: AuthViewModel
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current
+
+    // AppStorys campaign navigation. Every navigateToScreen call in the SDK fires from a click
+    // inside an actively-composed overlay (tooltip/banner/widget tap) - there's no path where it
+    // can happen while this Composable isn't alive, so a direct callback is enough; no Intent/
+    // onNewIntent restart plumbing needed. Registered on compose, cleared on dispose so
+    // AutoPayApplication never holds a reference to a dead NavController.
+    // The name string is whatever's configured on the AppStorys dashboard for that campaign - it
+    // must exactly match one of the Screen.*.route values in ui/navigation/Screen.kt.
+    DisposableEffect(navController) {
+        AutoPayApplication.navigateToScreenHandler = { name -> navController.navigate(name) }
+        onDispose { AutoPayApplication.navigateToScreenHandler = null }
+    }
+
+    // Backfill from the device's existing SMS inbox (SmsReceiver only catches SMS
+    // that arrive after install/permission-grant, not history already on the device).
+    LaunchedEffect(Unit) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+            transactionViewModel.scanSmsInbox(context)
+        }
+    }
 
     // EXACT 3 TABS AS REQUESTED: Home (AutoPay Records), Passbook, Settings
     val navigationItems = listOf(
@@ -107,12 +147,19 @@ fun MainAppContent(
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
-            if (isMainTabScreen) {
+            // AnimatedVisibility (not a plain `if`) so this show/hide goes through the same
+            // Transition-settling machinery NavHost's destination swap uses — that keeps the
+            // bar's appearance in lockstep with the content instead of popping in a frame
+            // before/after it, which is what caused the splash→dashboard glitch.
+            AnimatedVisibility(
+                visible = isMainTabScreen,
+                enter = EnterTransition.None,
+                exit = ExitTransition.None
+            ) {
                 Surface(
                     color = Color.White,
-                    shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                    shape = RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp, bottomStart = 30.dp , bottomEnd = 30.dp),
                     shadowElevation = 12.dp,
-                    tonalElevation = 4.dp,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -149,13 +196,13 @@ fun MainAppContent(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
+                                    Spacer(modifier = Modifier.height(8.dp))
                                     Icon(
                                         imageVector = screen.icon,
                                         contentDescription = screen.title,
                                         tint = if (selected) Color(0xFFFF5E00) else Color(0xFF94A3B8),
                                         modifier = Modifier.size(24.dp)
                                     )
-                                    Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = screen.title,
                                         color = if (selected) Color(0xFFFF5E00) else Color(0xFF94A3B8),
@@ -171,35 +218,41 @@ fun MainAppContent(
                 }
             }
         },
+        floatingActionButton = {
+            if (currentRoute == Screen.Home.route) {
+                ExtendedFloatingActionButton(
+                    shape = RoundedCornerShape(50.dp),
+                    onClick = { navController.navigate(Screen.AutoPay.route) },
+                    containerColor = Color(0xFFFF5E00),
+                    contentColor = Color.White,
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
+                    text = { Text("Add", fontWeight = FontWeight.Bold) }
+                )
+            }
+        },
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = Screen.Splash.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None }
         ) {
             // Splash Screen
             composable(Screen.Splash.route) {
                 SplashScreen(
                     onNavigateNext = {
-                        if (isOnboarded) {
-                            navController.navigate(Screen.Home.route) {
-                                popUpTo(Screen.Splash.route) { inclusive = true }
-                            }
-                        } else {
-                            navController.navigate(Screen.Onboarding.route) {
-                                popUpTo(Screen.Splash.route) { inclusive = true }
-                            }
+                        val target = when {
+                            !settingsViewModel.isOnboarded.value -> Screen.Onboarding.route
+                            !authViewModel.isAuthenticated.value -> Screen.Login.route
+                            else -> Screen.Home.route
                         }
-                    }
-                )
-            }
-
-            // Onboarding Screen
-            composable(Screen.Onboarding.route) {
-                OnboardingScreen(
-                    onStartTrialClick = {
-                        navController.navigate(Screen.Permissions.route)
+                        navController.navigate(target) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
                     }
                 )
             }
@@ -209,12 +262,39 @@ fun MainAppContent(
                 PermissionsScreen(
                     onPermissionsCompleted = {
                         settingsViewModel.setIsOnboarded(true)
+                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+                            transactionViewModel.scanSmsInbox(context)
+                        }
                         navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Onboarding.route) { inclusive = true }
+                            popUpTo(Screen.Permissions.route) { inclusive = true }
                         }
                     }
                 )
             }
+
+            // Onboarding Screen
+            composable(Screen.Onboarding.route) {
+                OnboardingScreen(
+                    onStartTrialClick = {
+                        navController.navigate(Screen.Login.route){
+                            popUpTo(Screen.Onboarding.route){inclusive = true}
+                        }
+                    }
+                )
+            }
+
+            // Login Screen (OTP sign-in)
+            composable(Screen.Login.route) {
+                LoginScreen(
+                    authViewModel = authViewModel,
+                    onSuccess = {
+                        navController.navigate(Screen.Permissions.route) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
 
             // Tab 1: Home (AutoPay Records)
             composable(Screen.Home.route) {
@@ -222,6 +302,19 @@ fun MainAppContent(
                     mandateViewModel = mandateViewModel,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
+                    },
+                    onSeeAllClick = {
+                        // Same popUpTo/launchSingleTop/restoreState contract as the bottom tab
+                        // bar's own tab-switch clicks (below) - this must behave like "switch to
+                        // the Passbook tab", not a one-off push, or it corrupts the saved-state
+                        // back stack the tab bar relies on to restore Home afterward.
+                        navController.navigate(Screen.Passbook.route) {
+                            popUpTo(Screen.Home.route) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     }
                 )
             }
@@ -230,7 +323,6 @@ fun MainAppContent(
             composable(Screen.Passbook.route) {
                 PassbookScreen(
                     viewModel = transactionViewModel,
-                    preferenceManager = preferenceManager,
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
                     }
@@ -239,11 +331,14 @@ fun MainAppContent(
 
             // Tab 3: Settings
             composable(Screen.Settings.route) {
+                val profileViewModel: ProfileViewModel = hiltViewModel()
                 SettingsScreen(
                     viewModel = settingsViewModel,
+                    transactionViewModel = transactionViewModel,
+                    profileViewModel = profileViewModel,
                     onLogoutClick = {
-                        settingsViewModel.setIsOnboarded(false)
-                        navController.navigate(Screen.Onboarding.route) {
+                        authViewModel.signOut()
+                        navController.navigate(Screen.Login.route) {
                             popUpTo(Screen.Home.route) { inclusive = true }
                         }
                     },
@@ -258,7 +353,7 @@ fun MainAppContent(
 
             // Sub-screen 1: App Settings (Voice, Language, Alert Customization)
             composable(Screen.AppSettings.route) {
-                AppSettingsScreen(
+                VoiceBehaviour(
                     navController = navController,
                     settingsViewModel = settingsViewModel
                 )
@@ -266,7 +361,16 @@ fun MainAppContent(
 
             // Sub-screen 2: Notifications List (Alerts, System & Payment Reminders)
             composable(Screen.Notifications.route) {
+                val notificationsViewModel: NotificationsViewModel = hiltViewModel()
                 NotificationsScreen(
+                    navController = navController,
+                    viewModel = notificationsViewModel
+                )
+            }
+
+            composable(Screen.AutoPay.route) {
+                AutoPayScreen(
+                    viewModel = mandateViewModel,
                     navController = navController
                 )
             }

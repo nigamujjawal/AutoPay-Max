@@ -4,13 +4,62 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import com.appversal.appstorys.AppStorys
+import com.uj.appstorysautopaymanager.domain.auth.usecase.GetStoredUserUseCase
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltAndroidApp
 class AutoPayApplication : Application() {
+
+    @Inject
+    lateinit var getStoredUserUseCase: GetStoredUserUseCase
+
     override fun onCreate() {
         super.onCreate()
+
+        // userId is blank on purpose - the app's real per-user identity (Firebase uid) isn't
+        // known yet this early (Application.onCreate() runs before login, and reading it would
+        // mean a blocking Room query on the main thread). The SDK generates its own anonymous id
+        // until one of the two identify paths below actually runs.
+        AppStorys.initialize(
+            this,
+            appId = BuildConfig.APPSTORYS_APP_ID,
+            accountId = BuildConfig.APPSTORYS_ACCOUNT_ID,
+            userId = "",
+            navigateToScreen = {
+             navigateToScreen(it)
+            }
+        )
+
+        // Path 1 (fresh login): AuthRepositoryImpl.verifyOtp() calls AppStorys.setUserId()
+        // itself right after a new sign-in succeeds.
+        // Path 2 (already signed in): a cold start with an existing session never runs
+        // verifyOtp() again, so nothing would otherwise identify a returning user - check Room
+        // here instead, off the main thread.
+        CoroutineScope(Dispatchers.IO).launch {
+            getStoredUserUseCase()?.let { AppStorys.setUserId(it.uid) }
+        }
+
         createNotificationChannel()
+    }
+
+    // Application has no NavController of its own, so this just forwards to whatever
+    // MainActivity's Composable registered - every navigateToScreen call in the SDK fires from a
+    // click inside an already-composed overlay (tooltip/banner/widget tap), so that handler is
+    // guaranteed to be set by the time this can ever run; no Activity-restart plumbing needed.
+    // The name string must exactly match one of the Screen.*.route values in
+    // ui/navigation/Screen.kt - whoever configures campaigns on the AppStorys dashboard needs to
+    // use those same route strings.
+    fun navigateToScreen(name: String) {
+        navigateToScreenHandler?.invoke(name)
+    }
+
+    companion object {
+        var navigateToScreenHandler: ((String) -> Unit)? = null
     }
 
     private fun createNotificationChannel() {

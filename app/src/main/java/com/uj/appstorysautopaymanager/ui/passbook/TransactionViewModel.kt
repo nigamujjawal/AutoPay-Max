@@ -78,7 +78,12 @@ class TransactionViewModel @Inject constructor(
             val cursor = contentResolver.query(
                 Telephony.Sms.Inbox.CONTENT_URI,
                 arrayOf(Telephony.Sms.Inbox._ID, Telephony.Sms.Inbox.BODY, Telephony.Sms.Inbox.DATE, Telephony.Sms.Inbox.ADDRESS),
-                null, null, Telephony.Sms.Inbox.DEFAULT_SORT_ORDER
+                null, null,
+                // Oldest first, not DEFAULT_SORT_ORDER ("date DESC") - mandate create/revoke
+                // reconciliation (cancelActiveMandatesByMerchant) depends on processing a
+                // merchant's SMS in chronological order, or a revoke gets seen before the
+                // create it's meant to cancel and becomes a no-op.
+                "${Telephony.Sms.Inbox.DATE} ASC"
             )
 
             cursor?.use { c ->
@@ -93,14 +98,29 @@ class TransactionViewModel @Inject constructor(
                         val body = c.getString(bodyIndex)
                         val date = c.getLong(dateIndex)
                         val address = c.getString(addressIndex) ?: "Unknown"
-                        val smsId = "${address}_${date}"
+                        // Content-based - must match SmsReceiver's smsId formula exactly, or the
+                        // same SMS picked up live vs. by this backfill gets two different ids
+                        // and duplicates in Passbook (Sms.Inbox.DATE != SmsMessage.timestampMillis
+                        // for the same message).
+                        val smsId = "${address}_${body}"
 
                         if (!repository.exists(smsId)) {
-                            val parsed = SmsParser.parseSms(body, date, smsId)
+                            val parsed = SmsParser.parseSms(body, date, smsId, address)
                             if (parsed != null) {
-                                repository.insertTransaction(parsed.transaction)
-                                parsed.mandate?.let {
-                                    repository.insertMandate(it)
+                                if (parsed.mandate != null) {
+                                    // See SmsReceiver / AutoPayRepository.applyMandateEvent: skip
+                                    // the Passbook entry for a mandate event that just
+                                    // reconfirms an already-known state (e.g. bank + Paytm both
+                                    // confirming the same setup).
+                                    val shouldRecord = repository.applyMandateEvent(parsed.mandate)
+                                    if (shouldRecord) {
+                                        repository.insertTransaction(parsed.transaction)
+                                    }
+                                } else {
+                                    // Regular (non-autopay) transaction: reconcile against a UPI
+                                    // app notification reporting the same real payment - see
+                                    // AutoPayRepository.applyTransactionEvent.
+                                    repository.applyTransactionEvent(parsed.transaction)
                                 }
                             }
                         }
@@ -114,27 +134,4 @@ class TransactionViewModel @Inject constructor(
         }
     }
 
-    fun deleteTransaction(txn: Transaction) {
-        viewModelScope.launch {
-            repository.deleteTransaction(txn)
-        }
-    }
-
-    fun convertToAutoPay(txn: Transaction, context: Context, preferenceManager: com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager) {
-        viewModelScope.launch {
-            val mandate = com.uj.appstorysautopaymanager.data.local.entity.Mandate(
-                merchant = txn.merchant,
-                amount = txn.amount,
-                frequency = "MONTHLY",
-                nextExpectedDebit = System.currentTimeMillis() + (30L * 24L * 60L * 60L * 1000L),
-                bank = txn.bankName,
-                status = "ACTIVE",
-                referenceNumber = txn.referenceNumber
-            )
-            repository.insertMandate(mandate)
-            repository.updateTransaction(txn.copy(isAutoPay = true))
-            val ttsHelper = com.uj.appstorysautopaymanager.tts.TextToSpeechHelper(context, preferenceManager)
-            ttsHelper.speak("AutoPay set for ${txn.merchant} of ${txn.amount.toInt()} rupees.")
-        }
-    }
 }

@@ -12,20 +12,38 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+// Social-proof pill on the onboarding screen - picked once per screen visit so it doesn't show
+// the exact same name/city to every single user.
+private val RECENT_ACTIVATIONS = listOf(
+    "Vikram Singh" to "Mumbai",
+    "Priya Sharma" to "Delhi",
+    "Rahul Verma" to "Bengaluru",
+    "Ananya Iyer" to "Chennai",
+    "Arjun Mehta" to "Pune",
+    "Sneha Reddy" to "Hyderabad",
+    "Karan Malhotra" to "Ahmedabad",
+    "Neha Kapoor" to "Kolkata",
+    "Rohan Gupta" to "Jaipur",
+    "Divya Nair" to "Kochi"
+)
 
 @Composable
 fun OnboardingScreen(
     onStartTrialClick: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+    val (activationName, activationCity) = remember { RECENT_ACTIVATIONS.random() }
 
     Box(
         modifier = Modifier
@@ -45,9 +63,7 @@ fun OnboardingScreen(
             // Top notification pill banner
             Box(
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .border(1.dp, Color(0xFFFFB074), CircleShape)
-                    .background(Color(0xFFFFF9F5))
+                    .border(1.dp, Color(0xFFFFB074), shape = RoundedCornerShape(12.dp))
                     .padding(horizontal = 16.dp, vertical = 6.dp)
             ) {
                 Row(
@@ -61,7 +77,7 @@ fun OnboardingScreen(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = "Vikram Singh just activated from Mumbai",
+                        text = "$activationName just activated from $activationCity",
                         color = Color(0xFFFF7600),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
@@ -72,12 +88,23 @@ fun OnboardingScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Main headline
-            Text(
-                text = "Start your FREE trial for ₹299",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B)
-            )
+            Row(
+
+            ) {
+                Text(
+                    text = "Start your FREE trial for ",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFF1E293B)
+                )
+                Text(
+                    text = "₹299",
+                    textDecoration = TextDecoration.LineThrough,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color(0xFF1E293B)
+                )
+            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -256,8 +283,8 @@ fun FeatureItem(
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(14.dp))
-                .border(1.dp, Color(0xFFFFD4B8), RoundedCornerShape(14.dp))
-                .background(Color(0xFFFFF9F5)),
+                .border(1.dp, Color(0xFFFFD4B8), RoundedCornerShape(14.dp)),
+//                .background(Color(0xFFFFF9F5)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -284,8 +311,7 @@ fun UpiBadge(name: String, brandColor: Color) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(Color(0xFFF8FAFC))
-            .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(8.dp))
+            .clip(shape = RoundedCornerShape(8.dp))
             .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         Text(

@@ -2,6 +2,7 @@ package com.uj.appstorysautopaymanager.ui.autopay
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uj.appstorysautopaymanager.data.local.entity.Category
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import com.uj.appstorysautopaymanager.data.repository.AutoPayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,9 @@ class MandateViewModel @Inject constructor(
     val mandates: StateFlow<List<Mandate>> = repository.allMandates
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    val categories: StateFlow<List<Category>> = repository.allCategories
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     fun addMandate(mandate: Mandate, context: android.content.Context) {
         viewModelScope.launch {
             repository.insertMandate(mandate)
@@ -32,12 +36,6 @@ class MandateViewModel @Inject constructor(
     fun updateMandate(mandate: Mandate) {
         viewModelScope.launch {
             repository.updateMandate(mandate)
-        }
-    }
-
-    fun deleteMandate(mandate: Mandate) {
-        viewModelScope.launch {
-            repository.deleteMandate(mandate)
         }
     }
 
