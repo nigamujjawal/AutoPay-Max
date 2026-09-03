@@ -35,6 +35,7 @@ class ReminderWorker(
         val repository = entryPoint.repository()
         val preferenceManager = entryPoint.preferenceManager()
 
+        val currencySymbol = preferenceManager.currencyFlow.first()
         val bills = billDao.getAllBills().first()
         val now = System.currentTimeMillis()
 
@@ -47,9 +48,9 @@ class ReminderWorker(
             if (daysRemaining >= 0 && (daysRemaining == bill.reminderDays || daysRemaining == 0)) {
                 val title = "Upcoming Bill Alert"
                 val text = when (daysRemaining) {
-                    0 -> "Your bill for ${bill.title} of ₹${bill.amount} is due TODAY!"
-                    1 -> "Your bill for ${bill.title} of ₹${bill.amount} is due tomorrow!"
-                    else -> "Your bill for ${bill.title} of ₹${bill.amount} is due in $daysRemaining days."
+                    0 -> "Your bill for ${bill.title} of $currencySymbol${bill.amount} is due TODAY!"
+                    1 -> "Your bill for ${bill.title} of $currencySymbol${bill.amount} is due tomorrow!"
+                    else -> "Your bill for ${bill.title} of $currencySymbol${bill.amount} is due in $daysRemaining days."
                 }
                 NotificationHelper.notify(
                     context = applicationContext,

@@ -1,6 +1,5 @@
 package com.uj.appstorysautopaymanager.ui.settings
 
-import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
+import com.uj.appstorysautopaymanager.tts.AnnouncementKind
 import com.uj.appstorysautopaymanager.tts.TextToSpeechHelper
 
 // SliderState.value is the actual value within valueRange, not a 0..1 fraction -
@@ -47,7 +47,7 @@ fun VoiceBehaviour(
 ) {
     val context = LocalContext.current
 
-    val currentLanguage by settingsViewModel.language.collectAsState()
+    val currentSpeechLanguage by settingsViewModel.speechLanguage.collectAsState()
     val voiceEngine by settingsViewModel.voiceEngine.collectAsState()
     val voiceVolume by settingsViewModel.voiceVolume.collectAsState()
     val speechSpeed by settingsViewModel.speechSpeed.collectAsState()
@@ -57,11 +57,14 @@ fun VoiceBehaviour(
     var volumeValue by remember(voiceVolume) { mutableFloatStateOf(voiceVolume) }
     var speedValue by remember(speechSpeed) { mutableFloatStateOf(speechSpeed) }
 
+    // Paired with its Locale/TTS language code (what TextToSpeechHelper actually needs) - the
+    // picker used to store the display string itself via setLanguage(), a different preference
+    // TextToSpeechHelper never read, so picking a language here never changed the spoken voice.
     val languages = remember {
         listOf(
-            "English", "Hindi (हिंदी)", "Marathi (मराठी)", "Gujarati (ગુજરાતી)",
-            "Tamil (தமிழ்)", "Telugu (తెలుగు)", "Kannada (ಕನ್ನಡ)", "Bengali (বাংলা)",
-            "Punjabi (ਪੰਜਾਬੀ)"
+            "English" to "en", "Hindi (हिंदी)" to "hi", "Marathi (मराठी)" to "mr", "Gujarati (ગુજરાતી)" to "gu",
+            "Tamil (தமிழ்)" to "ta", "Telugu (తెలుగు)" to "te", "Kannada (ಕನ್ನಡ)" to "kn", "Bengali (বাংলা)" to "bn",
+            "Punjabi (ਪੰਜਾਬੀ)" to "pa"
         )
     }
 
@@ -160,15 +163,15 @@ fun VoiceBehaviour(
                                         modifier = Modifier.fillMaxWidth(),
                                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                                     ) {
-                                        rowLangs.forEach { lang ->
-                                            val isSelected = currentLanguage == lang || (currentLanguage == "English" && lang == "English") || (currentLanguage == "Marathi" && lang.startsWith("Marathi"))
+                                        rowLangs.forEach { (displayName, code) ->
+                                            val isSelected = currentSpeechLanguage == code
                                             Box(
                                                 modifier = Modifier
                                                     .weight(1f)
                                                     .clip(CircleShape)
                                                     .background(if (isSelected) Color(0xFFFF5E00) else Color(0xFFF8FAFC))
                                                     .border(1.dp, if (isSelected) Color(0xFFFF5E00) else Color(0xFFF1F5F9), CircleShape)
-                                                    .clickable { settingsViewModel.setLanguage(lang) }
+                                                    .clickable { settingsViewModel.setSpeechLanguage(code) }
                                                     .padding(horizontal = 12.dp, vertical = 10.dp),
                                                 contentAlignment = Alignment.Center
                                             ) {
@@ -185,7 +188,7 @@ fun VoiceBehaviour(
                                                         )
                                                     }
                                                     Text(
-                                                        text = lang,
+                                                        text = displayName,
                                                         fontSize = 12.sp,
                                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                                         color = if (isSelected) Color.White else Color(0xFF334155),
@@ -564,7 +567,8 @@ fun VoiceBehaviour(
                                 Button(
                                     onClick = {
                                         val ttsHelper = TextToSpeechHelper(context, PreferenceManager(context))
-                                        ttsHelper.speak("Payment received rupees 100 on SoundBox One")
+                                        ttsHelper.speak(AnnouncementKind.CREDIT_RECEIVED, "AutoPay Max", 100)
+                                        settingsViewModel.sendTestNotification(context)
                                         Toast.makeText(context, "Playing test alert tone!", Toast.LENGTH_SHORT).show()
                                     },
                                     modifier = Modifier

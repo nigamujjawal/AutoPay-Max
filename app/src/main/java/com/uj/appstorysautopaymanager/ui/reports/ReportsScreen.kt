@@ -28,7 +28,8 @@ import com.uj.appstorysautopaymanager.ui.theme.*
 
 @Composable
 fun ReportsScreen(
-    dashboardViewModel: DashboardViewModel
+    dashboardViewModel: DashboardViewModel,
+    currencySymbol: String = "₹"
 ) {
     val stats by dashboardViewModel.dashboardStats.collectAsState()
     val allTxns by dashboardViewModel.allTransactions.collectAsState()
@@ -202,7 +203,7 @@ fun ReportsScreen(
                     monthlyData.forEach { (month, amt) ->
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = month, color = TextWhite, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-                            Text(text = "₹%.0f".format(amt), color = TextGray, fontSize = 10.sp)
+                            Text(text = "$currencySymbol%.0f".format(amt), color = TextGray, fontSize = 10.sp)
                         }
                     }
                 }

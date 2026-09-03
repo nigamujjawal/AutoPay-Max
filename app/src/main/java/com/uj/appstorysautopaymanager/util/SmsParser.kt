@@ -6,11 +6,16 @@ import java.util.regex.Pattern
 
 object SmsParser {
 
-    // "+ ₹500" style leading-plus credit convention (some bank SMS), confirmed real wording via
-    // com.uj.appstoryssoundbox's sibling parser.
-    private val PLUS_CREDIT_PATTERN = Pattern.compile("(?i)\\+\\s*(?:₹|rs\\.?|inr)")
+    // TRAI's DLT registration rules require every real transactional SMS (bank/UPI) to originate
+    // from a 6-character alphanumeric sender header (e.g. "VM-HDFCBK", "AD-SBIINB", or just
+    // "HDFCBK") - never a plain phone number. That's the one signal available here that an
+    // attacker can't fake by simply texting the victim from a real phone: this rejects exactly
+    // that spoof (e.g. "Received Rs.500 from X" sent from an ordinary 10-digit number).
+    private val PLAIN_PHONE_NUMBER_SENDER = Pattern.compile("^\\+?\\d{7,15}$")
 
     fun parseSms(smsBody: String, smsDate: Long, smsId: String, senderAddress: String = ""): ParsedResult? {
+        if (PLAIN_PHONE_NUMBER_SENDER.matcher(senderAddress.trim()).matches()) return null
+
         val lowercaseBody = smsBody.lowercase()
 
         // 1. Detect if it's a financial transaction (credit/debit/autopay/mandate)
@@ -45,7 +50,7 @@ object SmsParser {
                        lowercaseBody.contains("sent you") ||
                        lowercaseBody.contains("upi-cr") ||
                        lowercaseBody.contains("upi credit") ||
-                       PLUS_CREDIT_PATTERN.matcher(smsBody).find()
+                       SmsPatternConfig.plusCreditPattern.matcher(smsBody).find()
 
         val isMandate = lowercaseBody.contains("mandate") || 
                         lowercaseBody.contains("autopay") || 
@@ -83,8 +88,7 @@ object SmsParser {
         // reliable than scanning for the first Rs/INR figure anywhere in the message, which
         // can just as easily match the running balance ("AvlBal: Rs9548.54") when the actual
         // transaction amount has no currency prefix of its own.
-        val keywordAmountPattern = Pattern.compile("(?i)(?:debited|credited|received|rcvd|deducted|amount(?:\\s+of)?)\\s+(?:with\\s+)?(?:rs\\.?|inr|₹)?\\s*([\\d,]+(?:\\.\\d{1,2})?)")
-        val keywordAmountMatcher = keywordAmountPattern.matcher(smsBody)
+        val keywordAmountMatcher = SmsPatternConfig.keywordAmountPattern.matcher(smsBody)
         if (keywordAmountMatcher.find()) {
             val amountStr = keywordAmountMatcher.group(1)?.replace(",", "")
             amount = amountStr?.toDoubleOrNull() ?: 0.0
@@ -93,8 +97,7 @@ object SmsParser {
         if (amount == 0.0) {
             // Fallback: first Rs/INR/₹ figure anywhere (e.g. "Rs.39.09 Dr. from A/C...", which
             // has no debited/credited/deducted/amount keyword before the number at all).
-            val genericAmountPattern = Pattern.compile("(?i)(?:rs\\.?|inr|₹)\\s*([\\d,]+(?:\\.\\d{1,2})?)")
-            val genericAmountMatcher = genericAmountPattern.matcher(smsBody)
+            val genericAmountMatcher = SmsPatternConfig.genericAmountPattern.matcher(smsBody)
             if (genericAmountMatcher.find()) {
                 val amountStr = genericAmountMatcher.group(1)?.replace(",", "")
                 amount = amountStr?.toDoubleOrNull() ?: 0.0
@@ -113,8 +116,7 @@ object SmsParser {
         if (senderBankCode != null) {
             bankName = senderBankCode.uppercase()
         } else {
-            val bankPattern = Pattern.compile("(?i)\\b(hdfc|icici|sbi|axis|kotak|pnb|bob|hsbc|citi|canara|yesbank|unionb|paytm|phonepe|iob)\\b")
-            val bankMatcher = bankPattern.matcher(smsBody)
+            val bankMatcher = SmsPatternConfig.bankPattern.matcher(smsBody)
             if (bankMatcher.find()) {
                 bankName = bankMatcher.group(1)?.uppercase() ?: "Unknown Bank"
             }
@@ -122,13 +124,11 @@ object SmsParser {
 
         // 4. Extract Masked Account Number
         var accountNumber = "XXXX"
-        val accPattern = Pattern.compile("(?i)(?:a/c|acct|account|card)\\s*(?:no\\.?\\s*)?x*(\\d{4})")
-        val accMatcher = accPattern.matcher(smsBody)
+        val accMatcher = SmsPatternConfig.accountPattern.matcher(smsBody)
         if (accMatcher.find()) {
             accountNumber = "XX" + accMatcher.group(1)
         } else {
-            val altAccPattern = Pattern.compile("(?i)\\b\\*\\*(\\d{4})\\b")
-            val altAccMatcher = altAccPattern.matcher(smsBody)
+            val altAccMatcher = SmsPatternConfig.accountAltPattern.matcher(smsBody)
             if (altAccMatcher.find()) {
                 accountNumber = "XX" + altAccMatcher.group(1)
             }
@@ -137,8 +137,7 @@ object SmsParser {
         // 5. Extract UPI / Transaction Reference Number
         var refNo = ""
         // Optional "No"/"No." filler (BOB: "UPI Ref No 212942376732", no colon at all)
-        val refPattern = Pattern.compile("(?i)(?:upi ref|txn|ref|rrn|transaction id|id)\\s*(?:no\\.?)?\\s*:?\\s*(\\d{8,16})")
-        val refMatcher = refPattern.matcher(smsBody)
+        val refMatcher = SmsPatternConfig.refPattern.matcher(smsBody)
         if (refMatcher.find()) {
             refNo = refMatcher.group(1) ?: ""
         }
@@ -186,16 +185,14 @@ object SmsParser {
             // NPCI e-mandate template: "...created/revoked a mandate on <merchant> for a
             // frequency of...". Bounded to "for a frequency" so it doesn't spill into that
             // trailing clause the way the generic to/at/for fallback below does.
-            val mandateMerchantPattern = Pattern.compile("(?i)mandate\\s+on\\s+(.+?)\\s+for\\s+a\\s+frequency")
-            val mandateMerchantMatcher = mandateMerchantPattern.matcher(smsBody)
+            val mandateMerchantMatcher = SmsPatternConfig.mandateMerchantPattern.matcher(smsBody)
             if (mandateMerchantMatcher.find()) {
                 val candidate = mandateMerchantMatcher.group(1)?.trim() ?: ""
                 if (candidate.isNotEmpty()) merchant = candidate
             } else {
                 // Paytm template: "Automatic payment of Rs.X for <merchant> has been setup
                 // successfully". Bounded to "has been setup successfully" for the same reason.
-                val paytmMerchantPattern = Pattern.compile("(?i)for\\s+(.+?)\\s+has\\s+been\\s+setup\\s+successfully")
-                val paytmMerchantMatcher = paytmMerchantPattern.matcher(smsBody)
+                val paytmMerchantMatcher = SmsPatternConfig.paytmMerchantPattern.matcher(smsBody)
                 if (paytmMerchantMatcher.find()) {
                     val candidate = paytmMerchantMatcher.group(1)?.trim() ?: ""
                     if (candidate.isNotEmpty()) merchant = candidate
@@ -209,8 +206,7 @@ object SmsParser {
             // below can't capture (it stops at the first '.' and truncates the VPA). Bounded
             // by the sentence-ending ". " so a VPA's own internal '.' (no trailing space)
             // doesn't end the match early.
-            val vpaMerchantPattern = Pattern.compile("(?i)cr\\.?\\s+to\\s+(\\S+?)\\.\\s")
-            val vpaMerchantMatcher = vpaMerchantPattern.matcher(smsBody)
+            val vpaMerchantMatcher = SmsPatternConfig.vpaMerchantPattern.matcher(smsBody)
             if (vpaMerchantMatcher.find()) {
                 val candidate = vpaMerchantMatcher.group(1)?.trim() ?: ""
                 if (candidate.isNotEmpty()) merchant = candidate
@@ -220,8 +216,7 @@ object SmsParser {
         if (merchant == "Merchant") {
             // "<Name> paid you"/"<Name> sent you" - captures the real payer's name for this
             // direction-reversed UPI wording (confirmed via the sibling SoundBox parser).
-            val paidYouPattern = Pattern.compile("(?i)(.+?)\\s+(?:paid|sent)\\s+you\\s+(?:₹|rs\\.?|inr)")
-            val paidYouMatcher = paidYouPattern.matcher(smsBody)
+            val paidYouMatcher = SmsPatternConfig.paidYouMerchantPattern.matcher(smsBody)
             if (paidYouMatcher.find()) {
                 val candidate = paidYouMatcher.group(1)?.trim() ?: ""
                 if (candidate.isNotEmpty()) merchant = candidate
@@ -229,8 +224,7 @@ object SmsParser {
         }
 
         if (merchant == "Merchant") {
-            val merchantPattern = Pattern.compile("(?i)(?:to|at|for)\\s+([a-zA-Z0-9]+(?:\\s+[a-zA-Z0-9]+){0,2})")
-            val merchantMatcher = merchantPattern.matcher(smsBody)
+            val merchantMatcher = SmsPatternConfig.genericMerchantPattern.matcher(smsBody)
             if (merchantMatcher.find()) {
                 val candidate = merchantMatcher.group(1)?.trim() ?: ""
                 val lowerCandidate = candidate.lowercase()

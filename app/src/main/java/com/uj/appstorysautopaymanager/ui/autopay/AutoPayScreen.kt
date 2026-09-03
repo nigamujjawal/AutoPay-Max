@@ -1,6 +1,7 @@
 package com.uj.appstorysautopaymanager.ui.autopay
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -41,11 +42,23 @@ private val Placeholder = Color(0xFFAEAEBE)
 private val PaymentApps = listOf("GPay", "PhonePe", "Paytm", "Amazon Pay", "Other")
 private val Frequencies = listOf("Weekly", "Monthly", "Quarterly", "Yearly")
 
+private fun frequencyOffsetMillis(frequency: String): Long {
+    val days = when (frequency) {
+        "Weekly" -> 7L
+        "Monthly" -> 30L
+        "Quarterly" -> 90L
+        "Yearly" -> 365L
+        else -> 30L
+    }
+    return days * 24 * 60 * 60 * 1000
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AutoPayScreen(
     viewModel: MandateViewModel,
-    navController: NavController
+    navController: NavController,
+    currencySymbol: String = "₹"
 ) {
     val context = LocalContext.current
     val categories by viewModel.categories.collectAsState()
@@ -53,10 +66,19 @@ fun AutoPayScreen(
     var merchant by remember { mutableStateOf("") }
     var amountText by remember { mutableStateOf("") }
     var frequency by remember { mutableStateOf("Monthly") }
-    var nextDueDate by remember { mutableLongStateOf(System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000) }
+    var nextDueDate by remember { mutableLongStateOf(System.currentTimeMillis() + frequencyOffsetMillis("Monthly")) }
+    // Once the user has actually picked a date themselves, switching frequency shouldn't silently
+    // discard that choice - only the auto-computed placeholder should track frequency.
+    var userPickedDate by remember { mutableStateOf(false) }
     var category by remember { mutableStateOf("") }
     var paymentApp by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
+
+    LaunchedEffect(frequency) {
+        if (!userPickedDate) {
+            nextDueDate = System.currentTimeMillis() + frequencyOffsetMillis(frequency)
+        }
+    }
 
     val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
     val isValid = merchant.isNotBlank() && (amountText.toDoubleOrNull() ?: 0.0) > 0.0
@@ -100,6 +122,7 @@ fun AutoPayScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .imePadding()
                 .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
@@ -120,7 +143,7 @@ fun AutoPayScreen(
             AutoPayField(
                 value = amountText,
                 onValueChange = { amountText = it.filter { c -> c.isDigit() || c == '.' } },
-                placeholder = "Amount (₹)",
+                placeholder = "Amount ($currencySymbol)",
                 keyboardType = KeyboardType.Number
             )
 
@@ -233,6 +256,7 @@ fun AutoPayScreen(
                         nextDueDate = Calendar.getInstance().apply {
                             set(utc.get(Calendar.YEAR), utc.get(Calendar.MONTH), utc.get(Calendar.DAY_OF_MONTH))
                         }.timeInMillis
+                        userPickedDate = true
                     }
                     showDatePicker = false
                 }) {
@@ -319,58 +343,67 @@ private fun FrequencyChip(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AutoPayDropdown(
     selected: String,
     options: List<String>,
     onSelect: (String) -> Unit
 ) {
+    // Not ExposedDropdownMenu: that renders in a separately-positioned Popup that picks above vs.
+    // below the field based on available screen space, and flips to "above" the moment there's
+    // less room below than above - which is routinely the case for a field this far down a form.
+    // A plain inline expand is just the next sibling in this Column, so it can only ever appear
+    // below the field, no popup-positioning heuristics to fight.
     var expanded by remember { mutableStateOf(false) }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-        modifier = Modifier
-            .clip(RoundedCornerShape(14.dp))
-            .background(Color.White)
-    ) {
-        TextField(
-            value = selected,
-            onValueChange = {},
-            readOnly = true,
-            placeholder = { Text("Select", color = Placeholder) },
-            trailingIcon = {
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = LabelMuted)
-            },
-            shape = RoundedCornerShape(16.dp),
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = FieldBackground,
-                focusedContainerColor = FieldBackground,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                focusedTextColor = LabelDark,
-                unfocusedTextColor = LabelDark
-            )
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color.White)
+                .clip(RoundedCornerShape(16.dp))
+                .background(FieldBackground)
+                .clickable { expanded = !expanded }
+                .padding(horizontal = 18.dp, vertical = 16.dp)
         ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        onSelect(option)
-                        expanded = false
-                    }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = selected.ifBlank { "Select" },
+                    fontSize = 15.sp,
+                    color = if (selected.isBlank()) Placeholder else LabelDark
                 )
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = LabelMuted)
+            }
+        }
+
+        if (expanded) {
+            Column(
+                modifier = Modifier
+                    .padding(top = 6.dp)
+                    .widthIn(min = 140.dp)
+                    .heightIn(max = 240.dp)
+                    .verticalScroll(rememberScrollState())
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(Color.White)
+                    .border(1.dp, FieldBackground, RoundedCornerShape(14.dp))
+            ) {
+                options.forEach { option ->
+                    Text(
+                        text = option,
+                        fontSize = 15.sp,
+                        color = LabelDark,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onSelect(option)
+                                expanded = false
+                            }
+                            .padding(horizontal = 18.dp, vertical = 14.dp)
+                    )
+                }
             }
         }
     }

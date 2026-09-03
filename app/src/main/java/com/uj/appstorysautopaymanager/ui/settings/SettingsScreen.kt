@@ -220,7 +220,7 @@ fun SettingsScreen(
                         icon = Icons.Default.HelpOutline,
                         title = "Help & FAQ",
                         subtitle = "Browse answers on our help center",
-                        onClick = { openUrl(context, "https://autopay.com/help") }
+                        onClick = { openUrl(context, "https://autopaymax.com/help") }
                     )
                 }
             }
@@ -232,7 +232,7 @@ fun SettingsScreen(
                         icon = Icons.Default.ChatBubbleOutline,
                         title = "Contact Support",
                         subtitle = "Our team typically responds within 2-4 hours.",
-                        onClick = { openUrl(context, "https://autopay.com/support") }
+                        onClick = { openUrl(context, "https://autopaymax.com/support") }
                     )
                 }
             }
@@ -244,7 +244,7 @@ fun SettingsScreen(
                         icon = Icons.Default.ThumbUpOffAlt,
                         title = "Rate the App",
                         subtitle = "Love it? Leave a review!",
-                        onClick = { openUrl(context, "https://autopay.com/rate") }
+                        onClick = { openUrl(context, "https://autopaymax.com/rate") }
                     )
                 }
             }

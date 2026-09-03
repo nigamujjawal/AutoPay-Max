@@ -18,7 +18,7 @@ class PreferenceManager @Inject constructor(
     companion object {
         val THEME_KEY = stringPreferencesKey("theme")
         val CURRENCY_KEY = stringPreferencesKey("currency")
-        val LANGUAGE_KEY = stringPreferencesKey("language")
+        val CURRENCY_CODE_KEY = stringPreferencesKey("currency_code")
         val PIN_CODE_KEY = stringPreferencesKey("pin_code")
         val IS_BIOMETRIC_ENABLED_KEY = booleanPreferencesKey("is_biometric_enabled")
         val IS_VOICE_ALERTS_ENABLED_KEY = booleanPreferencesKey("is_voice_alerts_enabled")
@@ -36,7 +36,9 @@ class PreferenceManager @Inject constructor(
 
     val themeFlow: Flow<String> = context.dataStore.data.map { it[THEME_KEY] ?: "Light" }
     val currencyFlow: Flow<String> = context.dataStore.data.map { it[CURRENCY_KEY] ?: "₹" }
-    val languageFlow: Flow<String> = context.dataStore.data.map { it[LANGUAGE_KEY] ?: "English" }
+    // ISO 4217 code, e.g. for PaymentSyncWorker's backend `currency` field - currencyFlow's
+    // symbol alone is ambiguous ("$" is US/Australia/Mexico), this isn't.
+    val currencyCodeFlow: Flow<String> = context.dataStore.data.map { it[CURRENCY_CODE_KEY] ?: "INR" }
     val pinCodeFlow: Flow<String> = context.dataStore.data.map { it[PIN_CODE_KEY] ?: "" }
     val isBiometricEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_BIOMETRIC_ENABLED_KEY] ?: false }
     val isVoiceAlertsEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_VOICE_ALERTS_ENABLED_KEY] ?: true }
@@ -59,8 +61,8 @@ class PreferenceManager @Inject constructor(
         context.dataStore.edit { it[CURRENCY_KEY] = currency }
     }
 
-    suspend fun setLanguage(language: String) {
-        context.dataStore.edit { it[LANGUAGE_KEY] = language }
+    suspend fun setCurrencyCode(currencyCode: String) {
+        context.dataStore.edit { it[CURRENCY_CODE_KEY] = currencyCode }
     }
 
     suspend fun setPinCode(pin: String) {
