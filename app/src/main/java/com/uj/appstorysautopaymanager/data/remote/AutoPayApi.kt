@@ -44,4 +44,9 @@ interface AutoPayApi {
     // confirmed assumption (not a guess anymore): same SubscriptionDto shape as create.
     @POST("subscriptions/capture")
     suspend fun captureSubscription(@Body request: CaptureSubscriptionRequest): SubscriptionDto
+
+    @POST("subscriptions/verify-google-play")
+    suspend fun verifyGooglePlaySubscription(
+        @Body request: com.uj.appstorysautopaymanager.data.remote.dto.VerifyGooglePlaySubscriptionRequest
+    ): com.uj.appstorysautopaymanager.data.remote.dto.VerifyGooglePlaySubscriptionResponse
 }

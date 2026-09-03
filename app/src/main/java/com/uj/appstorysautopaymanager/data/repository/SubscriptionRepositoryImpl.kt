@@ -24,6 +24,30 @@ class SubscriptionRepositoryImpl @Inject constructor(
         api.captureSubscription(CaptureSubscriptionRequest(subscription_id = subscriptionId)).toDomain()
     }
 
+    override suspend fun verifyGooglePlaySubscription(
+        productId: String,
+        purchaseToken: String,
+        orderId: String?
+    ): Resource<Subscription> = safeApiCall {
+        val request = com.uj.appstorysautopaymanager.data.remote.dto.VerifyGooglePlaySubscriptionRequest(
+            productId = productId,
+            purchaseToken = purchaseToken,
+            orderId = orderId
+        )
+        val response = api.verifyGooglePlaySubscription(request)
+        Subscription(
+            id = response.subscriptionId,
+            userId = "",
+            provider = "google_play",
+            externalSubscriptionId = response.subscriptionId,
+            status = response.status,
+            startsAt = "",
+            endsAt = response.expiresAt,
+            createdAt = "",
+            updatedAt = ""
+        )
+    }
+
     private fun SubscriptionDto.toDomain() = Subscription(
         id = id,
         userId = user_id,

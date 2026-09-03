@@ -239,11 +239,18 @@ fun SubscriptionOfferScreen(
         ) {
             Text("Pay via", fontSize = 14.sp, color = Color(0xFF64748B))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                UpiBadge(name = "Paytm", brandColor = Color(0xFF00BAF2))
+                Text(
+                    text = "Google Play Billing",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E293B)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
+                    imageVector = Icons.Default.VerifiedUser,
                     contentDescription = null,
-                    tint = Color(0xFF64748B)
+                    tint = OrangeAccent,
+                    modifier = Modifier.size(16.dp)
                 )
             }
         }

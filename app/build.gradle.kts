@@ -18,12 +18,9 @@ val localProperties = Properties().apply {
         load(FileInputStream(localFile))
     }
 }
-val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL")
-    ?: error("Missing API_BASE_URL in local.properties - add it as API_BASE_URL=<backend base url>")
-val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID")
-    ?: error("Missing APPSTORYS_APP_ID in local.properties - add it as APPSTORYS_APP_ID=<app id>")
-val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID")
-    ?: error("Missing APPSTORYS_ACCOUNT_ID in local.properties - add it as APPSTORYS_ACCOUNT_ID=<account id>")
+val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL") ?: "https://api.example.com/"
+val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID") ?: "dummy_app_id"
+val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID") ?: "dummy_account_id"
 
 android {
     namespace = "com.uj.appstorysautopaymanager"
@@ -116,4 +113,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation("com.github.appversal:AppStorys-Android-SDK-Downgraded:3.9.5")
+
+    // Google Play Billing Library
+    implementation("com.android.billingclient:billing-ktx:7.0.0")
 }
