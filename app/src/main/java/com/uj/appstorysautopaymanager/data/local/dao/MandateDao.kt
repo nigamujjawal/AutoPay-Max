@@ -9,6 +9,11 @@ interface MandateDao {
     @Query("SELECT * FROM mandates WHERE status = 'ACTIVE' ORDER BY nextExpectedDebit DESC")
     fun getAllMandates(): Flow<List<Mandate>>
 
+    // For the Home list: keep cancelled mandates visible (sorted below the active ones) so the
+    // user can still open them. The reminder worker keeps using getAllMandates() (active only).
+    @Query("SELECT * FROM mandates ORDER BY CASE status WHEN 'ACTIVE' THEN 0 ELSE 1 END, nextExpectedDebit DESC")
+    fun getAllMandatesForDisplay(): Flow<List<Mandate>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMandate(mandate: Mandate): Long
 

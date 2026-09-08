@@ -6,6 +6,7 @@ import android.content.Intent
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.uj.appstorysautopaymanager.worker.GmailSyncWorker
 import com.uj.appstorysautopaymanager.worker.MandateReminderWorker
 import com.uj.appstorysautopaymanager.worker.ReminderWorker
 import java.util.concurrent.TimeUnit
@@ -15,6 +16,7 @@ class BootReceiver : BroadcastReceiver() {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
             scheduleBillReminders(context)
             scheduleMandateReminders(context)
+            GmailSyncWorker.schedule(context)
         }
     }
 

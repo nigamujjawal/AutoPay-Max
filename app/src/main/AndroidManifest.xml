@@ -7,10 +7,13 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- SMS permissions retained but the SMS/notification ingestion path is disconnected: the
+         autopay data source is now Gmail email-sync. SmsReceiver + UpiNotificationListenerService
+         are android:enabled="false" below. Remove these two permissions in a later cleanup. -->
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <!-- First network dependency in this app - required for Firebase Phone Auth (OTP). -->
+    <!-- Backend sync + Google sign-in + Gmail API. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -35,8 +38,11 @@
             </intent-filter>
         </activity>
 
+        <!-- Disconnected: autopay data now comes from Gmail email-sync, not SMS. Kept (dormant)
+             rather than deleted so it can be re-enabled without rebuilding the pipeline. -->
         <receiver
             android:name=".receiver.SmsReceiver"
+            android:enabled="false"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="999">
@@ -63,8 +69,10 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
+        <!-- Disconnected: see SmsReceiver note above. Dormant, not deleted. -->
         <service
             android:name=".receiver.UpiNotificationListenerService"
+            android:enabled="false"
             android:exported="false"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>

@@ -1,125 +1,112 @@
 package com.uj.appstorysautopaymanager.ui.auth
 
 import android.app.Activity
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
 import com.uj.appstorysautopaymanager.data.remote.SessionExpiredNotifier
-import com.uj.appstorysautopaymanager.domain.auth.model.OtpRequestState
 import com.uj.appstorysautopaymanager.domain.auth.usecase.GetStoredUserUseCase
-import com.uj.appstorysautopaymanager.domain.auth.usecase.SendOtpUseCase
+import com.uj.appstorysautopaymanager.domain.auth.usecase.SignInWithGoogleUseCase
 import com.uj.appstorysautopaymanager.domain.auth.usecase.SignOutUseCase
-import com.uj.appstorysautopaymanager.domain.auth.usecase.VerifyOtpUseCase
+import com.uj.appstorysautopaymanager.util.GmailAuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed interface LoginStep {
-    data object EnterPhone : LoginStep
-    data class EnterOtp(val phoneNumber: String, val verificationId: String) : LoginStep
+// One-shot outcomes of the connect flow, consumed by GoogleConnectScreen. Gmail authorization is
+// optional/non-fatal - Completed fires whether or not the read scope was granted.
+sealed interface ConnectEvent {
+    data class NeedsGmailResolution(val pendingIntent: android.app.PendingIntent) : ConnectEvent
+    data object Completed : ConnectEvent
+    data class Failed(val message: String) : ConnectEvent
 }
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val sendOtpUseCase: SendOtpUseCase,
-    private val verifyOtpUseCase: VerifyOtpUseCase,
+    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
     private val getStoredUserUseCase: GetStoredUserUseCase,
     private val signOutUseCase: SignOutUseCase,
-    private val sessionExpiredNotifier: SessionExpiredNotifier
+    private val sessionExpiredNotifier: SessionExpiredNotifier,
+    private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
     private val _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated: StateFlow<Boolean> = _isAuthenticated.asStateFlow()
 
-    // MainActivity's nav host collects this to force navigation back to Login from wherever the
-    // user happens to be - a 401 can arrive while they're on Settings, Passbook, anywhere.
+    // MainActivity's nav host collects this to force navigation back to the connect screen from
+    // wherever the user is - a 401 can arrive on any screen.
     val sessionExpired: SharedFlow<Unit> = sessionExpiredNotifier.events
 
-    private val _step = MutableStateFlow<LoginStep>(LoginStep.EnterPhone)
-    val step: StateFlow<LoginStep> = _step.asStateFlow()
+    private val _isConnecting = MutableStateFlow(false)
+    val isConnecting: StateFlow<Boolean> = _isConnecting.asStateFlow()
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+    private val _connectEvents = MutableSharedFlow<ConnectEvent>(extraBufferCapacity = 1)
+    val connectEvents: SharedFlow<ConnectEvent> = _connectEvents.asSharedFlow()
 
     init {
         viewModelScope.launch {
             _isAuthenticated.value = getStoredUserUseCase() != null
         }
-        // AuthInterceptor already cleared the token in Room the moment it saw the 401 - this
-        // still runs the full sign-out (Firebase included) so the app doesn't end up with a dead
-        // backend session but a live Firebase one.
         viewModelScope.launch {
             sessionExpiredNotifier.events.collect {
-                Log.d("AuthFlow", "sessionExpired received - forcing signOut() back to login")
+                Log.d("AuthFlow", "sessionExpired received - forcing signOut() back to connect screen")
                 signOut()
             }
         }
     }
 
-    fun sendOtp(phoneNumber: String, activity: Activity) {
-        _errorMessage.value = null
-        _isLoading.value = true
+    // Sign in with Google (Credential Manager), then grab the Gmail read scope - one user action.
+    fun connect(activity: Activity) {
+        if (_isConnecting.value) return
+        _isConnecting.value = true
         viewModelScope.launch {
-            sendOtpUseCase(phoneNumber, activity).collect { state ->
-                Log.d("AuthFlow", "viewModel step=${_step.value} received state=$state")
-                when (state) {
-                    is OtpRequestState.CodeSent -> {
-                        _isLoading.value = false
-                        _step.value = LoginStep.EnterOtp(phoneNumber, state.verificationId)
-                    }
-                    is OtpRequestState.AutoVerified -> {
-                        _isLoading.value = false
-                        _isAuthenticated.value = true
-                    }
-                    is OtpRequestState.Failed -> {
-                        _isLoading.value = false
-                        _errorMessage.value = state.message
-                    }
+            val user = signInWithGoogleUseCase(activity).getOrElse { e ->
+                Log.e("AuthFlow", "Google sign-in failed", e)
+                _isConnecting.value = false
+                _connectEvents.emit(ConnectEvent.Failed(e.message ?: "Google sign-in failed, please try again"))
+                return@launch
+            }
+            _isAuthenticated.value = true
+
+            when (val r = GmailAuthManager.authorize(activity)) {
+                is GmailAuthManager.AuthResult.Granted -> {
+                    preferenceManager.markGmailConnected(user.email)
+                    complete()
                 }
+                is GmailAuthManager.AuthResult.NeedsResolution ->
+                    _connectEvents.emit(ConnectEvent.NeedsGmailResolution(r.pendingIntent)) // stays "connecting" until the result
+                else -> complete() // Gmail denied/failed - proceed without it
             }
         }
     }
 
-    fun resendOtp(activity: Activity) {
-        val current = _step.value
-        if (current is LoginStep.EnterOtp) sendOtp(current.phoneNumber, activity)
-    }
-
-    fun verifyOtp(code: String) {
-        val current = _step.value
-        if (current !is LoginStep.EnterOtp) return
-        _errorMessage.value = null
-        _isLoading.value = true
+    fun onGmailResolutionResult(data: Intent?, activity: Activity) {
         viewModelScope.launch {
-            verifyOtpUseCase(current.verificationId, code)
-                .onSuccess {
-                    _isLoading.value = false
-                    _isAuthenticated.value = true
-                }
-                .onFailure { e ->
-                    _isLoading.value = false
-                    _errorMessage.value = e.message ?: "Incorrect code, please try again"
-                }
+            if (GmailAuthManager.resultFromIntent(activity, data) is GmailAuthManager.AuthResult.Granted) {
+                preferenceManager.markGmailConnected(preferenceManager.signedInEmailFlow.first())
+            }
+            complete()
         }
     }
 
-    fun backToPhoneEntry() {
-        _errorMessage.value = null
-        _step.value = LoginStep.EnterPhone
+    private suspend fun complete() {
+        _isConnecting.value = false
+        _connectEvents.emit(ConnectEvent.Completed)
     }
 
     fun signOut() {
         viewModelScope.launch {
             signOutUseCase()
             _isAuthenticated.value = false
-            _step.value = LoginStep.EnterPhone
         }
     }
 }

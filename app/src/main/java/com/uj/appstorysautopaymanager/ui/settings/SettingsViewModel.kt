@@ -70,6 +70,18 @@ class SettingsViewModel @Inject constructor(
     val isAutopayRemindersEnabled: StateFlow<Boolean> = preferenceManager.isAutopayRemindersEnabledFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
+    val isGmailConnected: StateFlow<Boolean> = preferenceManager.isGmailConnectedFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val gmailConnectedEmail: StateFlow<String> = preferenceManager.gmailConnectedEmailFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+
+    val isGmailReauthNeeded: StateFlow<Boolean> = preferenceManager.isGmailReauthNeededFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val signedInEmail: StateFlow<String> = preferenceManager.signedInEmailFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+
     private val _backupStatus = MutableSharedFlow<String>()
     val backupStatus = _backupStatus.asSharedFlow()
 
@@ -91,16 +103,26 @@ class SettingsViewModel @Inject constructor(
     fun setPushNotificationsEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setPushNotificationsEnabled(value) }
     fun setAutopayRemindersEnabled(value: Boolean) = viewModelScope.launch { preferenceManager.setAutopayRemindersEnabled(value) }
 
+    fun setGmailConnected(email: String) = viewModelScope.launch { preferenceManager.markGmailConnected(email) }
+
+    fun disconnectGmail() = viewModelScope.launch { preferenceManager.clearGmailConnection() }
+
+    fun triggerGmailSync(context: Context) =
+        com.uj.appstorysautopaymanager.worker.GmailSyncWorker.syncNow(context)
+
     // Fires through the same choke point every real alert uses (system banner + Notifications-
     // screen entry), so "Play Test Alert Tone" exercises the real push path, not a fake preview.
+    // Mirrors MandateReminderWorker's real "Upcoming AutoPay" reminder wording.
     fun sendTestNotification(context: Context) = viewModelScope.launch {
+        val currency = preferenceManager.currencyFlow.first()
         NotificationHelper.notify(
             context = context,
             repository = repository,
             preferenceManager = preferenceManager,
-            title = "Test upi payment",
-            body = "Received 100 from rahul kumar",
-            category = "Payments"
+            title = "Upcoming AutoPay",
+            body = "Netflix autopay of ${currency}499 is due in 2 days.",
+            category = "Payments",
+            isWarning = true
         )
     }
 

@@ -8,7 +8,10 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "auth_token")
 data class AuthTokenEntity(
     @PrimaryKey val uid: String,
-    val phoneNumber: String,
+    // Legacy column from the phone-OTP era - kept (written "") so the v8->v9 migration stays
+    // additive. Google sign-in fills `email` instead.
+    val phoneNumber: String = "",
+    val email: String = "",
     val idToken: String,
     // SoundBox backend session, obtained by exchanging idToken via POST /auth/firebase - this is
     // what's actually sent as the Bearer token for every other backend call, not idToken.

@@ -42,7 +42,8 @@ class UpiNotificationListenerService : NotificationListenerService() {
         val notifId = "notif_${sbn.key}"
         val postedAt = sbn.postTime
         val packageName = sbn.packageName
-        val ttsHelper = TextToSpeechHelper(applicationContext, preferenceManager)
+        // DEWIRED: detection no longer speaks. (This service is also android:enabled="false".)
+        // val ttsHelper = TextToSpeechHelper(applicationContext, preferenceManager)
 
         CoroutineScope(Dispatchers.IO).launch {
             if (repository.exists(notifId)) return@launch
@@ -63,12 +64,13 @@ class UpiNotificationListenerService : NotificationListenerService() {
                 repository.applyTransactionEvent(result.transaction)
             }
 
-            val kind = when {
-                result.mandate != null || result.transaction.isAutoPay -> AnnouncementKind.AUTOPAY_SET
-                result.transaction.transactionType == "CREDIT" -> AnnouncementKind.CREDIT_RECEIVED
-                else -> AnnouncementKind.DEBIT_PAID
-            }
-            ttsHelper.speak(kind, result.transaction.merchant, result.transaction.amount.toInt())
+            // DEWIRED: detection -> TTS. TTS now only fires on mandate reminders + manual setup.
+            // val kind = when {
+            //     result.mandate != null || result.transaction.isAutoPay -> AnnouncementKind.AUTOPAY_SET
+            //     result.transaction.transactionType == "CREDIT" -> AnnouncementKind.CREDIT_RECEIVED
+            //     else -> AnnouncementKind.DEBIT_PAID
+            // }
+            // ttsHelper.speak(kind, result.transaction.merchant, result.transaction.amount.toInt())
 
             val isCredit = result.transaction.transactionType == "CREDIT"
             val currencySymbol = preferenceManager.currencyFlow.first()

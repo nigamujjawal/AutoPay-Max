@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.appversal.appstorys.AppStorys
+import com.uj.appstorysautopaymanager.ui.navigation.Screen
 import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import java.text.SimpleDateFormat
@@ -58,12 +59,13 @@ private fun frequencyOffsetMillis(frequency: String): Long {
 fun AutoPayScreen(
     viewModel: MandateViewModel,
     navController: NavController,
-    currencySymbol: String = "₹"
+    currencySymbol: String = "₹",
+    prefillMerchant: String? = null
 ) {
     val context = LocalContext.current
     val categories by viewModel.categories.collectAsState()
 
-    var merchant by remember { mutableStateOf("") }
+    var merchant by remember { mutableStateOf(prefillMerchant.orEmpty()) }
     var amountText by remember { mutableStateOf("") }
     var frequency by remember { mutableStateOf("Monthly") }
     var nextDueDate by remember { mutableLongStateOf(System.currentTimeMillis() + frequencyOffsetMillis("Monthly")) }
@@ -127,10 +129,33 @@ fun AutoPayScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Manually track an autopay we couldn't detect from your SMS.",
+                text = "Fill in the subscription details below.",
                 fontSize = 14.sp,
                 color = LabelMuted
             )
+
+            val matchedApp = remember(merchant) { com.uj.appstorysautopaymanager.util.matchAutoPayApp(merchant) }
+            if (matchedApp != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(matchedApp.color),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = androidx.compose.ui.res.painterResource(id = matchedApp.iconRes),
+                            contentDescription = matchedApp.displayName,
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(matchedApp.displayName, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = LabelDark)
+                }
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
             AutoPayField(
@@ -216,7 +241,8 @@ fun AutoPayScreen(
                         ),
                         context
                     )
-                    navController.popBackStack()
+                    // Back past the tile picker straight to Home.
+                    navController.popBackStack(Screen.Home.route, inclusive = false)
                 },
                 enabled = isValid,
                 modifier = Modifier

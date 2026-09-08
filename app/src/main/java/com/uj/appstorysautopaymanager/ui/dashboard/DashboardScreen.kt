@@ -32,6 +32,7 @@ import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.data.local.entity.Mandate
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
 import com.uj.appstorysautopaymanager.util.matchAutoPayApp
+import com.uj.appstorysautopaymanager.util.merchantInitials
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,7 +41,7 @@ fun DashboardScreen(
     mandateViewModel: MandateViewModel,
     currencySymbol: String = "₹",
     onNotificationsClick: () -> Unit = {},
-    onSeeAllClick: () -> Unit = {}
+    onMandateClick: (Long) -> Unit = {}
 ) {
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()
@@ -50,8 +51,9 @@ fun DashboardScreen(
     var amountText by remember { mutableStateOf("") }
     var selectedFrequency by remember { mutableStateOf("Manual") }
 
-    val totalMonthlyCost = mandates.sumOf { it.amount }
-    val activeCount = mandates.size
+    val activeMandates = mandates.filter { it.status == "ACTIVE" }
+    val totalMonthlyCost = activeMandates.sumOf { it.amount }
+    val activeCount = activeMandates.size
 
     val displayTotal = totalMonthlyCost.toInt()
     val displayCount = activeCount
@@ -149,7 +151,7 @@ fun DashboardScreen(
                     }
                 }
 
-                // Section Header: Current Auto Payments | See All
+                // Section Header: Current Auto Payments
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -162,13 +164,6 @@ fun DashboardScreen(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color(0xFF1E293B)
-                    )
-                    Text(
-                        text = "See All",
-                        modifier = Modifier.clickable{onSeeAllClick()},
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFF5E00)
                     )
                 }
             }
@@ -201,7 +196,11 @@ fun DashboardScreen(
                     }
                 } else {
                     items(mandates, key = { it.id }) { mandate ->
-                        AutoPaymentRow(mandate = mandate, currencySymbol = currencySymbol)
+                        AutoPaymentRow(
+                            mandate = mandate,
+                            currencySymbol = currencySymbol,
+                            onClick = { onMandateClick(mandate.id) }
+                        )
                     }
                 }
             }
@@ -307,25 +306,19 @@ fun DashboardScreen(
 @Composable
 fun AutoPaymentRow(
     mandate: Mandate,
-    currencySymbol: String = "₹"
+    currencySymbol: String = "₹",
+    onClick: () -> Unit = {}
 ) {
     val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     val dueDateStr = df.format(Date(mandate.nextExpectedDebit))
+    val isActive = mandate.status == "ACTIVE"
 
     val daysUntilDue = remember(mandate.nextExpectedDebit) {
         val diff = mandate.nextExpectedDebit - System.currentTimeMillis()
         (diff / (1000 * 60 * 60 * 24)).coerceAtLeast(1)
     }
 
-    val initials = remember(mandate.merchant) {
-        val clean = mandate.merchant.replace("Bank of India", "").replace("Bank", "").trim()
-        val parts = clean.split(" ").filter { it.isNotBlank() }
-        if (parts.size >= 2) {
-            "${parts[0].firstOrNull()?.uppercase() ?: ""}${parts[1].firstOrNull()?.uppercase() ?: ""}"
-        } else {
-            clean.take(2).uppercase()
-        }
-    }
+    val initials = remember(mandate.merchant) { merchantInitials(mandate.merchant) }
 
     // High-frequency autopay merchants (streaming/telecom/food/insurance/investing) get a
     // recognizable brand-colored badge; anything else falls back to the generic gradient+initials.
@@ -336,6 +329,7 @@ fun AutoPaymentRow(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(Color.White)
+            .clickable { onClick() }
             .padding(14.dp)
     ) {
             Row(
@@ -419,10 +413,12 @@ fun AutoPaymentRow(
                             .padding(vertical = 2.dp)
                     ) {
                         Text(
-                            text = "Due in $daysUntilDue ${if (daysUntilDue == 1L) "day" else "days"}",
+                            text = if (isActive)
+                                "Due in $daysUntilDue ${if (daysUntilDue == 1L) "day" else "days"}"
+                            else "Cancelled",
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFF5E00)
+                            color = if (isActive) Color(0xFFFF5E00) else Color(0xFF94A3B8)
                         )
                     }
                 }

@@ -5,6 +5,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.ToneGenerator
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.util.Log
 import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
@@ -14,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.*
 
 class TextToSpeechHelper(
@@ -47,43 +49,81 @@ class TextToSpeechHelper(
         }
     }
 
+    // Fire-and-forget (UI contexts): returns immediately, speaks on the internal scope.
+    fun speak(kind: AnnouncementKind, merchant: String, amount: Int) {
+        scope.launch { speakInternal(kind, merchant, amount, awaitDone = false) }
+    }
+
+    // For background workers (MandateReminderWorker): suspends until the utterance finishes (or a
+    // 15s timeout), so the worker's process stays alive long enough for it to actually be heard.
+    // Uses QUEUE_ADD so consecutive calls play one after another instead of cutting each other off.
+    suspend fun speakBlocking(kind: AnnouncementKind, merchant: String, amount: Int) {
+        speakInternal(kind, merchant, amount, awaitDone = true)
+    }
+
     // Text is built here, not passed in, so the whole sentence changes with the speech-language
     // setting - not just the TTS engine's pronunciation accent on text that stayed English.
-    fun speak(kind: AnnouncementKind, merchant: String, amount: Int) {
-        scope.launch {
-            val isEnabled = preferenceManager.isVoiceAlertsEnabledFlow.first()
-            if (!isEnabled) return@launch
+    private suspend fun speakInternal(
+        kind: AnnouncementKind,
+        merchant: String,
+        amount: Int,
+        awaitDone: Boolean
+    ) {
+        if (!preferenceManager.isVoiceAlertsEnabledFlow.first()) return
+        awaitInit()
 
-            if (!isInitialized || tts == null) {
-                initializeTts()
-                var retries = 0
-                while (!isInitialized && retries < 15) {
-                    Thread.sleep(200)
-                    retries++
-                }
+        if (preferenceManager.playChimeFirstFlow.first()) {
+            playChime(preferenceManager.alertToneFlow.first())
+        }
+
+        val langCode = preferenceManager.speechLanguageFlow.first()
+        val speed = preferenceManager.speechSpeedFlow.first()
+        val voiceEngine = preferenceManager.voiceEngineFlow.first()
+        val currency = preferenceManager.currencyFlow.first()
+        val text = SpeechTemplates.build(langCode, kind, merchant, amount, currency)
+        val wantsFemale = voiceEngine.equals("Female Voice", ignoreCase = true)
+
+        val speech = tts ?: return
+        val langStatus = speech.setLanguage(Locale(langCode))
+        if (langStatus == TextToSpeech.LANG_MISSING_DATA || langStatus == TextToSpeech.LANG_NOT_SUPPORTED) {
+            Log.w("TTS", "Voice for '$langCode' not installed (status=$langStatus) - engine will fall back")
+        }
+        speech.setSpeechRate(speed)
+        val genderVoice = selectGenderVoice(speech, Locale(langCode), wantsFemale)
+        genderVoice?.let { speech.voice = it }
+        // Supplementary nudge even when a real gender-matched voice was found above.
+        speech.setPitch(if (wantsFemale) 1.05f else 0.95f)
+        Log.d("TTS_VOICE_DEBUG", "wantsFemale=$wantsFemale selectedVoice=${genderVoice?.name}")
+
+        if (!awaitDone) {
+            speech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "AutoPayTTS")
+            return
+        }
+
+        val id = "AutoPayTTS_${System.nanoTime()}"
+        withTimeoutOrNull(15_000) {
+            suspendCancellableCoroutine<Unit> { cont ->
+                speech.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {}
+                    override fun onDone(utteranceId: String?) {
+                        if (utteranceId == id && cont.isActive) cont.resumeWith(Result.success(Unit))
+                    }
+                    override fun onError(utteranceId: String?) {
+                        if (utteranceId == id && cont.isActive) cont.resumeWith(Result.success(Unit))
+                    }
+                })
+                speech.speak(text, TextToSpeech.QUEUE_ADD, null, id)
             }
+        }
+    }
 
-            if (preferenceManager.playChimeFirstFlow.first()) {
-                playChime(preferenceManager.alertToneFlow.first())
-            }
-
-            val langCode = preferenceManager.speechLanguageFlow.first()
-            val speed = preferenceManager.speechSpeedFlow.first()
-            val voiceEngine = preferenceManager.voiceEngineFlow.first()
-            val text = SpeechTemplates.build(langCode, kind, merchant, amount)
-            val wantsFemale = voiceEngine.equals("Female Voice", ignoreCase = true)
-
-            tts?.let { speech ->
-                speech.language = Locale(langCode)
-                speech.setSpeechRate(speed)
-                val genderVoice = selectGenderVoice(speech, Locale(langCode), wantsFemale)
-                genderVoice?.let { speech.voice = it }
-                // Kept as a supplementary nudge even when a real gender-matched voice was found
-                // above, and as the only signal left when it wasn't - harmless either way.
-                speech.setPitch(if (wantsFemale) 1.05f else 0.95f)
-                Log.d("TTS_VOICE_DEBUG", "wantsFemale=$wantsFemale selectedVoice=${genderVoice?.name}")
-                speech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "AutoPayTTS")
-            }
+    private suspend fun awaitInit() {
+        if (isInitialized && tts != null) return
+        if (tts == null) initializeTts()
+        var tries = 0
+        while (!isInitialized && tries < 25) {
+            delay(200)
+            tries++
         }
     }
 

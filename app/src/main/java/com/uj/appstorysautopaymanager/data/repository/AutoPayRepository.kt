@@ -113,6 +113,7 @@ class AutoPayRepository @Inject constructor(
 
     // Mandates
     val allMandates: Flow<List<Mandate>> = mandateDao.getAllMandates()
+    val allMandatesForDisplay: Flow<List<Mandate>> = mandateDao.getAllMandatesForDisplay()
     suspend fun insertMandate(mandate: Mandate): Long = mandateDao.insertMandate(mandate)
     suspend fun updateMandate(mandate: Mandate) = mandateDao.updateMandate(mandate)
     suspend fun getMandateByRef(ref: String): Mandate? = mandateDao.getMandateByRef(ref)

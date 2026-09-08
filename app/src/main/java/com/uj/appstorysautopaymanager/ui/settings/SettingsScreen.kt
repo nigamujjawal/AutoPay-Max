@@ -1,8 +1,19 @@
 package com.uj.appstorysautopaymanager.ui.settings
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,6 +28,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -25,9 +37,10 @@ import androidx.compose.ui.unit.sp
 import com.appversal.appstorys.AppStorys
 import com.appversal.appstorys.utils.appstorys
 import com.uj.appstorysautopaymanager.ui.dashboard.AutoPayTopHeader
-import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
 import com.uj.appstorysautopaymanager.ui.profile.ProfileUiEvent
 import com.uj.appstorysautopaymanager.ui.profile.ProfileViewModel
+import com.uj.appstorysautopaymanager.util.GmailAuthManager
+import kotlinx.coroutines.launch
 
 private fun openUrl(context: android.content.Context, url: String) {
     context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
@@ -36,22 +49,55 @@ private fun openUrl(context: android.content.Context, url: String) {
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
-    transactionViewModel: TransactionViewModel,
     profileViewModel: ProfileViewModel,
     onLogoutClick: () -> Unit,
     onNavigateToAppSettings: () -> Unit = {},
     onNotificationsClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    val activity = context as Activity
+    val scope = rememberCoroutineScope()
 
     val isVoiceAlertsEnabled by viewModel.isVoiceAlertsEnabled.collectAsState()
     val speechSpeed by viewModel.speechSpeed.collectAsState()
     val speechLanguage by viewModel.speechLanguage.collectAsState()
     val pushNotifications by viewModel.isPushNotificationsEnabled.collectAsState()
     val autopayReminders by viewModel.isAutopayRemindersEnabled.collectAsState()
-    val isScanning by transactionViewModel.isScanning.collectAsState()
+    val gmailConnected by viewModel.isGmailConnected.collectAsState()
+    val gmailEmail by viewModel.gmailConnectedEmail.collectAsState()
+    val gmailReauthNeeded by viewModel.isGmailReauthNeeded.collectAsState()
+    val signedInEmail by viewModel.signedInEmail.collectAsState()
 
     val profileState by profileViewModel.state.collectAsState()
+
+    val gmailResolutionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        scope.launch {
+            if (GmailAuthManager.resultFromIntent(activity, result.data) is GmailAuthManager.AuthResult.Granted) {
+                viewModel.setGmailConnected(signedInEmail)
+                viewModel.triggerGmailSync(context)
+                Toast.makeText(context, "Gmail connected", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Gmail connection cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun connectGmail() {
+        scope.launch {
+            when (val r = GmailAuthManager.authorize(activity)) {
+                is GmailAuthManager.AuthResult.Granted -> {
+                    viewModel.setGmailConnected(signedInEmail)
+                    viewModel.triggerGmailSync(context)
+                    Toast.makeText(context, "Gmail connected", Toast.LENGTH_SHORT).show()
+                }
+                is GmailAuthManager.AuthResult.NeedsResolution ->
+                    gmailResolutionLauncher.launch(IntentSenderRequest.Builder(r.pendingIntent).build())
+                else -> Toast.makeText(context, "Couldn't connect Gmail", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         profileViewModel.event.collect { event ->
@@ -166,13 +212,18 @@ fun SettingsScreen(
 
                         Divider(color = Color(0xFFF1F5F9))
 
-                        SettingsSwitchItem(
-                            icon = Icons.Default.Sync,
-                            title = "Re-scan SMS",
-                            subtitle = if (isScanning) "Scanning..." else "Tap to re-scan your SMS inbox now",
-                            checked = isScanning,
-                            onCheckedChange = { checked ->
-                                if (checked && !isScanning) transactionViewModel.scanSmsInbox(context)
+                        GmailSyncRow(
+                            connected = gmailConnected,
+                            email = gmailEmail.ifBlank { signedInEmail },
+                            reauthNeeded = gmailReauthNeeded,
+                            onSyncNow = {
+                                viewModel.triggerGmailSync(context)
+                                Toast.makeText(context, "Syncing your email…", Toast.LENGTH_SHORT).show()
+                            },
+                            onConnect = { connectGmail() },
+                            onDisconnect = {
+                                viewModel.disconnectGmail()
+                                Toast.makeText(context, "Gmail disconnected", Toast.LENGTH_SHORT).show()
                             }
                         )
 
@@ -487,5 +538,112 @@ fun SettingsSwitchItem(
                 uncheckedTrackColor = Color(0xFFCBD5E1)
             )
         )
+    }
+}
+
+// Expandable Gmail-sync row: header toggles a slide-down panel showing the connected account +
+// "Sync now" / "Disconnect" (or a "Connect" / "Reconnect" action when not connected).
+@Composable
+fun GmailSyncRow(
+    connected: Boolean,
+    email: String,
+    reauthNeeded: Boolean,
+    onSyncNow: () -> Unit,
+    onConnect: () -> Unit,
+    onDisconnect: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val chevronRotation by animateFloatAsState(if (expanded) 180f else 0f, label = "gmailChevron")
+
+    val (statusText, statusColor) = when {
+        reauthNeeded -> "Reconnect needed" to Color(0xFFB91C1C)
+        connected -> "Connected" to Color(0xFF15803D)
+        else -> "Not connected" to Color(0xFF94A3B8)
+    }
+
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFFFF0EA)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(Icons.Default.MailOutline, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text("Gmail Sync", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+                Spacer(Modifier.height(2.dp))
+                Text(statusText, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = statusColor)
+            }
+            Icon(
+                Icons.Default.KeyboardArrowDown,
+                contentDescription = if (expanded) "Collapse" else "Expand",
+                tint = Color(0xFF94A3B8),
+                modifier = Modifier.rotate(chevronRotation)
+            )
+        }
+
+        AnimatedVisibility(
+            visible = expanded,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            Column(modifier = Modifier.padding(start = 62.dp, end = 14.dp, bottom = 14.dp)) {
+                if (connected && !reauthNeeded) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Account", fontSize = 12.sp, color = Color(0xFF94A3B8))
+                        Text(
+                            email.ifBlank { "—" },
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF1E293B),
+                            maxLines = 1
+                        )
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Button(
+                            onClick = onSyncNow,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
+                        ) { Text("Sync now", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                        OutlinedButton(
+                            onClick = onDisconnect,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, Color(0xFFFECACA)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFB91C1C))
+                        ) { Text("Disconnect", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                    }
+                } else {
+                    Text(
+                        if (reauthNeeded) "Your Gmail access needs to be renewed."
+                        else "Connect Gmail so autopays can be read from your subscription emails.",
+                        fontSize = 12.sp,
+                        color = Color(0xFF64748B)
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    Button(
+                        onClick = onConnect,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
+                    ) { Text(if (reauthNeeded) "Reconnect" else "Connect Gmail", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                }
+            }
+        }
     }
 }

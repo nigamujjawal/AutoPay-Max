@@ -30,7 +30,8 @@ class SmsReceiver : BroadcastReceiver() {
         if (intent.action != Telephony.Sms.Intents.SMS_RECEIVED_ACTION) return
 
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
-        val ttsHelper = TextToSpeechHelper(context, preferenceManager)
+        // DEWIRED: detection no longer speaks. (This receiver is also android:enabled="false".)
+        // val ttsHelper = TextToSpeechHelper(context, preferenceManager)
 
         CoroutineScope(Dispatchers.IO).launch {
             for (sms in messages) {
@@ -60,12 +61,14 @@ class SmsReceiver : BroadcastReceiver() {
                     repository.applyTransactionEvent(result.transaction)
                 }
 
-                val kind = when {
-                    result.mandate != null || result.transaction.isAutoPay -> AnnouncementKind.AUTOPAY_SET
-                    result.transaction.transactionType == "CREDIT" -> AnnouncementKind.CREDIT_RECEIVED
-                    else -> AnnouncementKind.DEBIT_PAID
-                }
-                ttsHelper.speak(kind, result.transaction.merchant, result.transaction.amount.toInt())
+                // DEWIRED: detection -> TTS. TTS now only fires on mandate reminders +
+                // manual mandate setup.
+                // val kind = when {
+                //     result.mandate != null || result.transaction.isAutoPay -> AnnouncementKind.AUTOPAY_SET
+                //     result.transaction.transactionType == "CREDIT" -> AnnouncementKind.CREDIT_RECEIVED
+                //     else -> AnnouncementKind.DEBIT_PAID
+                // }
+                // ttsHelper.speak(kind, result.transaction.merchant, result.transaction.amount.toInt())
 
                 val isCredit = result.transaction.transactionType == "CREDIT"
                 val currencySymbol = preferenceManager.currencyFlow.first()

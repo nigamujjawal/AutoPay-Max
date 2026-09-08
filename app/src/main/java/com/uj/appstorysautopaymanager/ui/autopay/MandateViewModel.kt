@@ -18,7 +18,9 @@ class MandateViewModel @Inject constructor(
     private val preferenceManager: com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
 ) : ViewModel() {
 
-    val mandates: StateFlow<List<Mandate>> = repository.allMandates
+    // Includes CANCELLED mandates (sorted below active) so the Home list can still show and
+    // open them - callers that only want live autopays filter on status == "ACTIVE".
+    val mandates: StateFlow<List<Mandate>> = repository.allMandatesForDisplay
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val categories: StateFlow<List<Category>> = repository.allCategories

@@ -95,12 +95,18 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.biometric)
 
-    // Firebase (Phone/OTP auth)
+    // Firebase (Google-federated auth bridge + Remote Config)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
     implementation(libs.kotlinx.coroutines.play.services)
+
+    // In-app Google sign-in (Credential Manager) + Gmail readonly authorization
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.google.identity.googleid)
+    implementation(libs.play.services.auth)
 
     // Networking (SoundBox backend)
     implementation(libs.retrofit)

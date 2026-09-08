@@ -60,11 +60,13 @@ fun VoiceBehaviour(
     // Paired with its Locale/TTS language code (what TextToSpeechHelper actually needs) - the
     // picker used to store the display string itself via setLanguage(), a different preference
     // TextToSpeechHelper never read, so picking a language here never changed the spoken voice.
+    // Matching set lives in SpeechTemplates.TEMPLATES; the on-device TTS engine must have the
+    // voice pack for the picked locale (TextToSpeechHelper logs LANG_MISSING_DATA if not).
     val languages = remember {
         listOf(
-            "English" to "en", "Hindi (हिंदी)" to "hi", "Marathi (मराठी)" to "mr", "Gujarati (ગુજરાતી)" to "gu",
-            "Tamil (தமிழ்)" to "ta", "Telugu (తెలుగు)" to "te", "Kannada (ಕನ್ನಡ)" to "kn", "Bengali (বাংলা)" to "bn",
-            "Punjabi (ਪੰਜਾਬੀ)" to "pa"
+            "English" to "en", "Español" to "es", "Français" to "fr", "Deutsch" to "de",
+            "Italiano" to "it", "Português" to "pt", "Nederlands" to "nl", "Русский" to "ru",
+            "العربية" to "ar", "日本語" to "ja", "한국어" to "ko", "中文" to "zh"
         )
     }
 
@@ -216,7 +218,7 @@ fun VoiceBehaviour(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                                 ) {
-                                    listOf("Female Voice", "Male Voice").forEach { engine ->
+                                    listOf("Male Voice", "Female Voice").forEach { engine ->
                                         val isSelected = voiceEngine == engine
                                         Box(
                                             modifier = Modifier
@@ -567,7 +569,7 @@ fun VoiceBehaviour(
                                 Button(
                                     onClick = {
                                         val ttsHelper = TextToSpeechHelper(context, PreferenceManager(context))
-                                        ttsHelper.speak(AnnouncementKind.CREDIT_RECEIVED, "AutoPay Max", 100)
+                                        ttsHelper.speak(AnnouncementKind.AUTOPAY_DUE, "Netflix", 499)
                                         settingsViewModel.sendTestNotification(context)
                                         Toast.makeText(context, "Playing test alert tone!", Toast.LENGTH_SHORT).show()
                                     },

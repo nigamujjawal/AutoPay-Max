@@ -17,9 +17,22 @@ class ProfileRepositoryImpl @Inject constructor(
     private val tokenDao: AuthTokenDao
 ) : ProfileRepository {
 
-    override suspend fun getUserProfile(): Resource<UserProfile> = safeApiCall {
+    override suspend fun getUserProfile(): Resource<UserProfile> {
         val token = tokenDao.getToken()
-        api.getUser().toDomain(name = token?.name.orEmpty())
+        if (token == null || token.accessToken.isBlank()) {
+            // No backend session (Google users the SoundBox backend can't onboard - see
+            // AuthRepositoryImpl). Serve a local-only profile so Settings / Edit Profile still
+            // work without a network round-trip or an error toast.
+            return Resource.Success(
+                UserProfile(
+                    id = "", firebaseUid = token?.uid.orEmpty(), phoneNumber = "",
+                    name = token?.name.orEmpty(), upiId = "", provider = "google",
+                    subscriptionId = null, subscriptionStatus = "", subscriptionEndsAt = null,
+                    lastLogin = null, createdAt = "", updatedAt = ""
+                )
+            )
+        }
+        return safeApiCall { api.getUser().toDomain(name = token.name) }
     }
 
     // name is purely local (Room), upiId is the only field still sent to the backend. Each is
@@ -32,6 +45,9 @@ class ProfileRepositoryImpl @Inject constructor(
             tokenDao.getToken()?.let { tokenDao.updateName(it.uid, name) }
         }
         if (upiId == null) return Resource.Success(Unit)
+        // upiId is backend-only - skip it silently without a backend session (the local name,
+        // if any, was already saved above).
+        if (tokenDao.getToken()?.accessToken.isNullOrBlank()) return Resource.Success(Unit)
         return safeApiCall {
             api.updateUser(UpdateUserRequest(upi_id = upiId))
             Unit

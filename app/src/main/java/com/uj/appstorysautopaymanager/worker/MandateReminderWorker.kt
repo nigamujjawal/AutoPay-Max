@@ -6,6 +6,8 @@ import androidx.work.WorkerParameters
 import com.uj.appstorysautopaymanager.data.local.dao.MandateDao
 import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
 import com.uj.appstorysautopaymanager.data.repository.AutoPayRepository
+import com.uj.appstorysautopaymanager.tts.AnnouncementKind
+import com.uj.appstorysautopaymanager.tts.TextToSpeechHelper
 import com.uj.appstorysautopaymanager.util.NotificationHelper
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -44,10 +46,12 @@ class MandateReminderWorker(
         val mandates = mandateDao.getAllMandates().first() // already filtered to status = 'ACTIVE'
         val now = System.currentTimeMillis()
 
-        for (mandate in mandates) {
-            val daysRemaining = ((mandate.nextExpectedDebit - now) / (24L * 60L * 60L * 1000L)).toInt()
-            if (daysRemaining != 2) continue
+        val due = mandates.filter {
+            ((it.nextExpectedDebit - now) / (24L * 60L * 60L * 1000L)).toInt() == 2
+        }
+        if (due.isEmpty()) return Result.success()
 
+        for (mandate in due) {
             NotificationHelper.notify(
                 context = applicationContext,
                 repository = repository,
@@ -58,6 +62,17 @@ class MandateReminderWorker(
                 isWarning = true,
                 notificationId = mandate.id.toInt()
             )
+        }
+
+        // Speak the reminder(s). speakBlocking() suspends until each utterance finishes so the
+        // worker's process stays alive; it self-gates on the "Sound Alerts" (voice alerts) pref.
+        val tts = TextToSpeechHelper(applicationContext, preferenceManager)
+        try {
+            for (mandate in due) {
+                tts.speakBlocking(AnnouncementKind.AUTOPAY_DUE, mandate.merchant, mandate.amount.toInt())
+            }
+        } finally {
+            tts.shutdown()
         }
         return Result.success()
     }

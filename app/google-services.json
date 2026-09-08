@@ -12,7 +12,12 @@
           "package_name": "com.uj.appstorysautopaymanager"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "549749421894-8rd5nklflvvta4vor5c0s8uqt6j7s1fs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBUr-SxlH-zav0JNA3MqTKaoSzQ6pMNtMg"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549749421894-8rd5nklflvvta4vor5c0s8uqt6j7s1fs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

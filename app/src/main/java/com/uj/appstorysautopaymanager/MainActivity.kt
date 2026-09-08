@@ -1,7 +1,5 @@
 package com.uj.appstorysautopaymanager
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,24 +22,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.appversal.appstorys.AppStorys
 import com.uj.appstorysautopaymanager.receiver.BootReceiver
 import com.uj.appstorysautopaymanager.ui.auth.AuthViewModel
-import com.uj.appstorysautopaymanager.ui.auth.LoginScreen
+import com.uj.appstorysautopaymanager.ui.auth.GoogleConnectScreen
+import com.uj.appstorysautopaymanager.ui.autopay.AddSubscriptionPickerScreen
 import com.uj.appstorysautopaymanager.ui.autopay.AutoPayScreen
+import com.uj.appstorysautopaymanager.ui.autopay.MandateDetailScreen
 import com.uj.appstorysautopaymanager.ui.autopay.MandateViewModel
 import com.uj.appstorysautopaymanager.ui.dashboard.DashboardScreen
 import com.uj.appstorysautopaymanager.ui.navigation.Screen
 import com.uj.appstorysautopaymanager.ui.onboarding.OnboardingScreen
-import com.uj.appstorysautopaymanager.ui.onboarding.PermissionsScreen
 import com.uj.appstorysautopaymanager.ui.onboarding.SplashScreen
+import com.uj.appstorysautopaymanager.worker.GmailSyncWorker
 import com.uj.appstorysautopaymanager.ui.passbook.PassbookScreen
 import com.uj.appstorysautopaymanager.ui.passbook.TransactionViewModel
 import com.uj.appstorysautopaymanager.ui.notification.NotificationsScreen
@@ -62,6 +63,7 @@ class MainActivity : FragmentActivity() {
 
         BootReceiver.scheduleBillReminders(this)
         BootReceiver.scheduleMandateReminders(this)
+        GmailSyncWorker.schedule(this)
 
         setContent {
             val settingsViewModel: SettingsViewModel = hiltViewModel()
@@ -113,9 +115,8 @@ fun MainAppContent(
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val context = LocalContext.current
-    // Set from LoginScreen's country picker (auto-detected or manually chosen) - Dashboard,
-    // Passbook, and AutoPay read this instead of hardcoding a currency symbol.
+    // Set from GoogleConnectScreen's country picker (auto-detected or manually chosen) -
+    // Dashboard, Passbook, and AutoPay read this instead of hardcoding a currency symbol.
     val currencySymbol by settingsViewModel.currency.collectAsState()
 
     // AppStorys campaign navigation. Every navigateToScreen call in the SDK fires from a click
@@ -135,24 +136,16 @@ fun MainAppContent(
     // than reusing the manual logout button's popUpTo(Home).
     LaunchedEffect(Unit) {
         authViewModel.sessionExpired.collect {
-            navController.navigate(Screen.Login.route) {
+            navController.navigate(Screen.GoogleConnect.route) {
                 popUpTo(0) { inclusive = true }
             }
         }
     }
 
-    // Backfill from the device's existing SMS inbox (SmsReceiver only catches SMS
-    // that arrive after install/permission-grant, not history already on the device).
-    LaunchedEffect(Unit) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            transactionViewModel.scanSmsInbox(context)
-        }
-    }
-
-    // EXACT 3 TABS AS REQUESTED: Home (AutoPay Records), Passbook, Settings
+    // Passbook is unwired from the flow (no tab, no "See All" link) - its screen + VM are kept
+    // intact in the NavHost below so it can be re-added to this list to bring it back.
     val navigationItems = listOf(
         Screen.Home,
-        Screen.Passbook,
         Screen.Settings
     )
 
@@ -236,7 +229,7 @@ fun MainAppContent(
             if (currentRoute == Screen.Home.route) {
                 ExtendedFloatingActionButton(
                     shape = RoundedCornerShape(50.dp),
-                    onClick = { navController.navigate(Screen.AutoPay.route) },
+                    onClick = { navController.navigate(Screen.AddSubscription.route) },
                     containerColor = Color(0xFFFF5E00),
                     contentColor = Color.White,
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
@@ -261,7 +254,7 @@ fun MainAppContent(
                     onNavigateNext = {
                         val target = when {
                             !settingsViewModel.isOnboarded.value -> Screen.Onboarding.route
-                            !authViewModel.isAuthenticated.value -> Screen.Login.route
+                            !authViewModel.isAuthenticated.value -> Screen.GoogleConnect.route
                             else -> Screen.Home.route
                         }
                         navController.navigate(target) {
@@ -271,40 +264,25 @@ fun MainAppContent(
                 )
             }
 
-            // Permissions Screen
-            composable(Screen.Permissions.route) {
-                PermissionsScreen(
-                    onPermissionsCompleted = {
-                        settingsViewModel.setIsOnboarded(true)
-                        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-                            transactionViewModel.scanSmsInbox(context)
-                        }
-                        navController.navigate(Screen.Home.route) {
-                            popUpTo(Screen.Permissions.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
-
             // Onboarding Screen
             composable(Screen.Onboarding.route) {
                 OnboardingScreen(
                     onStartTrialClick = {
-                        navController.navigate(Screen.Login.route){
+                        navController.navigate(Screen.GoogleConnect.route){
                             popUpTo(Screen.Onboarding.route){inclusive = true}
                         }
                     }
                 )
             }
 
-            // Login Screen (OTP sign-in)
-            composable(Screen.Login.route) {
-                LoginScreen(
+            // Google connection: in-app sign-in + Gmail read scope, then Home.
+            composable(Screen.GoogleConnect.route) {
+                GoogleConnectScreen(
                     authViewModel = authViewModel,
                     settingsViewModel = settingsViewModel,
                     onSuccess = {
-                        navController.navigate(Screen.Permissions.route) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.GoogleConnect.route) { inclusive = true }
                         }
                     }
                 )
@@ -316,26 +294,18 @@ fun MainAppContent(
                 DashboardScreen(
                     mandateViewModel = mandateViewModel,
                     currencySymbol = currencySymbol,
+                    onMandateClick = { id ->
+                        navController.navigate(Screen.MandateDetail.routeFor(id))
+                    },
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
-                    },
-                    onSeeAllClick = {
-                        // Same popUpTo/launchSingleTop/restoreState contract as the bottom tab
-                        // bar's own tab-switch clicks (below) - this must behave like "switch to
-                        // the Passbook tab", not a one-off push, or it corrupts the saved-state
-                        // back stack the tab bar relies on to restore Home afterward.
-                        navController.navigate(Screen.Passbook.route) {
-                            popUpTo(Screen.Home.route) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
                     }
                 )
             }
 
-            // Tab 2: Passbook
+            // Passbook - unwired from the flow (removed from navigationItems + the Dashboard
+            // "See All" link). Kept registered so it still resolves for an AppStorys deep link
+            // and can be put back in the tab bar with one line.
             composable(Screen.Passbook.route) {
                 PassbookScreen(
                     viewModel = transactionViewModel,
@@ -351,11 +321,10 @@ fun MainAppContent(
                 val profileViewModel: ProfileViewModel = hiltViewModel()
                 SettingsScreen(
                     viewModel = settingsViewModel,
-                    transactionViewModel = transactionViewModel,
                     profileViewModel = profileViewModel,
                     onLogoutClick = {
                         authViewModel.signOut()
-                        navController.navigate(Screen.Login.route) {
+                        navController.navigate(Screen.GoogleConnect.route) {
                             popUpTo(Screen.Home.route) { inclusive = true }
                         }
                     },
@@ -385,11 +354,41 @@ fun MainAppContent(
                 )
             }
 
-            composable(Screen.AutoPay.route) {
+            // Add-subscription tile picker (opened by the Home FAB).
+            composable(Screen.AddSubscription.route) {
+                AddSubscriptionPickerScreen(
+                    onPick = { merchant ->
+                        navController.navigate(Screen.AutoPay.routeFor(merchant))
+                    },
+                    onBack = { navController.popBackStack() }
+                )
+            }
+
+            composable(
+                route = Screen.AutoPay.route,
+                arguments = listOf(navArgument("merchant") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                })
+            ) { entry ->
                 AutoPayScreen(
                     viewModel = mandateViewModel,
                     navController = navController,
-                    currencySymbol = currencySymbol
+                    currencySymbol = currencySymbol,
+                    prefillMerchant = entry.arguments?.getString("merchant")
+                )
+            }
+
+            composable(
+                route = Screen.MandateDetail.route,
+                arguments = listOf(navArgument("mandateId") { type = NavType.LongType })
+            ) { entry ->
+                MandateDetailScreen(
+                    mandateId = entry.arguments?.getLong("mandateId") ?: -1L,
+                    mandateViewModel = mandateViewModel,
+                    currencySymbol = currencySymbol,
+                    onBack = { navController.popBackStack() }
                 )
             }
         }

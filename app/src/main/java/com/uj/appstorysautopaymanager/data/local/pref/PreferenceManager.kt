@@ -32,6 +32,15 @@ class PreferenceManager @Inject constructor(
         val ALERT_TONE_KEY = stringPreferencesKey("alert_tone")
         val IS_PUSH_NOTIFICATIONS_ENABLED_KEY = booleanPreferencesKey("is_push_notifications_enabled")
         val IS_AUTOPAY_REMINDERS_ENABLED_KEY = booleanPreferencesKey("is_autopay_reminders_enabled")
+        // Gmail email-sync (autopay data source). All non-secret - the Gmail access token itself
+        // is never stored here, it lives in-memory only during a GmailSyncWorker run.
+        val IS_GMAIL_CONNECTED_KEY = booleanPreferencesKey("is_gmail_connected")
+        val GMAIL_CONNECTED_EMAIL_KEY = stringPreferencesKey("gmail_connected_email")
+        val IS_GMAIL_REAUTH_NEEDED_KEY = booleanPreferencesKey("is_gmail_reauth_needed")
+        val IS_GMAIL_BACKFILL_DONE_KEY = booleanPreferencesKey("is_gmail_backfill_done")
+        // Signed-in Google account email - set at login, reused by the Settings "reconnect Gmail"
+        // path (the Gmail scope is granted with the same account).
+        val SIGNED_IN_EMAIL_KEY = stringPreferencesKey("signed_in_email")
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { it[THEME_KEY] ?: "Light" }
@@ -52,6 +61,11 @@ class PreferenceManager @Inject constructor(
     val alertToneFlow: Flow<String> = context.dataStore.data.map { it[ALERT_TONE_KEY] ?: "Cashier" }
     val isPushNotificationsEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_PUSH_NOTIFICATIONS_ENABLED_KEY] ?: true }
     val isAutopayRemindersEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_AUTOPAY_REMINDERS_ENABLED_KEY] ?: true }
+    val isGmailConnectedFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_GMAIL_CONNECTED_KEY] ?: false }
+    val gmailConnectedEmailFlow: Flow<String> = context.dataStore.data.map { it[GMAIL_CONNECTED_EMAIL_KEY] ?: "" }
+    val isGmailReauthNeededFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_GMAIL_REAUTH_NEEDED_KEY] ?: false }
+    val isGmailBackfillDoneFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_GMAIL_BACKFILL_DONE_KEY] ?: false }
+    val signedInEmailFlow: Flow<String> = context.dataStore.data.map { it[SIGNED_IN_EMAIL_KEY] ?: "" }
 
     suspend fun setTheme(theme: String) {
         context.dataStore.edit { it[THEME_KEY] = theme }
@@ -115,5 +129,36 @@ class PreferenceManager @Inject constructor(
 
     suspend fun setAutopayRemindersEnabled(enabled: Boolean) {
         context.dataStore.edit { it[IS_AUTOPAY_REMINDERS_ENABLED_KEY] = enabled }
+    }
+
+    suspend fun setGmailReauthNeeded(needed: Boolean) {
+        context.dataStore.edit { it[IS_GMAIL_REAUTH_NEEDED_KEY] = needed }
+    }
+
+    suspend fun setGmailBackfillDone(done: Boolean) {
+        context.dataStore.edit { it[IS_GMAIL_BACKFILL_DONE_KEY] = done }
+    }
+
+    suspend fun setSignedInEmail(email: String) {
+        context.dataStore.edit { it[SIGNED_IN_EMAIL_KEY] = email }
+    }
+
+    // Single home for the "Gmail is connected" flag set - written from both the connect screen
+    // (AuthViewModel) and the Settings reconnect row (SettingsViewModel).
+    suspend fun markGmailConnected(email: String) {
+        context.dataStore.edit {
+            it[IS_GMAIL_CONNECTED_KEY] = true
+            it[GMAIL_CONNECTED_EMAIL_KEY] = email
+            it[IS_GMAIL_REAUTH_NEEDED_KEY] = false
+        }
+    }
+
+    suspend fun clearGmailConnection() {
+        context.dataStore.edit {
+            it[IS_GMAIL_CONNECTED_KEY] = false
+            it[GMAIL_CONNECTED_EMAIL_KEY] = ""
+            it[IS_GMAIL_REAUTH_NEEDED_KEY] = false
+            it[IS_GMAIL_BACKFILL_DONE_KEY] = false
+        }
     }
 }

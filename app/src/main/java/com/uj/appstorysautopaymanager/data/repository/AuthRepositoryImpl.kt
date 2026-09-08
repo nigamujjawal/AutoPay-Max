@@ -6,87 +6,84 @@ import com.appversal.appstorys.AppStorys
 import com.google.firebase.auth.FirebaseUser
 import com.uj.appstorysautopaymanager.data.local.dao.AuthTokenDao
 import com.uj.appstorysautopaymanager.data.local.entity.AuthTokenEntity
-import com.uj.appstorysautopaymanager.data.remote.FirebasePhoneAuthDataSource
+import com.uj.appstorysautopaymanager.data.local.pref.PreferenceManager
+import com.uj.appstorysautopaymanager.data.remote.GoogleAuthDataSource
 import com.uj.appstorysautopaymanager.data.remote.AutoPayApi
 import com.uj.appstorysautopaymanager.data.remote.dto.LoginRequest
 import com.uj.appstorysautopaymanager.domain.auth.model.AuthUser
-import com.uj.appstorysautopaymanager.domain.auth.model.OtpRequestState
 import com.uj.appstorysautopaymanager.domain.auth.repository.AuthRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
-    private val remote: FirebasePhoneAuthDataSource,
+    private val remote: GoogleAuthDataSource,
     private val api: AutoPayApi,
-    private val tokenDao: AuthTokenDao
+    private val tokenDao: AuthTokenDao,
+    private val preferenceManager: PreferenceManager
 ) : AuthRepository {
 
-    // SMS auto-retrieval (onVerificationCompleted) signs the user into Firebase and emits
-    // AutoVerified without ever going through verifyOtp() below - that path used to skip the
-    // backend exchange entirely, leaving Room with no access token and the very next API call
-    //401ing with nothing to recover from. Running the same exchange here closes that gap.
-    override fun sendOtp(phoneNumber: String, activity: Activity): Flow<OtpRequestState> =
-        remote.sendOtp(phoneNumber, activity).map { state ->
-            Log.d("AuthFlow", "repository received state=$state")
-            if (state !is OtpRequestState.AutoVerified) return@map state
-            val firebaseUser = remote.currentUser()
-                ?: return@map OtpRequestState.Failed("Sign-in succeeded but no user was returned")
-            exchangeFirebaseSession(firebaseUser)
-                .onFailure { Log.e("AuthFlow", "auto-verify backend exchange failed", it) }
-                .fold(onSuccess = { state }, onFailure = { OtpRequestState.Failed(it.message ?: "Sign-in failed") })
-        }
-
-    override suspend fun verifyOtp(verificationId: String, code: String): Result<AuthUser> {
-        val firebaseUser = remote.verifyCode(verificationId, code)
-        return exchangeFirebaseSession(firebaseUser)
+    // In-app Google account picker -> Firebase (federated). The SoundBox backend session is
+    // OPTIONAL: /auth/firebase's create-user path rejects a Google-federated token (no phone
+    // number -> HTTP 400), so we take the backend session when it's available and carry on
+    // without it when it isn't. Gmail sync is fully on-device; the only things that need the
+    // backend token (PaymentSyncWorker, backend Profile) degrade to a no-op.
+    override suspend fun signInWithGoogle(activity: Activity): Result<AuthUser> = runCatching {
+        federate(remote.signIn(activity))
     }
 
-    // Every other SoundBox endpoint is authorized against the backend's own access token, not the
-    // Firebase one - exchange it here (the one place both login paths funnel through) so the rest
-    // of the app never has to.
-    private suspend fun exchangeFirebaseSession(firebaseUser: FirebaseUser): Result<AuthUser> = runCatching {
+    private suspend fun federate(firebaseUser: FirebaseUser): AuthUser {
         val idToken = firebaseUser.getIdToken(false).await().token.orEmpty()
-        val session = api.firebaseLogin(LoginRequest(id_token = idToken))
-
         val user = AuthUser(
             uid = firebaseUser.uid,
-            phoneNumber = firebaseUser.phoneNumber.orEmpty(),
+            email = firebaseUser.email.orEmpty(),
             idToken = idToken
         )
+
+        // Best-effort backend exchange - null (and a blank access token stored below) if the
+        // backend can't onboard this user.
+        val session = runCatching { api.firebaseLogin(LoginRequest(id_token = idToken)) }
+            .onFailure { Log.w("AuthFlow", "backend /auth/firebase exchange failed - continuing without a backend session", it) }
+            .getOrNull()
+
         // saveToken REPLACEs the whole row - carry over the locally-set name across a re-login
-        // for the same uid, or it would silently reset back to "" every time this runs.
+        // for the same uid, or it silently resets to "" every time this runs.
         val existingName = tokenDao.getToken()?.takeIf { it.uid == user.uid }?.name.orEmpty()
         tokenDao.saveToken(
             AuthTokenEntity(
                 uid = user.uid,
-                phoneNumber = user.phoneNumber,
+                phoneNumber = "",
+                email = user.email,
                 idToken = user.idToken,
-                accessToken = session.access_token,
-                refreshToken = session.refresh_token,
+                accessToken = session?.access_token.orEmpty(),
+                refreshToken = session?.refresh_token.orEmpty(),
                 issuedAt = System.currentTimeMillis(),
                 name = existingName
             )
         )
-        // AppStorys was initialized with a placeholder/anonymous id (Application.onCreate() runs
-        // before any user is signed in) - identify the real user as soon as one actually logs in.
+        preferenceManager.setSignedInEmail(user.email)
+        // AppStorys was initialized with a placeholder id (Application.onCreate() runs before any
+        // user is signed in) - identify the real user as soon as one actually logs in.
         AppStorys.setUserId(user.uid)
-        user
+        return user
     }
 
-    // accessToken can be blank for a session saved before the SoundBox backend was wired up
-    // (pre-migration rows were backfilled with '') - treat that as not signed in, not just "no
-    // backend token yet", so the user gets routed back to login and re-exchanges it via
-    // verifyOtp() instead of every backend call failing with "missing authorization header" forever.
+    // Signed in = we have a Firebase uid on file. The backend access token may legitimately be
+    // blank (Google user the backend can't onboard) - that's not "not signed in".
     override suspend fun getStoredUser(): AuthUser? = tokenDao.getToken()
-        ?.takeIf { it.accessToken.isNotBlank() }
-        ?.let { AuthUser(uid = it.uid, phoneNumber = it.phoneNumber, idToken = it.idToken) }
+        ?.takeIf { it.uid.isNotBlank() }
+        ?.let { AuthUser(uid = it.uid, email = it.email, idToken = it.idToken) }
+
+    // True only when a usable SoundBox backend session exists - background workers that hit the
+    // backend gate on this, not on getStoredUser().
+    override suspend fun hasBackendSession(): Boolean =
+        tokenDao.getToken()?.accessToken?.isNotBlank() == true
 
     override suspend fun signOut() {
         remote.signOut()
         tokenDao.clear()
+        preferenceManager.setSignedInEmail("")
+        preferenceManager.clearGmailConnection()
     }
 }

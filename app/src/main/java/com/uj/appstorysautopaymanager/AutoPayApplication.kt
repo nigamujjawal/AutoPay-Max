@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.os.Build
 import com.appversal.appstorys.AppStorys
 import com.uj.appstorysautopaymanager.domain.auth.usecase.GetStoredUserUseCase
+import com.uj.appstorysautopaymanager.util.EmailPatternConfig
 import com.uj.appstorysautopaymanager.util.SmsPatternConfig
 import com.uj.appstorysautopaymanager.util.UpiPatternConfig
 import com.uj.appstorysautopaymanager.util.UsBankPatternConfig
@@ -38,23 +39,25 @@ class AutoPayApplication : Application() {
             }
         )
 
-        // Path 1 (fresh login): AuthRepositoryImpl.verifyOtp() calls AppStorys.setUserId()
+        // Path 1 (fresh login): AuthRepositoryImpl.signInWithGoogle() calls AppStorys.setUserId()
         // itself right after a new sign-in succeeds.
-        // Path 2 (already signed in): a cold start with an existing session never runs
-        // verifyOtp() again, so nothing would otherwise identify a returning user - check Room
-        // here instead, off the main thread.
+        // Path 2 (already signed in): a cold start with an existing session never runs the
+        // sign-in exchange again, so nothing would otherwise identify a returning user - check
+        // Room here instead, off the main thread.
         CoroutineScope(Dispatchers.IO).launch {
             getStoredUserUseCase()?.let { AppStorys.setUserId(it.uid) }
         }
 
         createNotificationChannel()
 
-        // Fire-and-forget: SmsParser/UpiNotificationParser/UsBankNotificationParser fall back to
-        // their hardcoded defaults (US bank one: an empty, always-no-match set) until this
-        // completes, so cold-start parsing never blocks on any of them.
+        // Fire-and-forget Remote Config refresh for every parser. EmailParser is the live source
+        // now (Gmail sync); the SMS/notification parsers are disconnected but their configs are
+        // left refreshing (harmless) in case the receivers are re-enabled. All fall back to
+        // hardcoded defaults until the fetch completes, so nothing blocks on cold start.
         SmsPatternConfig.refresh()
         UpiPatternConfig.refresh()
         UsBankPatternConfig.refresh()
+        EmailPatternConfig.refresh()
     }
 
     // Application has no NavController of its own, so this just forwards to whatever

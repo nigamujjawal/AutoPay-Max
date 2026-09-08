@@ -56,13 +56,10 @@ class PaymentSyncWorker(
         val savePayment = entryPoint.savePaymentUseCase()
         val currencyCode = entryPoint.preferenceManager().currencyCodeFlow.first()
 
-        // The SMS-inbox backfill scan (MainActivity, runs on every cold start) enqueues this
-        // worker for every transaction it inserts - including before login, since that scan isn't
-        // gated on auth state either. Without this check, a fresh/logged-out run hits /payments
-        // with no token, 401s, and (before AuthInterceptor's own fix) forced a spurious
-        // navigate-to-Login even mid-OTP-entry. Nothing to sync yet without a session - the next
-        // insert after a real login re-enqueues this anyway.
-        if (authRepository.getStoredUser() == null) return Result.success()
+        // The SoundBox backend session is optional (Google sign-in users often don't get one -
+        // see AuthRepositoryImpl). Nothing to sync without it; the next insert after a session
+        // is obtained re-enqueues this anyway.
+        if (!authRepository.hasBackendSession()) return Result.success()
 
         val unsynced = repository.getUnsyncedTransactions()
         if (unsynced.isEmpty()) return Result.success()
