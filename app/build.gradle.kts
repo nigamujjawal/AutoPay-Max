@@ -26,11 +26,11 @@ val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_
     ?: error("Missing APPSTORYS_ACCOUNT_ID in local.properties - add it as APPSTORYS_ACCOUNT_ID=<account id>")
 
 android {
-    namespace = "com.uj.appstorysautopaymanager"
+    namespace = "com.autopaymax"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.uj.appstorysautopaymanager"
+        applicationId = "com.autopaymax"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -123,4 +123,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation("com.github.appversal:AppStorys-Android-SDK-Downgraded:3.9.5")
+
+    // Source: https://mvnrepository.com/artifact/com.appsflyer/af-android-sdk
+    implementation("com.appsflyer:af-android-sdk:7.0.1")
 }

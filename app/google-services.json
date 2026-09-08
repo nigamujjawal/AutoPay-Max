@@ -7,12 +7,49 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:549749421894:android:26bdecbcfb227ca5d09747",
+        "android_client_info": {
+          "package_name": "com.autopaymax"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549749421894-8rd5nklflvvta4vor5c0s8uqt6j7s1fs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUr-SxlH-zav0JNA3MqTKaoSzQ6pMNtMg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549749421894-8rd5nklflvvta4vor5c0s8uqt6j7s1fs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:549749421894:android:36cfef69ee98e213d09747",
         "android_client_info": {
           "package_name": "com.uj.appstorysautopaymanager"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "549749421894-4ujst22k2ic9vdmgreim0j00p089ifr2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.uj.appstorysautopaymanager",
+            "certificate_hash": "5fec02c3cdb2ea3db847ee2c1d936af8ff836f94"
+          }
+        },
         {
           "client_id": "549749421894-8rd5nklflvvta4vor5c0s8uqt6j7s1fs.apps.googleusercontent.com",
           "client_type": 3
