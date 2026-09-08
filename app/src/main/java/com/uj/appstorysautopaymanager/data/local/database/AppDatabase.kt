@@ -25,7 +25,7 @@ import javax.inject.Provider
 
 @Database(
     entities = [Bill::class, Transaction::class, Mandate::class, Category::class, NotificationEntity::class, AuthTokenEntity::class],
-    version = 9,
+    version = 11,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -115,13 +115,32 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // Mandate.source - how the mandate was created (see the entity).
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE mandates ADD COLUMN source TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
+        // Back-fill Mandate.source from `bank`: EmailParser set it to "Google Play" for Play-billed
+        // subs and to the vendor display name for every other email source; AutoPayScreen left it
+        // "". Its own migration (not folded into 9_10) so devices already at v10 pick it up - a
+        // Gmail re-sync can't, GmailSyncWorker skips already-processed message ids.
+        private val MIGRATION_10_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("UPDATE mandates SET source = 'GOOGLE_PLAY' WHERE bank = 'Google Play'")
+                db.execSQL("UPDATE mandates SET source = 'EMAIL' WHERE source = '' AND bank <> ''")
+                db.execSQL("UPDATE mandates SET source = 'MANUAL' WHERE source = '' AND bank = ''")
+            }
+        }
+
         fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
                 AppDatabase::class.java,
                 "autopay_manager_db"
             )
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
             .addCallback(object : RoomDatabase.Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)

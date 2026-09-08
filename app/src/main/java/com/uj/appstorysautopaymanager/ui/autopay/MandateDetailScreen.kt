@@ -15,13 +15,18 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +43,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MandateDetailScreen(
     mandateId: Long,
@@ -48,6 +54,7 @@ fun MandateDetailScreen(
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()
     val mandate = mandates.find { it.id == mandateId }
+    var showCancelSheet by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -76,6 +83,9 @@ fun MandateDetailScreen(
 
         val matchedApp = matchAutoPayApp(mandate.merchant)
         val isActive = mandate.status == "ACTIVE"
+        // Play-billed subs have a real cancel destination and the cancellation is picked up from
+        // the Play cancellation email on the next sync - send the user straight there, no sheet.
+        val isPlayBilled = mandate.source == "GOOGLE_PLAY"
         val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
         Column(
@@ -133,7 +143,8 @@ fun MandateDetailScreen(
             }
         }
 
-        // Bottom action - opens Google Play's subscriptions screen to cancel there.
+        // Bottom action - Play-billed goes straight to the Play Store; everything else opens the
+        // cancellation sheet (guidance + mark-as-cancelled, since there's no auto-detect for it).
         Surface(color = Color.White, shadowElevation = 8.dp, modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
@@ -142,7 +153,9 @@ fun MandateDetailScreen(
                     .padding(horizontal = 20.dp, vertical = 14.dp)
             ) {
                 Button(
-                    onClick = { openPlayStoreSubscriptions(context) },
+                    onClick = {
+                        if (isPlayBilled) openPlayStoreSubscriptions(context) else showCancelSheet = true
+                    },
                     enabled = isActive,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -156,7 +169,11 @@ fun MandateDetailScreen(
                     )
                 ) {
                     Text(
-                        if (isActive) "Cancel subscription" else "Already cancelled",
+                        when {
+                            !isActive -> "Already cancelled"
+                            isPlayBilled -> "Cancel via Google Play"
+                            else -> "Cancel subscription"
+                        },
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -164,6 +181,67 @@ fun MandateDetailScreen(
             }
         }
     }
+
+    if (showCancelSheet && mandate != null) {
+        ModalBottomSheet(
+            onDismissRequest = { showCancelSheet = false },
+            containerColor = Color.White
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
+                Text(
+                    "Cancel ${mandate.merchant}",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1E293B)
+                )
+                Text(
+                    cancelInstructions(mandate.source, mandate.bank),
+                    fontSize = 14.sp,
+                    color = Color(0xFF64748B),
+                    lineHeight = 20.sp
+                )
+
+                Button(
+                    onClick = {
+                        mandateViewModel.cancelMandate(mandate)
+                        showCancelSheet = false
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFDC2626),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Mark as cancelled", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+    }
+}
+
+// Instructions for the sheet, which only opens for non-Play sources (Play-billed subs deep-link
+// straight to the Play Store instead). `vendor` is Mandate.bank - the vendor display name for
+// email-sourced ones ("Netflix", "Paytm", "HDFC Bank"...).
+private fun cancelInstructions(source: String, vendor: String): String = when (source) {
+    "EMAIL" -> {
+        val who = vendor.ifBlank { "the provider" }
+        "This autopay was detected from a $who email. If it's a UPI autopay, open your UPI app " +
+            "(PhonePe, Google Pay, Paytm...) and cancel it under Autopay or Mandates. Otherwise " +
+            "cancel it from $who's own website or app. Then mark it cancelled here."
+    }
+    else ->
+        "Cancel this autopay wherever it was set up, your bank or card issuer, or your payment app " +
+            "under Autopay / Mandates. Then mark it cancelled here so it stops showing as active."
 }
 
 // Google Play's subscriptions management screen. We don't have the app package/SKU from a

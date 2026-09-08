@@ -106,7 +106,8 @@ class AutoPayRepository @Inject constructor(
                 nextExpectedDebit = transaction.date + (30L * 24L * 60L * 60L * 1000L),
                 bank = transaction.bankName,
                 status = "ACTIVE",
-                referenceNumber = transaction.referenceNumber
+                referenceNumber = transaction.referenceNumber,
+                source = "INFERRED"
             )
         )
     }
@@ -130,7 +131,10 @@ class AutoPayRepository @Inject constructor(
                     frequency = mandate.frequency,
                     nextExpectedDebit = mandate.nextExpectedDebit,
                     bank = mandate.bank,
-                    referenceNumber = mandate.referenceNumber
+                    referenceNumber = mandate.referenceNumber,
+                    // A re-sync back-fills source onto rows created before this column existed;
+                    // never let a source-less event downgrade a row we already classified.
+                    source = mandate.source.ifBlank { existing.source }
                 )
             )
             false

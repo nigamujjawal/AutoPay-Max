@@ -116,6 +116,9 @@ object EmailParser {
         val combined = "$subject\n$bodyText".replace('\r', ' ')
         val (displayName, category) = VENDOR_DISPLAY[vendorKey]
             ?: (vendorKey.replaceFirstChar { it.uppercase() } to "Others")
+        // Play-billed subs can be cancelled via the Play Store; every other email source needs
+        // manual/UPI-app cancellation - see MandateDetailScreen.
+        val mandateSource = if (vendorKey == "google_play") "GOOGLE_PLAY" else "EMAIL"
 
         // The app/product name is what shows on Home (and drives the brand-icon match) - Google
         // Play receipts put it in the parentheses right before the price. Falls through to the
@@ -137,7 +140,8 @@ object EmailParser {
             val mandate = Mandate(
                 merchant = merchant, amount = 0.0, frequency = "MONTHLY",
                 nextExpectedDebit = receivedAt, bank = displayName,
-                status = "CANCELLED", referenceNumber = "", category = category
+                status = "CANCELLED", referenceNumber = "", category = category,
+                source = mandateSource
             )
             return ParsedResult(transaction, mandate)
         }
@@ -158,7 +162,8 @@ object EmailParser {
             val mandate = Mandate(
                 merchant = merchant, amount = recurringAmount, frequency = freq,
                 nextExpectedDebit = receivedAt + periodMillis(freq),
-                bank = displayName, status = "ACTIVE", referenceNumber = "", category = category
+                bank = displayName, status = "ACTIVE", referenceNumber = "", category = category,
+                source = mandateSource
             )
             return ParsedResult(transaction, mandate)
         }

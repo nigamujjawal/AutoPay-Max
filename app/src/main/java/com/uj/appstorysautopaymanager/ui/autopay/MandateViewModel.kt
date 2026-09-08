@@ -47,4 +47,13 @@ class MandateViewModel @Inject constructor(
             repository.updateMandate(mandate.copy(status = newStatus))
         }
     }
+
+    // One-way: the cancellation sheet only ever marks a mandate cancelled (it stays visible on
+    // Home with a "Cancelled" label). Actually stopping the charge happens at Google Play / the
+    // vendor / the UPI app - see MandateDetailScreen.
+    fun cancelMandate(mandate: Mandate) {
+        viewModelScope.launch {
+            repository.updateMandate(mandate.copy(status = "CANCELLED"))
+        }
+    }
 }

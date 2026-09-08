@@ -279,7 +279,8 @@ fun DashboardScreen(
                                     frequency = selectedFrequency,
                                     nextExpectedDebit = nextDate,
                                     bank = "HDFC Bank",
-                                    status = "ACTIVE"
+                                    status = "ACTIVE",
+                                    source = "MANUAL"
                                 )
                                 mandateViewModel.addMandate(mandate, context)
                                 showAddDialog = false

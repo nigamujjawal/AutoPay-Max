@@ -65,6 +65,8 @@ class EmailParserTest {
         assertEquals("MONTHLY", mandate.frequency)
         // merchant is the app name from the parens, not the product string / company
         assertEquals("Claude by Anthropic", mandate.merchant)
+        // Play-billed -> cancellable via the Play Store (MandateDetailScreen forks on this).
+        assertEquals("GOOGLE_PLAY", mandate.source)
         // A renewal actually billed money -> a Passbook charge for the same amount.
         assertEquals(1999.0, result.transaction.amount, 0.001)
         assertTrue(result.transaction.isAutoPay)
@@ -132,6 +134,20 @@ class EmailParserTest {
         // plain google.com (not the play address) is not tracked
         assertNull(EmailParser.vendorKeyFor("no-reply@google.com"))
         assertNull(EmailParser.vendorKeyFor("friend@gmail.com"))
+    }
+
+    @Test
+    fun `a non-play vendor mandate is tagged source EMAIL`() {
+        val membership = UpiPatternConfig.TxnPattern(
+            regex = Pattern.compile("(?i)membership .*?(?:₹|Rs\\.?|INR)\\s*([\\d,]+).*?renew"),
+            amountGroup = 1, senderGroup = -1
+        )
+        val result = EmailParser.parseWith(
+            "netflix", "Your receipt", "Your membership of Rs 649 will renew monthly.",
+            now, "nf1", mandatePatterns = listOf(membership), debitPatterns = emptyList()
+        )
+        assertNotNull(result?.mandate)
+        assertEquals("EMAIL", result!!.mandate?.source)
     }
 
     @Test

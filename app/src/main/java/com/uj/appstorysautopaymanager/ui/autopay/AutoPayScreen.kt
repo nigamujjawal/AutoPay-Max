@@ -237,7 +237,8 @@ fun AutoPayScreen(
                             bank = "",
                             status = "ACTIVE",
                             category = category,
-                            paymentApp = paymentApp
+                            paymentApp = paymentApp,
+                            source = "MANUAL"
                         ),
                         context
                     )

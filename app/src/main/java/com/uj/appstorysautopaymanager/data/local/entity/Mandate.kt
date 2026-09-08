@@ -14,5 +14,9 @@ data class Mandate(
     val status: String,
     val referenceNumber: String = "",
     val category: String = "",
-    val paymentApp: String = ""
+    val paymentApp: String = "",
+    // How this mandate was created - drives the cancellation guidance in MandateDetailScreen.
+    // "GOOGLE_PLAY" (Play-billed, email sync) | "EMAIL" (other vendor / UPI e-mandate, email sync)
+    // | "MANUAL" (AutoPayScreen) | "INFERRED" (detectRecurringMandate heuristic) | "" (unknown).
+    val source: String = ""
 )
