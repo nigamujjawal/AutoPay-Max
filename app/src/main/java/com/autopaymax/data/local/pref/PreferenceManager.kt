@@ -41,6 +41,9 @@ class PreferenceManager @Inject constructor(
         // Signed-in Google account email - set at login, reused by the Settings "reconnect Gmail"
         // path (the Gmail scope is granted with the same account).
         val SIGNED_IN_EMAIL_KEY = stringPreferencesKey("signed_in_email")
+        // One-time "sync your inbox" prompt on the Home screen - flipped true once the user has
+        // either run or dismissed it, so it never shows again.
+        val IS_MAIL_SYNC_PROMPT_SEEN_KEY = booleanPreferencesKey("is_mail_sync_prompt_seen")
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { it[THEME_KEY] ?: "Light" }
@@ -66,6 +69,7 @@ class PreferenceManager @Inject constructor(
     val isGmailReauthNeededFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_GMAIL_REAUTH_NEEDED_KEY] ?: false }
     val isGmailBackfillDoneFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_GMAIL_BACKFILL_DONE_KEY] ?: false }
     val signedInEmailFlow: Flow<String> = context.dataStore.data.map { it[SIGNED_IN_EMAIL_KEY] ?: "" }
+    val isMailSyncPromptSeenFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_MAIL_SYNC_PROMPT_SEEN_KEY] ?: false }
 
     suspend fun setTheme(theme: String) {
         context.dataStore.edit { it[THEME_KEY] = theme }
@@ -141,6 +145,10 @@ class PreferenceManager @Inject constructor(
 
     suspend fun setSignedInEmail(email: String) {
         context.dataStore.edit { it[SIGNED_IN_EMAIL_KEY] = email }
+    }
+
+    suspend fun setMailSyncPromptSeen(seen: Boolean) {
+        context.dataStore.edit { it[IS_MAIL_SYNC_PROMPT_SEEN_KEY] = seen }
     }
 
     // Single home for the "Gmail is connected" flag set - written from both the connect screen

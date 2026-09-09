@@ -26,8 +26,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppStorysAutoPayManager">
-        
+        android:theme="@style/Theme.AppStorysAutoPayManager"
+        tools:replace="android:dataExtractionRules,android:fullBackupContent">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

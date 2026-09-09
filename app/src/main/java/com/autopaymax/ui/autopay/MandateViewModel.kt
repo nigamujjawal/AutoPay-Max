@@ -6,8 +6,10 @@ import com.autopaymax.data.local.entity.Category
 import com.autopaymax.data.local.entity.Mandate
 import com.autopaymax.data.repository.AutoPayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.autopaymax.worker.GmailSyncWorker
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +27,22 @@ class MandateViewModel @Inject constructor(
 
     val categories: StateFlow<List<Category>> = repository.allCategories
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    // One-time Home prompt to kick off the first Gmail scan. Shows until the user runs or
+    // dismisses it; GmailSyncWorker still self-schedules regardless, this just makes the first
+    // sync visible and intentional.
+    val showMailSyncPrompt: StateFlow<Boolean> = preferenceManager.isMailSyncPromptSeenFlow
+        .map { !it }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    fun dismissMailSyncPrompt() = viewModelScope.launch {
+        preferenceManager.setMailSyncPromptSeen(true)
+    }
+
+    fun syncMailsOnce(context: android.content.Context) {
+        GmailSyncWorker.syncNow(context)
+        viewModelScope.launch { preferenceManager.setMailSyncPromptSeen(true) }
+    }
 
     fun addMandate(mandate: Mandate, context: android.content.Context) {
         viewModelScope.launch {

@@ -45,6 +45,7 @@ fun DashboardScreen(
 ) {
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()
+    val showMailSyncPrompt by mandateViewModel.showMailSyncPrompt.collectAsState()
 
     var showAddDialog by remember { mutableStateOf(false) }
     var merchantName by remember { mutableStateOf("") }
@@ -204,6 +205,44 @@ fun DashboardScreen(
                     }
                 }
             }
+        }
+
+        // One-time "sync your inbox" prompt — first Home visit only, dismiss or run flips it off.
+        if (showMailSyncPrompt) {
+            AlertDialog(
+                onDismissRequest = { mandateViewModel.dismissMailSyncPrompt() },
+                containerColor = Color.White,
+                title = {
+                    Text(
+                        text = "Sync your inbox",
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1E293B)
+                    )
+                },
+                text = {
+                    Text(
+                        text = "Scan your Gmail once for subscription and autopay emails so your payments show up here automatically.",
+                        color = Color(0xFF64748B),
+                        fontSize = 14.sp
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            mandateViewModel.syncMailsOnce(context)
+                            Toast.makeText(context, "Syncing your inbox…", Toast.LENGTH_SHORT).show()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5E00))
+                    ) {
+                        Text("Sync now", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { mandateViewModel.dismissMailSyncPrompt() }) {
+                        Text("Not now", color = Color(0xFF64748B))
+                    }
+                }
+            )
         }
 
         // Add AutoPay Dialog

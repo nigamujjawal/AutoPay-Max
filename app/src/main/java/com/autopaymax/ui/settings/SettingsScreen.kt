@@ -109,7 +109,6 @@ fun SettingsScreen(
 
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var profileName by remember { mutableStateOf("") }
-    var profileUpiId by remember { mutableStateOf("") }
 
     AppStorys.getScreenCampaigns("settings_screen",listOf())
 
@@ -135,16 +134,52 @@ fun SettingsScreen(
             }
             item {
                 SettingsCard {
-                    SettingsRowItem(
-                        icon = Icons.Default.Edit,
-                        title = "Edit Profile",
-                        subtitle = "Update your name & business info",
-                        onClick = {
-                            profileName = profileState.profile?.name.orEmpty()
-                            profileUpiId = profileState.profile?.upiId.orEmpty()
-                            showEditProfileDialog = true
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFFFF0EA)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column {
+                                Text(
+                                    profileState.profile?.name?.takeIf { it.isNotBlank() } ?: "Add your name",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1E293B)
+                                )
+                                if (signedInEmail.isNotBlank()) {
+                                    Text(signedInEmail, fontSize = 11.sp, color = Color(0xFF94A3B8))
+                                }
+                            }
                         }
-                    )
+                        Box(
+                            modifier = Modifier
+                                .clip(CircleShape)
+                                .clickable {
+                                    profileName = profileState.profile?.name.orEmpty()
+                                    showEditProfileDialog = true
+                                }
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.Edit, contentDescription = "Edit profile", tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+                        }
+                    }
                 }
             }
 
@@ -374,38 +409,24 @@ fun SettingsScreen(
                 Text("Edit Profile", fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
             },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedTextField(
-                        shape = RoundedCornerShape(20.dp),
-                        value = profileName,
-                        onValueChange = { profileName = it },
-                        placeholder = { Text("Name") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFFFF6B00),
-                            unfocusedBorderColor = Color.Black
-                        )
+                OutlinedTextField(
+                    shape = RoundedCornerShape(20.dp),
+                    value = profileName,
+                    onValueChange = { profileName = it },
+                    placeholder = { Text("Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFFFF6B00),
+                        unfocusedBorderColor = Color.Black
                     )
-                    OutlinedTextField(
-                        shape = RoundedCornerShape(20.dp),
-                        value = profileUpiId,
-                        onValueChange = { profileUpiId = it },
-                        placeholder = { Text("UPI ID") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFFFF6B00),
-                            unfocusedBorderColor = Color.Black
-                        )
-                    )
-                }
+                )
             },
             confirmButton = {
                 Button(
                     onClick = {
                         showEditProfileDialog = false
-                        profileViewModel.saveProfile(name = profileName, upiId = profileUpiId)
+                        profileViewModel.saveProfile(name = profileName)
                     },
                     enabled = !profileState.isSaving,
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
