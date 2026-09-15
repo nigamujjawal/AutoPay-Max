@@ -47,10 +47,14 @@ class PreferenceManager @Inject constructor(
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { it[THEME_KEY] ?: "Light" }
-    val currencyFlow: Flow<String> = context.dataStore.data.map { it[CURRENCY_KEY] ?: "₹" }
+    val currencyFlow: Flow<String> = context.dataStore.data.map { 
+        it[CURRENCY_KEY] ?: getDefaultDeviceCurrencySymbol() 
+    }
     // ISO 4217 code, e.g. for PaymentSyncWorker's backend `currency` field - currencyFlow's
     // symbol alone is ambiguous ("$" is US/Australia/Mexico), this isn't.
-    val currencyCodeFlow: Flow<String> = context.dataStore.data.map { it[CURRENCY_CODE_KEY] ?: "INR" }
+    val currencyCodeFlow: Flow<String> = context.dataStore.data.map { 
+        it[CURRENCY_CODE_KEY] ?: getDefaultDeviceCurrencyCode() 
+    }
     val pinCodeFlow: Flow<String> = context.dataStore.data.map { it[PIN_CODE_KEY] ?: "" }
     val isBiometricEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_BIOMETRIC_ENABLED_KEY] ?: false }
     val isVoiceAlertsEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_VOICE_ALERTS_ENABLED_KEY] ?: true }
@@ -168,5 +172,21 @@ class PreferenceManager @Inject constructor(
             it[IS_GMAIL_REAUTH_NEEDED_KEY] = false
             it[IS_GMAIL_BACKFILL_DONE_KEY] = false
         }
+    }
+}
+
+fun getDefaultDeviceCurrencySymbol(): String {
+    return try {
+        java.util.Currency.getInstance(java.util.Locale.getDefault()).symbol
+    } catch (e: Exception) {
+        "$"
+    }
+}
+
+fun getDefaultDeviceCurrencyCode(): String {
+    return try {
+        java.util.Currency.getInstance(java.util.Locale.getDefault()).currencyCode
+    } catch (e: Exception) {
+        "USD"
     }
 }

@@ -26,10 +26,10 @@ class SettingsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "System")
 
     val currency: StateFlow<String> = preferenceManager.currencyFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "₹")
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), com.autopaymax.data.local.pref.getDefaultDeviceCurrencySymbol())
 
     val currencyCode: StateFlow<String> = preferenceManager.currencyCodeFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "INR")
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), com.autopaymax.data.local.pref.getDefaultDeviceCurrencyCode())
 
     val pinCode: StateFlow<String> = preferenceManager.pinCodeFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")

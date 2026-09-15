@@ -16,6 +16,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+import com.revenuecat.purchases.LogLevel
+import com.revenuecat.purchases.Purchases
+import com.revenuecat.purchases.PurchasesConfiguration
+
 @HiltAndroidApp
 class AutoPayApplication : Application() {
 
@@ -24,6 +28,21 @@ class AutoPayApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Enable debug logs in development builds
+        if (BuildConfig.DEBUG) {
+            Purchases.logLevel = LogLevel.DEBUG
+        }
+
+        // Initialize RevenueCat SDK
+        if (BuildConfig.REVENUECAT_API_KEY.isNotBlank()) {
+            Purchases.configure(
+                PurchasesConfiguration.Builder(
+                    this,
+                    BuildConfig.REVENUECAT_API_KEY
+                ).build()
+            )
+        }
 
         // userId is blank on purpose - the app's real per-user identity (Firebase uid) isn't
         // known yet this early (Application.onCreate() runs before login, and reading it would
@@ -45,7 +64,12 @@ class AutoPayApplication : Application() {
         // sign-in exchange again, so nothing would otherwise identify a returning user - check
         // Room here instead, off the main thread.
         CoroutineScope(Dispatchers.IO).launch {
-            getStoredUserUseCase()?.let { AppStorys.setUserId(it.uid) }
+            getStoredUserUseCase()?.let { user ->
+                AppStorys.setUserId(user.uid)
+                if (Purchases.isConfigured) {
+                    Purchases.sharedInstance.logIn(user.uid)
+                }
+            }
         }
 
         createNotificationChannel()

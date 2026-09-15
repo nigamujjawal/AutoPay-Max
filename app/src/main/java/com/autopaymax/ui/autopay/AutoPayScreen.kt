@@ -34,7 +34,8 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-private val OrangeAccent = Color(0xFFFF5E00)
+private val NavyAccent = Color(0xFF1E3A8A)
+private val BlueAccent = Color(0xFF2563EB)
 private val FieldBackground = Color(0xFFF7F7FA)
 private val LabelDark = Color(0xFF1E293B)
 private val LabelMuted = Color(0xFF64748B)
@@ -59,7 +60,7 @@ private fun frequencyOffsetMillis(frequency: String): Long {
 fun AutoPayScreen(
     viewModel: MandateViewModel,
     navController: NavController,
-    currencySymbol: String = "₹",
+    currencySymbol: String = "$",
     prefillMerchant: String? = null
 ) {
     val context = LocalContext.current
@@ -93,8 +94,8 @@ fun AutoPayScreen(
             .background(Color.White)
             .appstorys("autopay_screen")
     ) {
-        // Orange header
-        Surface(color = OrangeAccent, shadowElevation = 0.dp, modifier = Modifier.fillMaxWidth()) {
+        // Navy header
+        Surface(color = NavyAccent, shadowElevation = 0.dp, modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -251,7 +252,7 @@ fun AutoPayScreen(
                     .height(52.dp),
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = OrangeAccent,
+                    containerColor = BlueAccent,
                     contentColor = Color.White,
                     disabledContainerColor = Color(0xFFF1F1F5),
                     disabledContentColor = Color(0xFFAEAEBE)
@@ -287,12 +288,12 @@ fun AutoPayScreen(
                     }
                     showDatePicker = false
                 }) {
-                    Text("OK", color = OrangeAccent, fontWeight = FontWeight.Bold)
+                    Text("OK", color = BlueAccent, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = OrangeAccent, fontWeight = FontWeight.Bold)
+                    Text("Cancel", color = BlueAccent, fontWeight = FontWeight.Bold)
                 }
             }
         ) {
@@ -300,10 +301,10 @@ fun AutoPayScreen(
                 state = datePickerState,
                 title = { Text("Select date", modifier = Modifier.padding(start = 24.dp, top = 16.dp)) },
                 colors = DatePickerDefaults.colors(
-                    selectedDayContainerColor = OrangeAccent,
+                    selectedDayContainerColor = BlueAccent,
                     selectedDayContentColor = Color.White,
-                    todayDateBorderColor = OrangeAccent,
-                    todayContentColor = OrangeAccent
+                    todayDateBorderColor = BlueAccent,
+                    todayContentColor = BlueAccent
                 )
             )
         }
@@ -356,7 +357,7 @@ private fun FrequencyChip(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(if (selected) OrangeAccent else FieldBackground)
+            .background(if (selected) BlueAccent else FieldBackground)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 6.dp),
         contentAlignment = Alignment.Center

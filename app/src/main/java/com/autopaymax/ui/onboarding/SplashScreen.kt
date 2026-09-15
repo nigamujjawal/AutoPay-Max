@@ -1,16 +1,11 @@
 package com.autopaymax.ui.onboarding
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.CurrencyRupee
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -23,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.autopaymax.ui.theme.NavyPrimary
 import kotlinx.coroutines.delay
 
 @Composable
@@ -34,18 +30,18 @@ fun SplashScreen(
         onNavigateNext()
     }
 
-    val orangeGradient = Brush.verticalGradient(
+    val navyGradient = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFFFF5E00),
-            Color(0xFFFF7600),
-            Color(0xFFFF9200)
+            Color(0xFF1E293B),
+            Color(0xFF2C4375),
+            Color(0xFF365380)
         )
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(orangeGradient)
+            .background(navyGradient)
     ) {
         // Decorative background circles
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -77,27 +73,18 @@ fun SplashScreen(
             // App Logo Box
             Box(
                 modifier = Modifier
-                    .size(90.dp)
-                    .clip(RoundedCornerShape(22.dp))
+                    .size(96.dp)
+                    .clip(RoundedCornerShape(26.dp))
                     .background(Color.White),
                 contentAlignment = Alignment.Center
             ) {
-                Box(
+                Image(
+                    painter = painterResource(id = com.autopaymax.R.drawable.appicon),
+                    contentDescription = "App Logo",
                     modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFFF0E6)),
-                    contentAlignment = Alignment.Center
-                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.CalendarMonth,
-//                        contentDescription = null,
-//                        tint = Color(0xFFFF5E00),
-//                        modifier = Modifier.size(36.dp)
-//                    )
-                    Image(painter = painterResource(id = com.autopaymax.R.mipmap.ic_launcher_round), contentDescription = "App Logo",
-                        Modifier.size(36.dp))
-                }
+                        .size(68.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
             }
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -135,7 +122,7 @@ fun SplashScreen(
                     ) {
                         Text(
                             text = tag,
-                            color = Color(0xFFE65100),
+                            color = NavyPrimary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )

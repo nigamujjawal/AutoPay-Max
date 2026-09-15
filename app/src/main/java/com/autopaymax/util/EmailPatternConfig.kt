@@ -75,19 +75,19 @@ object EmailPatternConfig {
     // exact regexes against real captured email text without going through Remote Config.
     internal val DEFAULT_LISTS: Map<String, List<UpiPatternConfig.TxnPattern>> = mapOf(
         "google_play_mandate" to listOf(
-            // Item line: "Claude Pro Subscription (Claude by Anthropic)   ₹1,999.00/month"
+            // Item line: "Claude Pro Subscription (Claude by Anthropic)   $19.99/month" or "₹1,999.00/month"
             UpiPatternConfig.TxnPattern(
-                Pattern.compile("(?i)Item\\s+Price\\s+(.+?)\\s+(?:₹|Rs\\.?|INR)\\s*([\\d,]+(?:\\.\\d{2})?)\\s*/\\s*month"),
+                Pattern.compile("(?i)Item\\s+Price\\s+(.+?)\\s+(?:[$€£₹¥]|Rs\\.?|INR|USD|EUR|GBP|CAD|AUD)\\s*([\\d,]+(?:\\.\\d{2})?)\\s*/\\s*month"),
                 amountGroup = 2, senderGroup = 1
             ),
-            // Renewal prose fallback: "Your subscription from Anthropic, PBC on Google Play has renewed" + "Total: ₹1,999.00"
+            // Renewal prose fallback: "Your subscription from Anthropic, PBC on Google Play has renewed" + "Total: $19.99"
             UpiPatternConfig.TxnPattern(
-                Pattern.compile("(?is)subscription from (.+?) on Google Play has renewed.*?Total:\\s*(?:₹|Rs\\.?|INR)\\s*([\\d,]+(?:\\.\\d{2})?)"),
+                Pattern.compile("(?is)subscription from (.+?) on Google Play has renewed.*?Total:\\s*(?:[$€£₹¥]|Rs\\.?|INR|USD|EUR|GBP|CAD|AUD)\\s*([\\d,]+(?:\\.\\d{2})?)"),
                 amountGroup = 2, senderGroup = 1
             ),
-            // Free-trial sign-up: "signed up for a trial subscription from GOTYOURBACK ... charged the subscription cost (currently ₹4,550.00/6 months)"
+            // Free-trial sign-up: "signed up for a trial subscription from GOTYOURBACK ... charged the subscription cost (currently $45.50/6 months)"
             UpiPatternConfig.TxnPattern(
-                Pattern.compile("(?is)signed up for a trial subscription from (.+?) on Google Play.*?charged the subscription cost \\(currently\\s*(?:₹|Rs\\.?|INR)\\s*([\\d,]+(?:\\.\\d{2})?)"),
+                Pattern.compile("(?is)signed up for a trial subscription from (.+?) on Google Play.*?charged the subscription cost \\(currently\\s*(?:[$€£₹¥]|Rs\\.?|INR|USD|EUR|GBP|CAD|AUD)\\s*([\\d,]+(?:\\.\\d{2})?)"),
                 amountGroup = 2, senderGroup = 1
             )
         ),

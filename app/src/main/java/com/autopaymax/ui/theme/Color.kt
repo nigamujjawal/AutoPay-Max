@@ -1,13 +1,23 @@
 package com.autopaymax.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.MaterialTheme
 
 // Define the static colors first (for ColorScheme mapping)
-val OrangePrimary = Color(0xFFFF7600) // SoundBox vibrant orange
-val OrangeSecondary = Color(0xFFFF9E40) // SoundBox secondary soft orange
-val OrangeAccent = Color(0xFFFFB066) // SoundBox accent peach orange
+val NavyPrimary = Color(0xFF1E3A8A) // Rich indigo navy primary
+val NavySecondary = Color(0xFF2563EB) // Royal slate blue secondary
+val NavyAccent = Color(0xFF3B82F6) // Bright accent blue
+
+val PremiumNavyGradient = Brush.horizontalGradient(
+    colors = listOf(Color(0xFF1E3A8A), Color(0xFF2563EB))
+)
+
+// Aliases for compatibility
+val OrangePrimary = NavyPrimary
+val OrangeSecondary = NavySecondary
+val OrangeAccent = NavyAccent
 
 val AppDarkBackground = Color(0xFF0F172A)
 val AppDarkCardBackground = Color(0xFF1E293B)

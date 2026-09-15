@@ -42,6 +42,7 @@ import com.autopaymax.ui.dashboard.DashboardScreen
 import com.autopaymax.ui.navigation.Screen
 import com.autopaymax.ui.onboarding.OnboardingScreen
 import com.autopaymax.ui.onboarding.SplashScreen
+import com.autopaymax.ui.subscription.SubscriptionOfferScreen
 import com.autopaymax.worker.GmailSyncWorker
 import com.autopaymax.ui.passbook.PassbookScreen
 import com.autopaymax.ui.passbook.TransactionViewModel
@@ -207,12 +208,12 @@ fun MainAppContent(
                                     Icon(
                                         imageVector = screen.icon,
                                         contentDescription = screen.title,
-                                        tint = if (selected) Color(0xFFFF5E00) else Color(0xFF94A3B8),
+                                        tint = if (selected) com.autopaymax.ui.theme.NavyPrimary else Color(0xFF94A3B8),
                                         modifier = Modifier.size(24.dp)
                                     )
                                     Text(
                                         text = screen.title,
-                                        color = if (selected) Color(0xFFFF5E00) else Color(0xFF94A3B8),
+                                        color = if (selected) com.autopaymax.ui.theme.NavyPrimary else Color(0xFF94A3B8),
                                         fontSize = 11.sp,
                                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                                         maxLines = 1,
@@ -230,7 +231,7 @@ fun MainAppContent(
                 ExtendedFloatingActionButton(
                     shape = RoundedCornerShape(50.dp),
                     onClick = { navController.navigate(Screen.AddSubscription.route) },
-                    containerColor = Color(0xFFFF5E00),
+                    containerColor = com.autopaymax.ui.theme.NavyPrimary,
                     contentColor = Color.White,
                     icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
                     text = { Text("Add", fontWeight = FontWeight.Bold) }
@@ -268,21 +269,39 @@ fun MainAppContent(
             composable(Screen.Onboarding.route) {
                 OnboardingScreen(
                     onStartTrialClick = {
-                        navController.navigate(Screen.GoogleConnect.route){
-                            popUpTo(Screen.Onboarding.route){inclusive = true}
+                        settingsViewModel.setIsOnboarded(true)
+                        val target = if (!authViewModel.isAuthenticated.value) Screen.GoogleConnect.route else Screen.Home.route
+                        navController.navigate(target) {
+                            popUpTo(Screen.Onboarding.route) { inclusive = true }
                         }
                     }
                 )
             }
 
-            // Google connection: in-app sign-in + Gmail read scope, then Home.
+            // Google connection: in-app sign-in + Gmail read scope, then Subscription Paywall.
             composable(Screen.GoogleConnect.route) {
                 GoogleConnectScreen(
                     authViewModel = authViewModel,
                     settingsViewModel = settingsViewModel,
                     onSuccess = {
-                        navController.navigate(Screen.Home.route) {
+                        navController.navigate(Screen.SubscriptionOffer.route) {
                             popUpTo(Screen.GoogleConnect.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            // Subscription Offer (Paywall Screen shown right after login)
+            composable(Screen.SubscriptionOffer.route) {
+                SubscriptionOfferScreen(
+                    onSubscribeClick = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.SubscriptionOffer.route) { inclusive = true }
+                        }
+                    },
+                    onContinueClick = {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.SubscriptionOffer.route) { inclusive = true }
                         }
                     }
                 )
@@ -299,6 +318,12 @@ fun MainAppContent(
                     },
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
+                    },
+                    onAddSubscriptionClick = {
+                        navController.navigate(Screen.AddSubscription.route)
+                    },
+                    onSelectApp = { merchant ->
+                        navController.navigate(Screen.AutoPay.routeFor(merchant))
                     }
                 )
             }
@@ -323,6 +348,7 @@ fun MainAppContent(
                     viewModel = settingsViewModel,
                     profileViewModel = profileViewModel,
                     onLogoutClick = {
+                        settingsViewModel.setIsOnboarded(false)
                         authViewModel.signOut()
                         navController.navigate(Screen.GoogleConnect.route) {
                             popUpTo(Screen.Home.route) { inclusive = true }
@@ -330,6 +356,9 @@ fun MainAppContent(
                     },
                     onNavigateToAppSettings = {
                         navController.navigate(Screen.AppSettings.route)
+                    },
+                    onNavigateToOnboarding = {
+                        navController.navigate(Screen.Onboarding.route)
                     },
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)

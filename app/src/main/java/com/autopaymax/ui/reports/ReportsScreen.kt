@@ -29,7 +29,7 @@ import com.autopaymax.ui.theme.*
 @Composable
 fun ReportsScreen(
     dashboardViewModel: DashboardViewModel,
-    currencySymbol: String = "₹"
+    currencySymbol: String = "$"
 ) {
     val stats by dashboardViewModel.dashboardStats.collectAsState()
     val allTxns by dashboardViewModel.allTransactions.collectAsState()

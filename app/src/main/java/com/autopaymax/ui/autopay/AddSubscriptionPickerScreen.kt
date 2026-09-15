@@ -125,11 +125,11 @@ private fun AppTile(app: AutoPayApp, onClick: () -> Unit) {
 @Composable
 private fun OtherTile(onClick: () -> Unit) {
     TileCard(onClick = onClick) {
-        IconBadge(bg = Color(0xFFFFF0EA)) {
-            Icon(Icons.Default.Add, contentDescription = "Not listed", tint = Color(0xFFFF5E00), modifier = Modifier.size(22.dp))
+        IconBadge(bg = Color(0xFFEFF6FF)) {
+            Icon(Icons.Default.Add, contentDescription = "Not listed", tint = Color(0xFF2563EB), modifier = Modifier.size(22.dp))
         }
         Spacer(Modifier.height(8.dp))
-        TileLabel("Not listed")
+        TileLabel("Add Custom")
     }
 }
 

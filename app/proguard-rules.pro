@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# RevenueCat & Google Play Billing ProGuard rules
+-keep class com.revenuecat.purchases.** { *; }

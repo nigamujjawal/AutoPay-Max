@@ -39,6 +39,7 @@ import com.appversal.appstorys.utils.appstorys
 import com.autopaymax.ui.dashboard.AutoPayTopHeader
 import com.autopaymax.ui.profile.ProfileUiEvent
 import com.autopaymax.ui.profile.ProfileViewModel
+import com.autopaymax.ui.theme.NavyPrimary
 import com.autopaymax.util.GmailAuthManager
 import kotlinx.coroutines.launch
 
@@ -52,6 +53,7 @@ fun SettingsScreen(
     profileViewModel: ProfileViewModel,
     onLogoutClick: () -> Unit,
     onNavigateToAppSettings: () -> Unit = {},
+    onNavigateToOnboarding: () -> Unit = {},
     onNotificationsClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
@@ -110,7 +112,7 @@ fun SettingsScreen(
     var showEditProfileDialog by remember { mutableStateOf(false) }
     var profileName by remember { mutableStateOf("") }
 
-    AppStorys.getScreenCampaigns("settings_screen",listOf())
+    AppStorys.getScreenCampaigns("settings_screen", listOf())
 
     Column(
         modifier = Modifier
@@ -118,7 +120,7 @@ fun SettingsScreen(
             .background(Color(0xFFFAFAFA))
             .appstorys("settings_screen")
     ) {
-        // App Top Header (Same as Home & Passbook)
+        // App Top Header
         AutoPayTopHeader(onNotificationsClick = onNotificationsClick)
 
         LazyColumn(
@@ -149,10 +151,10 @@ fun SettingsScreen(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFFFF0EA)),
+                                    .background(Color(0xFFF1F5F9)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.Person, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+                                Icon(Icons.Default.Person, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
@@ -177,7 +179,7 @@ fun SettingsScreen(
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit profile", tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Edit, contentDescription = "Edit profile", tint = NavyPrimary, modifier = Modifier.size(18.dp))
                         }
                     }
                 }
@@ -188,9 +190,6 @@ fun SettingsScreen(
                 SettingsSectionHeader("Subscription")
             }
             item {
-                // Static placeholder until Razorpay checkout is integrated - do not wire this to
-                // SubscriptionViewModel/CreateSubscriptionUseCase yet, there's no real payment
-                // collection step behind it.
                 SubscriptionCard {
                     Row(
                         modifier = Modifier
@@ -204,16 +203,16 @@ fun SettingsScreen(
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFFF6B00)),
+                                    .background(NavyPrimary),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(Icons.Default.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("AutoPay Premium", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.Red)
+                                Text("AutoPay Premium", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0F172A))
                                 Spacer(modifier = Modifier.height(2.dp))
-                                Text("Premium active • Renews Jul 2027", fontSize = 11.sp, color = Color(0xFFFF6B00), fontWeight = FontWeight.SemiBold)
+                                Text("Premium active • Renews Jul 2027", fontSize = 11.sp, color = NavyPrimary, fontWeight = FontWeight.SemiBold)
                             }
                         }
 
@@ -221,10 +220,10 @@ fun SettingsScreen(
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(Color.White)
-                                .border(1.dp, Color(0xFFFFE0D1), CircleShape)
+                                .border(1.dp, Color(0xFFCBD5E1), CircleShape)
                                 .padding(horizontal = 14.dp, vertical = 6.dp)
                         ) {
-                            Text("Active", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF6B00))
+                            Text("Active", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = NavyPrimary)
                         }
                     }
                 }
@@ -245,7 +244,7 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setPushNotificationsEnabled(it) }
                         )
 
-                        Divider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = Color(0xFFF1F5F9))
 
                         GmailSyncRow(
                             connected = gmailConnected,
@@ -262,7 +261,7 @@ fun SettingsScreen(
                             }
                         )
 
-                        Divider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = Color(0xFFF1F5F9))
 
                         SettingsSwitchItem(
                             icon = Icons.Default.NotificationsActive,
@@ -272,7 +271,7 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setAutopayRemindersEnabled(it) }
                         )
 
-                        Divider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = Color(0xFFF1F5F9))
 
                         SettingsSwitchItem(
                             icon = Icons.Default.VolumeUp,
@@ -282,7 +281,7 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setVoiceAlertsEnabled(it) }
                         )
 
-                        Divider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = Color(0xFFF1F5F9))
 
                         SettingsRowItem(
                             icon = Icons.Default.Tune,
@@ -335,7 +334,19 @@ fun SettingsScreen(
                 }
             }
 
-            // Delete Account Button (same theme as Log Out)
+            // App Tour & Onboarding Card
+            item {
+                SettingsCard {
+                    SettingsRowItem(
+                        icon = Icons.Default.Explore,
+                        title = "App Tour & Onboarding",
+                        subtitle = "Replay the feature walkthrough & onboarding sequence",
+                        onClick = onNavigateToOnboarding
+                    )
+                }
+            }
+
+            // Delete Account Button
             item {
                 Box(
                     modifier = Modifier
@@ -367,7 +378,7 @@ fun SettingsScreen(
                 }
             }
 
-            // Log Out Button (Matches Image 6)
+            // Log Out Button
             item {
                 Box(
                     modifier = Modifier
@@ -417,7 +428,7 @@ fun SettingsScreen(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFFFF6B00),
+                        focusedBorderColor = NavyPrimary,
                         unfocusedBorderColor = Color.Black
                     )
                 )
@@ -429,7 +440,7 @@ fun SettingsScreen(
                         profileViewModel.saveProfile(name = profileName)
                     },
                     enabled = !profileState.isSaving,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
+                    colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary)
                 ) {
                     Text("Save", color = Color.White, fontWeight = FontWeight.Bold)
                 }
@@ -473,8 +484,8 @@ fun SubscriptionCard(content: @Composable ColumnScope.() -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFFFF9F5))
-            .border(1.dp, Color(0xFFFFE0D1), RoundedCornerShape(20.dp))
+            .background(Color(0xFFF8FAFC))
+            .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(20.dp))
     ) {
         Column(content = content)
     }
@@ -500,10 +511,10 @@ fun SettingsRowItem(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFFF0EA)),
+                    .background(Color(0xFFF1F5F9)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+                Icon(icon, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
@@ -537,10 +548,10 @@ fun SettingsSwitchItem(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFFF0EA)),
+                    .background(Color(0xFFF1F5F9)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+                Icon(icon, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
@@ -554,7 +565,7 @@ fun SettingsSwitchItem(
             onCheckedChange = onCheckedChange,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = Color(0xFFFF6B00),
+                checkedTrackColor = NavyPrimary,
                 uncheckedThumbColor = Color.White,
                 uncheckedTrackColor = Color(0xFFCBD5E1)
             )
@@ -562,8 +573,6 @@ fun SettingsSwitchItem(
     }
 }
 
-// Expandable Gmail-sync row: header toggles a slide-down panel showing the connected account +
-// "Sync now" / "Disconnect" (or a "Connect" / "Reconnect" action when not connected).
 @Composable
 fun GmailSyncRow(
     connected: Boolean,
@@ -594,10 +603,10 @@ fun GmailSyncRow(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFFF0EA)),
+                    .background(Color(0xFFF1F5F9)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.MailOutline, contentDescription = null, tint = Color(0xFFFF6B00), modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.MailOutline, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
@@ -639,7 +648,7 @@ fun GmailSyncRow(
                             onClick = onSyncNow,
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
+                            colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary)
                         ) { Text("Sync now", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
                         OutlinedButton(
                             onClick = onDisconnect,
@@ -661,7 +670,7 @@ fun GmailSyncRow(
                         onClick = onConnect,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF6B00))
+                        colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary)
                     ) { Text(if (reauthNeeded) "Reconnect" else "Connect Gmail", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
                 }
             }

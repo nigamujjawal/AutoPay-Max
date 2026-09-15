@@ -182,9 +182,9 @@ object EmailParser {
         return null
     }
 
-    // "<Product> (<App Name>)   ₹1,999.00/month" -> "App Name". The parens group immediately
+    // "<Product> (<App Name>)   $19.99/month" -> "App Name". The parens group immediately
     // before a price. Null when there isn't one (non-Play emails, plain item names).
-    private val PLAY_APP_NAME = Pattern.compile("\\(([^()]{2,80})\\)\\s+(?:₹|Rs\\.?|INR)\\s*[\\d,]")
+    private val PLAY_APP_NAME = Pattern.compile("\\(([^()]{2,80})\\)\\s+(?:[$€£₹¥]|Rs\\.?|INR|USD|EUR|GBP|CAD|AUD)\\s*[\\d,]")
     private fun playAppName(text: String): String? {
         val m = PLAY_APP_NAME.matcher(text)
         return if (m.find()) m.group(1)?.trim()?.takeIf { it.isNotEmpty() } else null
@@ -218,7 +218,7 @@ object EmailParser {
 
     // Best-effort "was anything actually billed in this email" - a receipt "Total:" line. Absent
     // for vendors whose emails have no such line, in which case the caller assumes a real charge.
-    private val RECEIPT_TOTAL = Pattern.compile("(?i)Total:\\s*(?:₹|Rs\\.?|INR)\\s*([\\d,]+(?:\\.\\d{2})?)")
+    private val RECEIPT_TOTAL = Pattern.compile("(?i)Total:\\s*(?:[$€£₹¥]|Rs\\.?|INR|USD|EUR|GBP|CAD|AUD)\\s*([\\d,]+(?:\\.\\d{2})?)")
     private fun receiptTotal(text: String): Double? {
         val m = RECEIPT_TOTAL.matcher(text)
         return if (m.find()) m.group(1)?.replace(",", "")?.toDoubleOrNull() else null

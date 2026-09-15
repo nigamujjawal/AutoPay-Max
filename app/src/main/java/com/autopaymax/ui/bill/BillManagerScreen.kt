@@ -34,7 +34,7 @@ import java.util.*
 @Composable
 fun BillManagerScreen(
     viewModel: BillViewModel,
-    currencySymbol: String = "₹"
+    currencySymbol: String = "$"
 ) {
     val bills by viewModel.filteredBills.collectAsState()
     val categories by viewModel.categories.collectAsState()
@@ -205,7 +205,7 @@ fun BillManagerScreen(
 @Composable
 fun BillRow(
     bill: Bill,
-    currencySymbol: String = "₹",
+    currencySymbol: String = "$",
     onMarkPaid: () -> Unit,
     onDuplicate: () -> Unit,
     onDelete: () -> Unit,

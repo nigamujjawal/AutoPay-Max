@@ -49,7 +49,7 @@ fun MandateDetailScreen(
     mandateId: Long,
     mandateViewModel: MandateViewModel,
     onBack: () -> Unit,
-    currencySymbol: String = "₹"
+    currencySymbol: String = "$"
 ) {
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()

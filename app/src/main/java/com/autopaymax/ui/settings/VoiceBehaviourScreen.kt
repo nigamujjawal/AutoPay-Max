@@ -6,7 +6,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,9 +31,8 @@ import androidx.navigation.NavController
 import com.autopaymax.data.local.pref.PreferenceManager
 import com.autopaymax.tts.AnnouncementKind
 import com.autopaymax.tts.TextToSpeechHelper
+import com.autopaymax.ui.theme.NavyPrimary
 
-// SliderState.value is the actual value within valueRange, not a 0..1 fraction -
-// normalize it so the active-track width is correct for ranges that don't start at 0.
 @OptIn(ExperimentalMaterial3Api::class)
 private fun sliderFraction(state: SliderState): Float =
     (state.value - state.valueRange.start) / (state.valueRange.endInclusive - state.valueRange.start)
@@ -57,11 +55,6 @@ fun VoiceBehaviour(
     var volumeValue by remember(voiceVolume) { mutableFloatStateOf(voiceVolume) }
     var speedValue by remember(speechSpeed) { mutableFloatStateOf(speechSpeed) }
 
-    // Paired with its Locale/TTS language code (what TextToSpeechHelper actually needs) - the
-    // picker used to store the display string itself via setLanguage(), a different preference
-    // TextToSpeechHelper never read, so picking a language here never changed the spoken voice.
-    // Matching set lives in SpeechTemplates.TEMPLATES; the on-device TTS engine must have the
-    // voice pack for the picked locale (TextToSpeechHelper logs LANG_MISSING_DATA if not).
     val languages = remember {
         listOf(
             "English" to "en", "Español" to "es", "Français" to "fr", "Deutsch" to "de",
@@ -78,7 +71,7 @@ fun VoiceBehaviour(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // App Header with Back Button (Matches Screenshot 1)
+            // App Header with Back Button
             Surface(
                 color = Color.White,
                 shadowElevation = 0.dp,
@@ -171,8 +164,8 @@ fun VoiceBehaviour(
                                                 modifier = Modifier
                                                     .weight(1f)
                                                     .clip(CircleShape)
-                                                    .background(if (isSelected) Color(0xFFFF5E00) else Color(0xFFF8FAFC))
-                                                    .border(1.dp, if (isSelected) Color(0xFFFF5E00) else Color(0xFFF1F5F9), CircleShape)
+                                                    .background(if (isSelected) NavyPrimary else Color(0xFFF8FAFC))
+                                                    .border(1.dp, if (isSelected) NavyPrimary else Color(0xFFF1F5F9), CircleShape)
                                                     .clickable { settingsViewModel.setSpeechLanguage(code) }
                                                     .padding(horizontal = 12.dp, vertical = 10.dp),
                                                 contentAlignment = Alignment.Center
@@ -224,8 +217,8 @@ fun VoiceBehaviour(
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .clip(CircleShape)
-                                                .background(if (isSelected) Color(0xFFFF5E00) else Color(0xFFF8FAFC))
-                                                .border(1.dp, if (isSelected) Color(0xFFFF5E00) else Color(0xFFF1F5F9), CircleShape)
+                                                .background(if (isSelected) NavyPrimary else Color(0xFFF8FAFC))
+                                                .border(1.dp, if (isSelected) NavyPrimary else Color(0xFFF1F5F9), CircleShape)
                                                 .clickable { settingsViewModel.setVoiceEngine(engine) }
                                                 .padding(vertical = 12.dp),
                                             contentAlignment = Alignment.Center
@@ -285,7 +278,7 @@ fun VoiceBehaviour(
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                                             contentDescription = null,
-                                            tint = Color(0xFFFF5E00),
+                                            tint = NavyPrimary,
                                             modifier = Modifier.size(20.dp)
                                         )
                                         Text(
@@ -325,14 +318,14 @@ fun VoiceBehaviour(
                                                     val centerY = size.height / 2f
                                                     val fraction = sliderFraction(state)
                                                     drawLine(
-                                                        color = Color(0xFFFFE0D1),
+                                                        color = Color(0xFFE2E8F0),
                                                         start = Offset(0f, centerY),
                                                         end = Offset(size.width, centerY),
                                                         strokeWidth = size.height * 4f,
                                                         cap = StrokeCap.Round
                                                     )
                                                     drawLine(
-                                                        color = Color(0xFFFF5E00),
+                                                        color = NavyPrimary,
                                                         start = Offset(0f, centerY),
                                                         end = Offset(size.width * fraction, centerY),
                                                         strokeWidth = size.height * 4f,
@@ -354,7 +347,7 @@ fun VoiceBehaviour(
                                         Icon(
                                             imageVector = Icons.Default.FlashOn,
                                             contentDescription = null,
-                                            tint = Color(0xFFFF5E00),
+                                            tint = NavyPrimary,
                                             modifier = Modifier.size(20.dp)
                                         )
                                         Text(
@@ -394,14 +387,14 @@ fun VoiceBehaviour(
                                                     val centerY = size.height / 2f
                                                     val fraction = sliderFraction(state)
                                                     drawLine(
-                                                        color = Color(0xFFFFE0D1),
+                                                        color = Color(0xFFE2E8F0),
                                                         start = Offset(0f, centerY),
                                                         end = Offset(size.width, centerY),
                                                         strokeWidth = size.height * 4f,
                                                         cap = StrokeCap.Round
                                                     )
                                                     drawLine(
-                                                        color = Color(0xFFFF5E00),
+                                                        color = NavyPrimary,
                                                         start = Offset(0f, centerY),
                                                         end = Offset(size.width * fraction, centerY),
                                                         strokeWidth = size.height * 4f,
@@ -439,7 +432,7 @@ fun VoiceBehaviour(
                                         onCheckedChange = { settingsViewModel.setPlayChimeFirst(it) },
                                         colors = SwitchDefaults.colors(
                                             checkedThumbColor = Color.White,
-                                            checkedTrackColor = Color(0xFFFF5E00),
+                                            checkedTrackColor = NavyPrimary,
                                             uncheckedThumbColor = Color.White,
                                             uncheckedTrackColor = Color(0xFFCBD5E1)
                                         )
@@ -501,8 +494,8 @@ fun VoiceBehaviour(
                                             selected = isSelected,
                                             onClick = { settingsViewModel.setAlertTone(title) },
                                             colors = RadioButtonDefaults.colors(
-                                                selectedColor = Color(0xFFFF5E00),
-                                                unselectedColor = Color(0xFFFF5E00)
+                                                selectedColor = NavyPrimary,
+                                                unselectedColor = NavyPrimary
                                             )
                                         )
                                     }
@@ -576,7 +569,7 @@ fun VoiceBehaviour(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(50.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5E00)),
+                                    colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary),
                                     shape = CircleShape
                                 ) {
                                     Row(

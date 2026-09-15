@@ -18,12 +18,10 @@ val localProperties = Properties().apply {
         load(FileInputStream(localFile))
     }
 }
-val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL")
-    ?: error("Missing API_BASE_URL in local.properties - add it as API_BASE_URL=<backend base url>")
-val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID")
-    ?: error("Missing APPSTORYS_APP_ID in local.properties - add it as APPSTORYS_APP_ID=<app id>")
-val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID")
-    ?: error("Missing APPSTORYS_ACCOUNT_ID in local.properties - add it as APPSTORYS_ACCOUNT_ID=<account id>")
+val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL")?.ifBlank { "https://api.autopaymax.com/" } ?: "https://api.autopaymax.com/"
+val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID") ?: ""
+val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID") ?: ""
+val revenueCatApiKey: String = localProperties.getProperty("REVENUECAT_API_KEY") ?: ""
 
 android {
     namespace = "com.autopaymax"
@@ -40,6 +38,7 @@ android {
         buildConfigField("String", "API_BASE_URL", "\"$soundBoxApiBaseUrl\"")
         buildConfigField("String", "APPSTORYS_APP_ID", "\"$appStorysAppId\"")
         buildConfigField("String", "APPSTORYS_ACCOUNT_ID", "\"$appStorysAccountId\"")
+        buildConfigField("String", "REVENUECAT_API_KEY", "\"$revenueCatApiKey\"")
     }
 
     buildTypes {
@@ -126,4 +125,8 @@ dependencies {
 
     // Source: https://mvnrepository.com/artifact/com.appsflyer/af-android-sdk
     implementation("com.appsflyer:af-android-sdk:7.0.1")
+
+    // RevenueCat Subscriptions & Google Play Billing
+    implementation(libs.revenuecat.purchases)
+    implementation(libs.revenuecat.ui)
 }

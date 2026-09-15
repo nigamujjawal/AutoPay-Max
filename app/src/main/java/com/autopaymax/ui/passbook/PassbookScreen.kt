@@ -35,7 +35,7 @@ import java.util.*
 @Composable
 fun PassbookScreen(
     viewModel: TransactionViewModel,
-    currencySymbol: String = "₹",
+    currencySymbol: String = "$",
     onNotificationsClick: () -> Unit = {}
 ) {
     val transactions by viewModel.filteredTransactions.collectAsState()
@@ -326,7 +326,7 @@ fun PassbookScreen(
 @Composable
 fun PassbookTransactionRow(
     txn: Transaction,
-    currencySymbol: String = "₹"
+    currencySymbol: String = "$"
 ) {
     val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
     val formattedDate = df.format(Date(txn.date))

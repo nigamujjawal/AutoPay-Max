@@ -31,12 +31,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
-        Retrofit.Builder()
-            .baseUrl(BuildConfig.API_BASE_URL)
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val rawUrl = BuildConfig.API_BASE_URL.ifBlank { "https://api.autopaymax.com/" }
+        val formattedUrl = when {
+            rawUrl.startsWith("http://") || rawUrl.startsWith("https://") -> rawUrl
+            else -> "https://$rawUrl"
+        }.let { if (it.endsWith("/")) it else "$it/" }
+
+        return Retrofit.Builder()
+            .baseUrl(formattedUrl)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
 
     @Provides
     @Singleton

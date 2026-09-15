@@ -94,9 +94,9 @@ fun detectCountryCode(context: Context): CountryCode {
     return COUNTRY_CODES.find { it.iso == isoCode } ?: DEFAULT_COUNTRY
 }
 
-private val FieldBorder = Color(0xFFEDE4D6)
-private val TitleColor = Color(0xFF1E293B)
-private val SubtitleColor = Color(0xFF7D889A)
+private val FieldBorder = Color(0xFFE2E8F0)
+private val TitleColor = Color(0xFF0F172A)
+private val SubtitleColor = Color(0xFF64748B)
 
 // Auto-detects on first composition and reports (symbol, code) via onSelected - the caller wires
 // that to SettingsViewModel. Manual override via the dropdown re-fires onSelected.
