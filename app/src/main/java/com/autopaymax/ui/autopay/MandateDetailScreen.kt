@@ -14,10 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,10 +34,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.autopaymax.ui.components.StatusBadge
+import com.autopaymax.ui.theme.*
 import com.autopaymax.util.matchAutoPayApp
 import com.autopaymax.util.merchantInitials
 import java.text.SimpleDateFormat
@@ -59,7 +60,7 @@ fun MandateDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFA))
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
     ) {
         Row(
@@ -69,14 +70,14 @@ fun MandateDetailScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color(0xFF1E293B))
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = TextWhite)
             }
-            Text("AutoPay Detail", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+            Text("AutoPay Detail", style = MaterialTheme.typography.titleLarge, color = TextWhite)
         }
 
         if (mandate == null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Autopay not found", color = Color(0xFF94A3B8))
+                Text("Autopay not found", color = TextGray)
             }
             return
         }
@@ -100,7 +101,7 @@ fun MandateDetailScreen(
                 modifier = Modifier
                     .size(72.dp)
                     .clip(CircleShape)
-                    .background(matchedApp?.color ?: Color(0xFFFF7600)),
+                    .background(matchedApp?.color ?: PrimaryIndigo),
                 contentAlignment = Alignment.Center
             ) {
                 if (matchedApp != null) {
@@ -111,20 +112,23 @@ fun MandateDetailScreen(
                         modifier = Modifier.size(32.dp)
                     )
                 } else {
-                    Text(merchantInitials(mandate.merchant), color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                    Text(merchantInitials(mandate.merchant), color = Color.White, style = MaterialTheme.typography.headlineSmall)
                 }
             }
 
             Spacer(Modifier.height(14.dp))
             Text(
                 text = mandate.merchant,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B),
+                style = MaterialTheme.typography.headlineSmall,
+                color = TextWhite,
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(8.dp))
-            StatusPill(isActive)
+            // mandate.status is literally "ACTIVE" or "CANCELLED" — StatusBadge
+            // already renders ACTIVE as the steady-green light and falls back to
+            // a neutral dot+label for anything else, which is exactly right for
+            // "Cancelled".
+            StatusBadge(status = mandate.status)
 
             Spacer(Modifier.height(24.dp))
 
@@ -132,20 +136,20 @@ fun MandateDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
             ) {
-                DetailRow("Next payment date", if (isActive) df.format(Date(mandate.nextExpectedDebit)) else "—")
-                Divider(color = Color(0xFFF1F5F9))
+                DetailRow("Next payment date", if (isActive) df.format(Date(mandate.nextExpectedDebit)) else "-")
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow("Bill amount", "$currencySymbol${mandate.amount.toInt()}")
-                Divider(color = Color(0xFFF1F5F9))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 DetailRow("Status", if (isActive) "Active" else "Cancelled")
             }
         }
 
         // Bottom action - Play-billed goes straight to the Play Store; everything else opens the
         // cancellation sheet (guidance + mark-as-cancelled, since there's no auto-detect for it).
-        Surface(color = Color.White, shadowElevation = 8.dp, modifier = Modifier.fillMaxWidth()) {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shadowElevation = 8.dp, modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -162,10 +166,10 @@ fun MandateDetailScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFDC2626),
-                        contentColor = Color.White,
-                        disabledContainerColor = Color(0xFFF1F1F5),
-                        disabledContentColor = Color(0xFF94A3B8)
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        disabledContentColor = TextGray
                     )
                 ) {
                     Text(
@@ -174,8 +178,7 @@ fun MandateDetailScreen(
                             isPlayBilled -> "Cancel via Google Play"
                             else -> "Cancel subscription"
                         },
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium
                     )
                 }
             }
@@ -185,7 +188,7 @@ fun MandateDetailScreen(
     if (showCancelSheet && mandate != null) {
         ModalBottomSheet(
             onDismissRequest = { showCancelSheet = false },
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Column(
                 modifier = Modifier
@@ -197,15 +200,13 @@ fun MandateDetailScreen(
             ) {
                 Text(
                     "Cancel ${mandate.merchant}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF1E293B)
+                    style = MaterialTheme.typography.titleLarge,
+                    color = TextWhite
                 )
                 Text(
                     cancelInstructions(mandate.source, mandate.bank),
-                    fontSize = 14.sp,
-                    color = Color(0xFF64748B),
-                    lineHeight = 20.sp
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextGray
                 )
 
                 Button(
@@ -218,11 +219,11 @@ fun MandateDetailScreen(
                         .height(52.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFDC2626),
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
                     )
                 ) {
-                    Text("Mark as cancelled", fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Text("Mark as cancelled", style = MaterialTheme.typography.titleMedium)
                 }
             }
         }
@@ -256,23 +257,6 @@ private fun openPlayStoreSubscriptions(context: android.content.Context) {
 }
 
 @Composable
-private fun StatusPill(isActive: Boolean) {
-    val (bg, fg, label) = if (isActive) {
-        Triple(Color(0xFFDCFCE7), Color(0xFF15803D), "Active")
-    } else {
-        Triple(Color(0xFFFEE2E2), Color(0xFFB91C1C), "Cancelled")
-    }
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))
-            .background(bg)
-            .padding(horizontal = 12.dp, vertical = 5.dp)
-    ) {
-        Text(label, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = fg)
-    }
-}
-
-@Composable
 private fun DetailRow(label: String, value: String) {
     Row(
         modifier = Modifier
@@ -281,7 +265,7 @@ private fun DetailRow(label: String, value: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(label, fontSize = 13.sp, color = Color(0xFF94A3B8))
-        Text(value, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF1E293B))
+        Text(label, style = MaterialTheme.typography.bodySmall, color = TextGray)
+        Text(value, style = MaterialTheme.typography.titleSmall, color = TextWhite)
     }
 }

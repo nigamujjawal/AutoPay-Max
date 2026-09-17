@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,10 +16,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.autopaymax.ui.theme.AppDarkBackground
 import com.autopaymax.ui.theme.NavyPrimary
+import com.autopaymax.ui.theme.NavySecondary
 import kotlinx.coroutines.delay
 
 @Composable
@@ -30,18 +31,16 @@ fun SplashScreen(
         onNavigateNext()
     }
 
-    val navyGradient = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF1E293B),
-            Color(0xFF2C4375),
-            Color(0xFF365380)
-        )
+    // The cockpit powering on — fixed dark instrument gradient in both
+    // app themes, same palette as the Dashboard hero gauge.
+    val instrumentGradient = Brush.verticalGradient(
+        colors = listOf(AppDarkBackground, NavyPrimary, NavySecondary)
     )
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(navyGradient)
+            .background(instrumentGradient)
     ) {
         // Decorative background circles
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -93,8 +92,7 @@ fun SplashScreen(
             Text(
                 text = "AutoPay Max",
                 color = Color.White,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+                style = MaterialTheme.typography.headlineLarge
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -102,8 +100,7 @@ fun SplashScreen(
             Text(
                 text = "Your Smart Auto Payment Manager",
                 color = Color.White.copy(alpha = 0.9f),
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.titleMedium
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -123,8 +120,7 @@ fun SplashScreen(
                         Text(
                             text = tag,
                             color = NavyPrimary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 }
@@ -154,8 +150,7 @@ fun SplashScreen(
             Text(
                 text = "Loading...",
                 color = Color.White.copy(alpha = 0.9f),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
+                style = MaterialTheme.typography.labelLarge
             )
         }
     }

@@ -126,13 +126,13 @@ fun BillManagerScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Sort by: $sortBy", color = TextGray, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                
+
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     listOf("Due Date", "Amount", "Title").forEach { opt ->
                         val active = opt == sortBy
                         Text(
                             text = opt,
-                            color = if (active) AccentTeal else TextGray,
+                            color = if (active) PrimaryIndigo else TextGray,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier
@@ -250,8 +250,7 @@ fun BillRow(
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = "$currencySymbol%,.2f".format(bill.amount),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Black,
+                    style = InstrumentValueMedium,
                     color = TextWhite
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -273,7 +272,7 @@ fun BillRow(
                         Icon(
                             imageVector = Icons.Default.ContentCopy,
                             contentDescription = "Duplicate",
-                            tint = AccentTeal
+                            tint = PrimaryIndigo
                         )
                     }
                     IconButton(
@@ -391,7 +390,7 @@ fun BillDialog(
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(12.dp))
-                                        .background(if (category == cat) PrimaryIndigo else BorderColor)
+                                        .background(if (category == cat) PrimaryIndigo else MaterialTheme.colorScheme.surfaceContainer)
                                         .clickable { category = cat }
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {
@@ -413,7 +412,7 @@ fun BillDialog(
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(12.dp))
-                                        .background(if (repeatType == freq) PrimaryIndigo else BorderColor)
+                                        .background(if (repeatType == freq) PrimaryIndigo else MaterialTheme.colorScheme.surfaceContainer)
                                         .clickable { repeatType = freq }
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {

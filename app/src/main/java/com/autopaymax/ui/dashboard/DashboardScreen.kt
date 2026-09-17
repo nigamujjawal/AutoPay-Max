@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.NotificationsNone
@@ -37,25 +38,27 @@ import com.appversal.appstorys.AppStorys
 import com.appversal.appstorys.utils.appstorys
 import com.autopaymax.data.local.entity.Mandate
 import com.autopaymax.ui.autopay.MandateViewModel
-import com.autopaymax.ui.theme.NavyPrimary
-import com.autopaymax.ui.theme.NavySecondary
-import com.autopaymax.ui.theme.PremiumNavyGradient
+import com.autopaymax.ui.components.PremiumNormalCard
+import com.autopaymax.ui.theme.*
 import com.autopaymax.util.matchAutoPayApp
 import com.autopaymax.util.merchantInitials
-import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun DashboardScreen(
     mandateViewModel: MandateViewModel,
     currencySymbol: String = "$",
     onNotificationsClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {},
     onMandateClick: (Long) -> Unit = {},
     onAddSubscriptionClick: () -> Unit = {},
+    onImportScreenshot: () -> Unit = {},
     onSelectApp: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val mandates by mandateViewModel.mandates.collectAsState()
+    val hasLoadedMandates by mandateViewModel.hasLoadedMandates.collectAsState()
     val showMailSyncPrompt by mandateViewModel.showMailSyncPrompt.collectAsState()
 
     var showAddDialog by remember { mutableStateOf(false) }
@@ -70,6 +73,17 @@ fun DashboardScreen(
     val displayTotal = totalMonthlyCost.toInt()
     val displayCount = activeCount
 
+    // Instrument read: how many mandates are steady vs. need a look
+    // (overdue, or due inside the next 3 days).
+    val attentionCount = remember(activeMandates) {
+        val now = System.currentTimeMillis()
+        activeMandates.count { m -> daysUntilDebit(m.nextExpectedDebit, now) <= 3 }
+    }
+    val anyOverdue = remember(activeMandates) {
+        val now = System.currentTimeMillis()
+        activeMandates.any { m -> m.nextExpectedDebit < now }
+    }
+
     AppStorys.getScreenCampaigns("DashboardScreen", listOf())
     Log.d("AppStorys", "Active AppStorys userId: ${AppStorys.getUserId()}")
 
@@ -77,13 +91,13 @@ fun DashboardScreen(
         modifier = Modifier
             .appstorys("dashboard_container")
             .fillMaxSize()
-            .background(Color(0xFFFAFAFC))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             // App Header
-            AutoPayTopHeader(onNotificationsClick = onNotificationsClick)
+            AutoPayTopHeader(onNotificationsClick = onNotificationsClick, onCalendarClick = onCalendarClick)
 
             Column(
                 modifier = Modifier
@@ -93,7 +107,9 @@ fun DashboardScreen(
             ) {
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Hero Card - Total Monthly Spending (Premium Indigo Slate Gradient)
+                // Hero instrument — the primary gauge. Fixed dark bezel in
+                // both app themes: a physical instrument insert, not a
+                // surface that flips with the page.
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -102,16 +118,11 @@ fun DashboardScreen(
                         .clip(RoundedCornerShape(22.dp))
                         .background(
                             Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0xFF0F172A),
-                                    Color(0xFF1E3A8A),
-                                    Color(0xFF2563EB)
-                                )
+                                colors = listOf(AppDarkBackground, NavyPrimary, NavySecondary)
                             )
                         )
                         .padding(22.dp)
                 ) {
-                    // Decorative background circles
                     Canvas(modifier = Modifier.fillMaxSize()) {
                         drawCircle(
                             color = Color.White.copy(alpha = 0.12f),
@@ -130,33 +141,51 @@ fun DashboardScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Total Monthly Spending",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White.copy(alpha = 0.85f)
+                            text = "TOTAL MONTHLY",
+                            style = InstrumentLabel,
+                            color = Color.White.copy(alpha = 0.75f)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "$currencySymbol $displayTotal",
-                            fontSize = 40.sp,
-                            fontWeight = FontWeight.Black,
-                            color = Color.White,
-                            letterSpacing = (-1).sp
+                            style = InstrumentValueHero,
+                            color = Color.White
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+
+                        val readingColor = when {
+                            displayCount == 0 -> Color.White.copy(alpha = 0.7f)
+                            attentionCount == 0 -> StatusActiveDarkTone
+                            anyOverdue -> AppDarkError
+                            else -> AppDarkTertiary
+                        }
+                        val readingText = when {
+                            displayCount == 0 -> "No active autopays"
+                            attentionCount == 0 -> "$displayCount active · steady"
+                            else -> "$attentionCount of $displayCount need${if (attentionCount == 1) "s" else ""} attention"
+                        }
+
                         Box(
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.2f))
-                                .border(1.dp, Color.White.copy(alpha = 0.3f), CircleShape)
-                                .padding(horizontal = 14.dp, vertical = 4.dp)
+                                .background(Color.White.copy(alpha = 0.14f))
+                                .border(1.dp, Color.White.copy(alpha = 0.2f), CircleShape)
+                                .padding(horizontal = 14.dp, vertical = 6.dp)
                         ) {
-                            Text(
-                                text = "Across $displayCount autopays",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(7.dp)
+                                        .clip(CircleShape)
+                                        .background(readingColor)
+                                )
+                                Spacer(modifier = Modifier.width(7.dp))
+                                Text(
+                                    text = readingText,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }
@@ -171,9 +200,8 @@ fun DashboardScreen(
                 ) {
                     Text(
                         text = "Current Auto Payments",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = TextWhite
                     )
                 }
             }
@@ -188,16 +216,17 @@ fun DashboardScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 contentPadding = PaddingValues(top = 4.dp, bottom = 60.dp)
             ) {
-                if (mandates.isEmpty()) {
+                if (!hasLoadedMandates) {
+                    // Room hasn't emitted its first result yet - render nothing rather than
+                    // guessing, so the empty-state screen never flashes ahead of real data.
+                } else if (mandates.isEmpty()) {
                     item {
                         EmptyStateStartExploring(
                             onConnectGmail = {
                                 mandateViewModel.syncMailsOnce(context)
                                 Toast.makeText(context, "Syncing your inbox…", Toast.LENGTH_SHORT).show()
                             },
-                            onImportScreenshot = {
-                                onAddSubscriptionClick()
-                            },
+                            onImportScreenshot = onImportScreenshot,
                             onAddSubscription = onAddSubscriptionClick,
                             onQuickAdd = { name, _ ->
                                 onSelectApp(name)
@@ -220,19 +249,19 @@ fun DashboardScreen(
         if (showMailSyncPrompt) {
             AlertDialog(
                 onDismissRequest = { mandateViewModel.dismissMailSyncPrompt() },
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 title = {
                     Text(
                         text = "Sync your inbox",
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TextWhite
                     )
                 },
                 text = {
                     Text(
                         text = "Scan your Gmail once for subscription and autopay emails so your payments show up here automatically.",
-                        color = Color(0xFF64748B),
-                        fontSize = 14.sp
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = TextGray
                     )
                 },
                 confirmButton = {
@@ -249,7 +278,7 @@ fun DashboardScreen(
                 },
                 dismissButton = {
                     TextButton(onClick = { mandateViewModel.dismissMailSyncPrompt() }) {
-                        Text("Not now", color = Color(0xFF64748B))
+                        Text("Not now", color = TextGray)
                     }
                 }
             )
@@ -259,12 +288,12 @@ fun DashboardScreen(
         if (showAddDialog) {
             AlertDialog(
                 onDismissRequest = { showAddDialog = false },
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 title = {
                     Text(
                         text = "Add AutoPay Mandate",
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TextWhite
                     )
                 },
                 text = {
@@ -278,7 +307,7 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = NavySecondary,
-                                unfocusedBorderColor = Color(0xFFCBD5E1)
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             )
                         )
                         OutlinedTextField(
@@ -288,7 +317,7 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = NavySecondary,
-                                unfocusedBorderColor = Color(0xFFCBD5E1)
+                                unfocusedBorderColor = MaterialTheme.colorScheme.outline
                             )
                         )
                         Row(
@@ -300,16 +329,15 @@ fun DashboardScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .clip(RoundedCornerShape(10.dp))
-                                        .background(if (selected) NavySecondary else Color(0xFFF1F5F9))
+                                        .background(if (selected) NavySecondary else MaterialTheme.colorScheme.surfaceContainer)
                                         .clickable { selectedFrequency = freq }
                                         .padding(vertical = 10.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = freq,
-                                        color = if (selected) Color.White else Color(0xFF64748B),
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
+                                        color = if (selected) Color.White else TextGray,
+                                        style = MaterialTheme.typography.labelLarge
                                     )
                                 }
                             }
@@ -346,13 +374,17 @@ fun DashboardScreen(
                 },
                 dismissButton = {
                     TextButton(onClick = { showAddDialog = false }) {
-                        Text("Cancel", color = Color(0xFF64748B))
+                        Text("Cancel", color = TextGray)
                     }
                 }
             )
         }
     }
 }
+
+/** Days until [nextExpectedDebit], relative to [now]; negative means overdue. */
+private fun daysUntilDebit(nextExpectedDebit: Long, now: Long): Long =
+    TimeUnit.MILLISECONDS.toDays(nextExpectedDebit - now)
 
 // ==========================================
 // EMPTY STATE - START EXPLORING VIEW (SC 6)
@@ -405,7 +437,7 @@ private fun EmptyStateStartExploring(
                     .offset(x = 10.dp, y = (-5).dp)
                     .shadow(8.dp, RoundedCornerShape(20.dp))
                     .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFF0F172A)),
+                    .background(AppDarkBackground),
                 contentAlignment = Alignment.Center
             ) {
                 Text("D", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
@@ -427,21 +459,18 @@ private fun EmptyStateStartExploring(
 
         Text(
             text = "Start exploring",
-            fontSize = 26.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = Color(0xFF0F172A),
-            textAlign = TextAlign.Center,
-            letterSpacing = (-0.5).sp
+            style = MaterialTheme.typography.headlineLarge,
+            color = TextWhite,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
             text = "Add your first subscription to begin your\njourney.",
-            fontSize = 14.sp,
-            color = Color(0xFF64748B),
-            textAlign = TextAlign.Center,
-            lineHeight = 20.sp
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextGray,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -458,7 +487,7 @@ private fun EmptyStateStartExploring(
                     .height(54.dp)
                     .clip(RoundedCornerShape(18.dp))
                     .clickable { onConnectGmail() },
-                color = Color(0xFFF1F5F9)
+                color = MaterialTheme.colorScheme.surfaceContainer
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
@@ -474,9 +503,8 @@ private fun EmptyStateStartExploring(
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Connect to Gmail",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TextWhite
                     )
                 }
             }
@@ -488,7 +516,7 @@ private fun EmptyStateStartExploring(
                     .height(54.dp)
                     .clip(RoundedCornerShape(18.dp))
                     .clickable { onImportScreenshot() },
-                color = Color(0xFFF1F5F9)
+                color = MaterialTheme.colorScheme.surfaceContainer
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
@@ -498,15 +526,14 @@ private fun EmptyStateStartExploring(
                     Icon(
                         imageVector = Icons.Default.Image,
                         contentDescription = "Screenshot",
-                        tint = Color(0xFF475569),
+                        tint = TextGray,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Import from screenshot",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TextWhite
                     )
                 }
             }
@@ -518,7 +545,7 @@ private fun EmptyStateStartExploring(
                     .height(54.dp)
                     .clip(RoundedCornerShape(18.dp))
                     .clickable { onAddSubscription() },
-                color = Color(0xFFF1F5F9)
+                color = MaterialTheme.colorScheme.surfaceContainer
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
@@ -528,15 +555,14 @@ private fun EmptyStateStartExploring(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add",
-                        tint = Color(0xFF475569),
+                        tint = TextGray,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Add subscription",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.titleMedium,
+                        color = TextWhite
                     )
                 }
             }
@@ -544,7 +570,8 @@ private fun EmptyStateStartExploring(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // Popular Subscriptions Quick Add Cards Row
+        // Popular Subscriptions Quick Add Cards Row — each keeps its own
+        // real brand color; these are third-party marks, not app theme.
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 4.dp)
@@ -704,30 +731,34 @@ fun AutoPaymentRow(
     currencySymbol: String = "$",
     onClick: () -> Unit = {}
 ) {
-    val df = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-    val dueDateStr = df.format(Date(mandate.nextExpectedDebit))
     val isActive = mandate.status == "ACTIVE"
 
-    val daysUntilDue = remember(mandate.nextExpectedDebit) {
-        val diff = mandate.nextExpectedDebit - System.currentTimeMillis()
-        (diff / (1000 * 60 * 60 * 24)).coerceAtLeast(1)
-    }
+    val now = remember(mandate.nextExpectedDebit) { System.currentTimeMillis() }
+    val daysUntilDueRaw = remember(mandate.nextExpectedDebit) { daysUntilDebit(mandate.nextExpectedDebit, now) }
+    val isOverdue = isActive && daysUntilDueRaw < 0
+    val isDueSoon = isActive && !isOverdue && daysUntilDueRaw <= 3
+    val daysUntilDue = daysUntilDueRaw.coerceAtLeast(1)
 
     val initials = remember(mandate.merchant) { merchantInitials(mandate.merchant) }
     val matchedApp = remember(mandate.merchant) { matchAutoPayApp(mandate.merchant) }
 
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
-            .clickable { onClick() },
-        color = Color.White,
-        shadowElevation = 2.dp
+    val lightColor = when {
+        !isActive -> TextGray.copy(alpha = 0.6f)
+        isOverdue -> StatusOverdue
+        isDueSoon -> StatusPending
+        else -> StatusActive
+    }
+    val statusText = when {
+        !isActive -> "Cancelled"
+        isOverdue -> "Overdue"
+        else -> "Due in $daysUntilDue ${if (daysUntilDue == 1L) "day" else "days"}"
+    }
+
+    PremiumNormalCard(
+        onClick = onClick
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -767,19 +798,21 @@ fun AutoPaymentRow(
 
                 Spacer(modifier = Modifier.width(14.dp))
 
-                Column {
+                // Home is a glance list - date, frequency, and source live on the mandate
+                // detail screen (one tap away), not here.
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(7.dp)
+                            .clip(CircleShape)
+                            .background(lightColor)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = mandate.merchant,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TextWhite,
                         maxLines = 1
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "$dueDateStr • ${mandate.frequency}",
-                        fontSize = 12.sp,
-                        color = Color(0xFF94A3B8)
                     )
                 }
             }
@@ -789,26 +822,15 @@ fun AutoPaymentRow(
             ) {
                 Text(
                     text = "$currencySymbol${mandate.amount.toInt()}",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFFDC2626)
+                    style = InstrumentValueMedium,
+                    color = TextWhite
                 )
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color.Transparent)
-                        .padding(vertical = 2.dp)
-                ) {
-                    Text(
-                        text = if (isActive)
-                            "Due in $daysUntilDue ${if (daysUntilDue == 1L) "day" else "days"}"
-                        else "Cancelled",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isActive) NavySecondary else Color(0xFF94A3B8)
-                    )
-                }
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = statusText,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = lightColor
+                )
             }
         }
     }
@@ -816,10 +838,11 @@ fun AutoPaymentRow(
 
 @Composable
 fun AutoPayTopHeader(
-    onNotificationsClick: () -> Unit = {}
+    onNotificationsClick: () -> Unit = {},
+    onCalendarClick: () -> Unit = {}
 ) {
     Surface(
-        color = Color.White,
+        color = MaterialTheme.colorScheme.background,
         shadowElevation = 0.dp,
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -848,25 +871,31 @@ fun AutoPayTopHeader(
 
                 Text(
                     text = "AutoPay Max",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = NavyPrimary,
-                    letterSpacing = (-0.5).sp
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = NavySecondary
                 )
             }
 
-            // Right Icons (Bell with dot)
+            // Right Icons (Calendar, Bell with dot)
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Icon(
+                    imageVector = Icons.Default.CalendarMonth,
+                    contentDescription = "AutoPay Calendar",
+                    tint = TextGray,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable { onCalendarClick() }
+                )
                 Box(
                     modifier = Modifier.clickable { onNotificationsClick() }
                 ) {
                     Icon(
                         imageVector = Icons.Default.NotificationsNone,
                         contentDescription = "Notifications",
-                        tint = Color(0xFF64748B),
+                        tint = TextGray,
                         modifier = Modifier.size(24.dp)
                     )
                     Box(

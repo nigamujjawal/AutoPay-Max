@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -30,9 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.autopaymax.ui.theme.NavyPrimary
-import com.autopaymax.ui.theme.NavySecondary
-import com.autopaymax.ui.theme.PremiumNavyGradient
+import com.autopaymax.ui.theme.*
 
 @Composable
 fun OnboardingScreen(
@@ -43,7 +40,7 @@ fun OnboardingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFC))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         AnimatedContent(
             targetState = currentStep,
@@ -80,7 +77,8 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
                 .padding(bottom = 110.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Background brand grid wall
+            // Background brand grid wall — each tile keeps its own
+            // real brand color; these are third-party marks, not app theme.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -118,7 +116,7 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
                     shape = RoundedCornerShape(26.dp),
                     color = Color.White,
                     shadowElevation = 16.dp,
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0))
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -140,22 +138,18 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
             // App Name Headline
             Text(
                 text = "AutoPay Max",
-                fontSize = 36.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF0F172A),
-                textAlign = TextAlign.Center,
-                letterSpacing = (-0.5).sp
+                style = MaterialTheme.typography.headlineLarge,
+                color = TextWhite,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
                 text = "Keep track of your\nsubscriptions in one place",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF475569),
-                textAlign = TextAlign.Center,
-                lineHeight = 28.sp
+                style = MaterialTheme.typography.titleLarge,
+                color = TextGray,
+                textAlign = TextAlign.Center
             )
         }
 
@@ -165,7 +159,7 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
             shadowElevation = 12.dp,
-            color = Color.White
+            color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Box(
                 modifier = Modifier
@@ -184,8 +178,7 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
                 ) {
                     Text(
                         text = "Get started",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White
                     )
                 }
@@ -215,7 +208,7 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
                     .size(56.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color.White)
-                    .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(16.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
                     .shadow(4.dp, RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
@@ -231,74 +224,71 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "You're spending more\nthan you think",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF0F172A),
-                textAlign = TextAlign.Center,
-                lineHeight = 38.sp,
-                letterSpacing = (-0.5).sp
+                style = MaterialTheme.typography.headlineLarge,
+                color = TextWhite,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = "Find forgotten subscriptions, cut what you\ndon't need, and start saving today.",
-                fontSize = 15.sp,
-                color = Color(0xFF64748B),
-                textAlign = TextAlign.Center,
-                lineHeight = 22.sp
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextGray,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Brand Subscription Cards List
+            // Brand Subscription Cards List — each keeps its own real
+            // brand color; these are third-party marks, not app theme.
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 SpendBrandCard(
                     name = "Netflix",
-                    price = "£12.99",
+                    price = "$12.99",
                     backgroundColor = Color(0xFF0F172A),
                     logoChar = "N",
                     logoColor = Color(0xFFE50914)
                 )
                 SpendBrandCard(
                     name = "Spotify",
-                    price = "£10.99",
+                    price = "$10.99",
                     backgroundColor = Color(0xFF1DB954),
                     logoChar = "≈",
                     logoColor = Color.White
                 )
                 SpendBrandCard(
                     name = "Youtube Premium",
-                    price = "£11.99",
+                    price = "$11.99",
                     backgroundColor = Color(0xFFEF4444),
                     logoChar = "▶",
                     logoColor = Color.White
                 )
                 SpendBrandCard(
                     name = "Amazon Prime",
-                    price = "£14.99",
+                    price = "$14.99",
                     backgroundColor = Color(0xFF00A8E1),
                     logoChar = "prime",
-                    logoColor = Color.White
+                    logoColor = Color.White,
+                    iconRes = com.autopaymax.R.drawable.ic_brand_primevideo
                 )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Total Spend Box
+            // Total Spend Box — the instrument reading: this screen's
+            // one money figure, in the same monospace register as
+            // every other money readout in the app.
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "£611.52",
-                    fontSize = 44.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = Color(0xFF0F172A),
-                    letterSpacing = (-1).sp
+                    text = "$611.52",
+                    style = InstrumentValueHero,
+                    color = TextWhite
                 )
                 Text(
                     text = "per year",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF64748B)
+                    style = InstrumentLabel,
+                    color = TextGray
                 )
             }
         }
@@ -309,7 +299,7 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
             shadowElevation = 12.dp,
-            color = Color.White
+            color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Box(
                 modifier = Modifier
@@ -328,8 +318,7 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
                 ) {
                     Text(
                         text = "Find my savings",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White
                     )
                 }
@@ -366,14 +355,14 @@ private fun OnboardingStep3HelpGoals(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF1F5F9))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .clickable { onBack() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color(0xFF0F172A),
+                        tint = TextWhite,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -385,7 +374,7 @@ private fun OnboardingStep3HelpGoals(
                         .height(6.dp)
                         .clip(RoundedCornerShape(3.dp)),
                     color = NavySecondary,
-                    trackColor = Color(0xFFE2E8F0)
+                    trackColor = MaterialTheme.colorScheme.outlineVariant
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Image(
@@ -401,11 +390,8 @@ private fun OnboardingStep3HelpGoals(
 
             Text(
                 text = "What do you want help\nwith most?",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF0F172A),
-                lineHeight = 38.sp,
-                letterSpacing = (-0.5).sp
+                style = MaterialTheme.typography.headlineLarge,
+                color = TextWhite
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -446,7 +432,7 @@ private fun OnboardingStep3HelpGoals(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
             shadowElevation = 12.dp,
-            color = Color.White
+            color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Box(
                 modifier = Modifier
@@ -465,8 +451,7 @@ private fun OnboardingStep3HelpGoals(
                 ) {
                     Text(
                         text = "Continue",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White
                     )
                 }
@@ -502,14 +487,14 @@ private fun OnboardingStep4ValueNotifications(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFF1F5F9))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .clickable { onBack() },
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color(0xFF0F172A),
+                        tint = TextWhite,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -521,7 +506,7 @@ private fun OnboardingStep4ValueNotifications(
                         .height(6.dp)
                         .clip(RoundedCornerShape(3.dp)),
                     color = NavySecondary,
-                    trackColor = Color(0xFFE2E8F0)
+                    trackColor = MaterialTheme.colorScheme.outlineVariant
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Image(
@@ -537,21 +522,18 @@ private fun OnboardingStep4ValueNotifications(
 
             Text(
                 text = "We watch. You save.",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF0F172A),
-                textAlign = TextAlign.Center,
-                letterSpacing = (-0.5).sp
+                style = MaterialTheme.typography.headlineLarge,
+                color = TextWhite,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Price hikes, upcoming renewals, expiring\ntrials — we catch them so you don't have\nto.",
-                fontSize = 15.sp,
-                color = Color(0xFF64748B),
-                textAlign = TextAlign.Center,
-                lineHeight = 22.sp
+                text = "Price hikes, upcoming renewals, expiring\ntrials. We catch them so you don't have\nto.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextGray,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -566,7 +548,7 @@ private fun OnboardingStep4ValueNotifications(
                     brandColor = Color(0xFFE50914),
                     title = "Netflix",
                     time = "Today",
-                    description = "Found Netflix in your email — £12.99/mo",
+                    description = "Found Netflix in your email: $12.99/mo",
                     elevation = 10.dp
                 )
                 NotificationStackCard(
@@ -582,7 +564,7 @@ private fun OnboardingStep4ValueNotifications(
                     brandColor = Color(0xFFEF4444),
                     title = "Youtube Premium",
                     time = "Yesterday",
-                    description = "YouTube Premium price increased — cheaper alternatives found",
+                    description = "YouTube Premium price increased. Cheaper alternatives found",
                     elevation = 6.dp
                 )
                 NotificationStackCard(
@@ -591,7 +573,8 @@ private fun OnboardingStep4ValueNotifications(
                     title = "Amazon Prime",
                     time = "5 days",
                     description = "Amazon Prime free trial ends in 5 days",
-                    elevation = 4.dp
+                    elevation = 4.dp,
+                    iconRes = com.autopaymax.R.drawable.ic_brand_primevideo
                 )
             }
         }
@@ -602,7 +585,7 @@ private fun OnboardingStep4ValueNotifications(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
             shadowElevation = 12.dp,
-            color = Color.White
+            color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             Box(
                 modifier = Modifier
@@ -621,8 +604,7 @@ private fun OnboardingStep4ValueNotifications(
                 ) {
                     Text(
                         text = "Continue",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White
                     )
                 }
@@ -659,7 +641,8 @@ private fun SpendBrandCard(
     price: String,
     backgroundColor: Color,
     logoChar: String,
-    logoColor: Color
+    logoColor: Color,
+    iconRes: Int? = null
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -685,12 +668,21 @@ private fun SpendBrandCard(
                         .background(Color.White.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = logoChar,
-                        color = logoColor,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (iconRes != null) {
+                        Icon(
+                            painter = painterResource(id = iconRes),
+                            contentDescription = name,
+                            tint = logoColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    } else {
+                        Text(
+                            text = logoChar,
+                            color = logoColor,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
                 Text(
                     text = name,
@@ -702,8 +694,7 @@ private fun SpendBrandCard(
             Text(
                 text = price,
                 color = Color.White,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold
+                style = InstrumentValueMedium
             )
         }
     }
@@ -721,10 +712,10 @@ private fun GoalCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(22.dp))
-            .background(if (isSelected) Color(0xFFEFF6FF) else Color.White)
+            .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) NavySecondary else Color(0xFFE2E8F0),
+                color = if (isSelected) NavySecondary else MaterialTheme.colorScheme.outlineVariant,
                 shape = RoundedCornerShape(22.dp)
             )
             .clickable { onClick() }
@@ -738,29 +729,27 @@ private fun GoalCard(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(if (isSelected) NavySecondary.copy(alpha = 0.12f) else Color(0xFFF1F5F9)),
+                    .background(if (isSelected) NavySecondary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceContainerHigh),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = if (isSelected) NavySecondary else Color(0xFF0F172A),
+                    tint = if (isSelected) NavySecondary else TextWhite,
                     modifier = Modifier.size(24.dp)
                 )
             }
             Column {
                 Text(
                     text = title,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0F172A)
+                    style = MaterialTheme.typography.titleLarge,
+                    color = TextWhite
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = subtitle,
-                    fontSize = 13.sp,
-                    color = Color(0xFF64748B),
-                    lineHeight = 18.sp
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextGray
                 )
             }
         }
@@ -774,12 +763,13 @@ private fun NotificationStackCard(
     title: String,
     time: String,
     description: String,
-    elevation: androidx.compose.ui.unit.Dp
+    elevation: androidx.compose.ui.unit.Dp,
+    iconRes: Int? = null
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(0.94f),
         shape = RoundedCornerShape(22.dp),
-        color = Color.White,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         shadowElevation = elevation
     ) {
         Row(
@@ -791,16 +781,25 @@ private fun NotificationStackCard(
                 modifier = Modifier
                     .size(46.dp)
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFFF8FAFC))
-                    .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(14.dp)),
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(14.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = brandChar,
-                    color = brandColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
+                if (iconRes != null) {
+                    Icon(
+                        painter = painterResource(id = iconRes),
+                        contentDescription = title,
+                        tint = brandColor,
+                        modifier = Modifier.size(22.dp)
+                    )
+                } else {
+                    Text(
+                        text = brandChar,
+                        color = brandColor,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
             }
             Column(modifier = Modifier.weight(1f)) {
                 Row(
@@ -810,23 +809,20 @@ private fun NotificationStackCard(
                 ) {
                     Text(
                         text = title,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TextWhite
                     )
                     Text(
                         text = time,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF94A3B8)
+                        style = MaterialTheme.typography.labelMedium,
+                        color = TextGray
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = description,
-                    fontSize = 13.sp,
-                    color = Color(0xFF475569),
-                    lineHeight = 18.sp
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextGray
                 )
             }
         }

@@ -24,6 +24,7 @@ credentials = "1.6.0"
 googleid = "1.2.0"
 playServicesAuth = "22.0.0"
 revenuecat = "10.21.1"
+mlkitTextRecognition = "16.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -82,6 +83,9 @@ okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-i
 # RevenueCat Subscriptions & Google Play Billing
 revenuecat-purchases = { group = "com.revenuecat.purchases", name = "purchases", version.ref = "revenuecat" }
 revenuecat-ui = { group = "com.revenuecat.purchases", name = "purchases-ui", version.ref = "revenuecat" }
+
+# On-device OCR for the "import from screenshot" add-subscription flow
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

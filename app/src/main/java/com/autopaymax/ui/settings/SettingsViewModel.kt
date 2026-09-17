@@ -70,8 +70,11 @@ class SettingsViewModel @Inject constructor(
     val isAutopayRemindersEnabled: StateFlow<Boolean> = preferenceManager.isAutopayRemindersEnabledFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
+    // Eagerly, not WhileSubscribed: MainActivity's Splash-screen routing reads this via .value
+    // before any screen has subscribed to it (it's the very first decision made), so lazy
+    // sharing would always see the stale initial `false` there regardless of the real value.
     val isGmailConnected: StateFlow<Boolean> = preferenceManager.isGmailConnectedFlow
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val gmailConnectedEmail: StateFlow<String> = preferenceManager.gmailConnectedEmailFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")

@@ -77,7 +77,7 @@ fun ReportsScreen(
                         // Donut Canvas
                         val chartData = stats.categorySummary
                         val total = chartData.values.sum()
-                        val colors = listOf(PrimaryIndigo, SecondaryPurple, AccentTeal, AccentCoral, AccentEmerald, Color(0xFFF59E0B))
+                        val colors = listOf(PrimaryIndigo, SecondaryPurple, ChartViolet, ChartCyan, ChartRose, NavyAccent)
 
                         Canvas(
                             modifier = Modifier

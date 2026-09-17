@@ -12,33 +12,77 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = OrangePrimary,
-    secondary = OrangeSecondary,
-    tertiary = OrangeAccent,
-    background = AppDarkBackground,
-    surface = AppDarkCardBackground,
-    outlineVariant = AppDarkBorderColor,
+    primary = NavySecondary,
     onPrimary = Color.White,
+    primaryContainer = Color(0xFF16233D),
+    onPrimaryContainer = Color(0xFFC7D9FF),
+
+    secondary = AppDarkSecondary,
     onSecondary = Color.White,
-    onTertiary = Color.White,
+
+    tertiary = AppDarkTertiary,
+    onTertiary = Color(0xFF241A00),
+
+    error = AppDarkError,
+    onError = Color.White,
+    errorContainer = Color(0xFF3A1215),
+    onErrorContainer = Color(0xFFFFB4AB),
+
+    background = AppDarkBackground,
     onBackground = AppDarkTextWhite,
+
+    surface = AppDarkCardBackground,
     onSurface = AppDarkTextWhite,
-    onSurfaceVariant = AppDarkTextGray
+    surfaceVariant = AppDarkCardBackground,
+    onSurfaceVariant = AppDarkTextGray,
+
+    surfaceDim = AppDarkSurfaceDim,
+    surfaceBright = AppDarkSurfaceBright,
+    surfaceContainerLowest = AppDarkSurfaceContainerLowest,
+    surfaceContainerLow = AppDarkSurfaceContainerLow,
+    surfaceContainer = AppDarkSurfaceContainer,
+    surfaceContainerHigh = AppDarkSurfaceContainerHigh,
+    surfaceContainerHighest = AppDarkSurfaceContainerHighest,
+
+    outline = AppDarkBorderColor,
+    outlineVariant = Color(0xFF1E2733)
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = OrangePrimary,
-    secondary = OrangeSecondary,
-    tertiary = OrangeAccent,
-    background = AppLightBackground,
-    surface = AppLightCardBackground,
-    outlineVariant = AppLightBorderColor,
+    primary = NavySecondary,
     onPrimary = Color.White,
+    primaryContainer = Color(0xFFDCE7FF),
+    onPrimaryContainer = Color(0xFF0B2A63),
+
+    secondary = AppLightSecondary,
     onSecondary = Color.White,
+
+    tertiary = AppLightTertiary,
     onTertiary = Color.White,
+
+    error = AppLightError,
+    onError = Color.White,
+    errorContainer = Color(0xFFFBEAEA),
+    onErrorContainer = Color(0xFF7F1D1D),
+
+    background = AppLightBackground,
     onBackground = AppLightTextDark,
+
+    surface = AppLightCardBackground,
     onSurface = AppLightTextDark,
-    onSurfaceVariant = AppLightTextGray
+    surfaceVariant = AppLightCardBackground,
+    onSurfaceVariant = AppLightTextGray,
+
+    surfaceDim = AppLightSurfaceDim,
+    surfaceBright = AppLightSurfaceBright,
+    surfaceContainerLowest = AppLightSurfaceContainerLowest,
+    surfaceContainerLow = AppLightSurfaceContainerLow,
+    surfaceContainer = AppLightSurfaceContainer,
+    surfaceContainerHigh = AppLightSurfaceContainerHigh,
+    surfaceContainerHighest = AppLightSurfaceContainerHighest,
+
+    outline = AppLightBorderColor,
+    outlineVariant = Color(0xFFE2E7EE)
 )
 
 @Composable

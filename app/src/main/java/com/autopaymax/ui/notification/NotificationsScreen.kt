@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.compose.material3.Text
 import com.appversal.appstorys.utils.appstorys
 import com.autopaymax.data.local.entity.NotificationEntity
+import com.autopaymax.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -91,15 +91,15 @@ fun NotificationsScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .appstorys("notifications_screen")
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Header with Back Button, Title + Badge, and Mark all read (Matches Screenshot 2)
+            // Header with Back Button, Title + Badge, and Mark all read
             Surface(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 shadowElevation = 0.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -119,14 +119,14 @@ fun NotificationsScreen(
                             modifier = Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .border(1.dp, Color(0xFFE2E8F0), CircleShape)
+                                .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
                                 .clickable { navController.popBackStack() },
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
-                                tint = Color(0xFF64748B),
+                                tint = TextGray,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -137,9 +137,8 @@ fun NotificationsScreen(
                         ) {
                             Text(
                                 text = "Notifications",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E293B)
+                                style = MaterialTheme.typography.titleLarge,
+                                color = TextWhite
                             )
 
                             if (unreadCount > 0) {
@@ -147,14 +146,14 @@ fun NotificationsScreen(
                                     modifier = Modifier
                                         .size(22.dp)
                                         .clip(CircleShape)
-                                        .background(Color(0xFFFF5E00)),
+                                        .background(PrimaryIndigo),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = unreadCount.toString(),
                                         color = Color.White,
                                         fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                                         textAlign = TextAlign.Center,
                                         lineHeight = 12.sp,
                                         maxLines = 1
@@ -166,9 +165,8 @@ fun NotificationsScreen(
 
                     Text(
                         text = "Mark all read",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFF5E00),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = PrimaryIndigo,
                         modifier = Modifier.clickable { viewModel.markAllRead() }
                     )
                 }
@@ -181,7 +179,7 @@ fun NotificationsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(top = 10.dp, bottom = 100.dp)
             ) {
-                // Filter Tabs (All | Payments | System) (Matches Screenshot 2)
+                // Filter Tabs (All | Payments | System)
                 item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -192,16 +190,15 @@ fun NotificationsScreen(
                             Box(
                                 modifier = Modifier
                                     .clip(CircleShape)
-                                    .background(if (active) Color(0xFFFF5E00) else Color.White)
-                                    .border(2.dp, if (active) Color(0xFFFF5E00) else Color(0xFFFFF8F0), CircleShape)
+                                    .background(if (active) PrimaryIndigo else MaterialTheme.colorScheme.surfaceContainer)
+                                    .border(1.dp, if (active) PrimaryIndigo else MaterialTheme.colorScheme.outlineVariant, CircleShape)
                                     .clickable { selectedFilter = tab }
                                     .padding(horizontal = 22.dp, vertical = 8.dp)
                             ) {
                                 Text(
                                     text = tab,
-                                    color = if (active) Color.White else Color(0xFF64748B),
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold
+                                    color = if (active) Color.White else TextGray,
+                                    style = MaterialTheme.typography.labelLarge
                                 )
                             }
                         }
@@ -217,17 +214,16 @@ fun NotificationsScreen(
                                 .padding(vertical = 40.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("No notifications found.", color = Color(0xFF94A3B8), fontSize = 14.sp)
+                            Text("No notifications found.", color = TextGray, style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 } else {
                     groupedList.forEach { (dateGroup, items) ->
                         item {
                             Text(
-                                text = dateGroup,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFFFF5E00),
+                                text = dateGroup.uppercase(),
+                                style = InstrumentLabel,
+                                color = TextGray,
                                 modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
                             )
                         }
@@ -250,8 +246,10 @@ fun NotificationCardRow(
     item: NotificationItem,
     onDismiss: () -> Unit
 ) {
-    val cardBg = if (item.isWarning) Color(0xFFFFF8F0) else Color.White
-    val cardBorder = if (item.isWarning) Color(0xFFFFE8D6) else Color(0xFFF1F5F9)
+    // isWarning is "needs a look", not a hard failure — amber (pending),
+    // not red (overdue). A confirmed/info notification reads steady green.
+    val statusColor = if (item.isWarning) StatusPending else StatusActive
+    val cardBg = if (item.isWarning) StatusPending.copy(alpha = 0.06f) else MaterialTheme.colorScheme.surfaceContainer
 
     Box(
         modifier = Modifier
@@ -259,7 +257,6 @@ fun NotificationCardRow(
             .shadow(elevation = 2.dp, shape = RoundedCornerShape(18.dp))
             .clip(RoundedCornerShape(18.dp))
             .background(cardBg)
-//            .border(1.dp, cardBorder, RoundedCornerShape(18.dp))
             .padding(16.dp)
     ) {
         Row(
@@ -271,21 +268,21 @@ fun NotificationCardRow(
                 modifier = Modifier
                     .size(38.dp)
                     .clip(CircleShape)
-                    .background(if (item.isWarning) Color(0xFFFFEAD5) else Color(0xFFE8F8EE)),
+                    .background(statusColor.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
                 if (item.isWarning) {
                     Icon(
                         imageVector = Icons.Default.PriorityHigh,
                         contentDescription = null,
-                        tint = Color(0xFFFF5E00),
+                        tint = statusColor,
                         modifier = Modifier.size(20.dp)
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = null,
-                        tint = Color(0xFF10B981),
+                        tint = statusColor,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -301,9 +298,8 @@ fun NotificationCardRow(
                 ) {
                     Text(
                         text = item.title,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1E293B),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = TextWhite,
                         modifier = Modifier.weight(1f)
                     )
 
@@ -316,14 +312,14 @@ fun NotificationCardRow(
                                 modifier = Modifier
                                     .size(8.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFFF5E00))
+                                    .background(PrimaryIndigo)
                             )
                         }
 
                         Text(
                             text = item.timestamp,
-                            fontSize = 10.sp,
-                            color = Color(0xFF94A3B8)
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TextGray
                         )
                     }
                 }
@@ -335,9 +331,8 @@ fun NotificationCardRow(
                 ) {
                     Text(
                         text = item.body,
-                        lineHeight = 15.sp,
-                        fontSize = 13.sp,
-                        color = Color(0xFF64748B),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextGray,
                         modifier = Modifier.weight(1f)
                     )
 
@@ -345,14 +340,14 @@ fun NotificationCardRow(
                         modifier = Modifier
                             .size(22.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFFF1F5F9))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .clickable { onDismiss() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Dismiss",
-                            tint = Color(0xFF94A3B8),
+                            tint = TextGray,
                             modifier = Modifier.size(13.dp)
                         )
                     }

@@ -14,6 +14,7 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Settings : Screen("settings", "Settings", Icons.Default.Settings)
     object AppSettings : Screen("app_settings", "App Settings", Icons.Default.Tune)
     object Notifications : Screen("notifications", "Notifications", Icons.Default.Notifications)
+    object Calendar : Screen("calendar", "Calendar", Icons.Default.CalendarMonth)
 
     // Tile picker shown when the user taps "Add new subscription" on Home.
     object AddSubscription : Screen("add_subscription", "Add Subscription", Icons.Default.Add)

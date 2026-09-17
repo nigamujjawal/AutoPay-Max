@@ -7,6 +7,7 @@ import com.revenuecat.purchases.Package
 import com.revenuecat.purchases.PurchaseParams
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesError
+import com.revenuecat.purchases.PurchasesErrorCode
 import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
 import com.revenuecat.purchases.interfaces.ReceiveOfferingsCallback
 import com.revenuecat.purchases.interfaces.UpdatedCustomerInfoListener
@@ -36,10 +37,22 @@ interface BillingRepository {
     fun restorePurchases(onSuccess: (CustomerInfo) -> Unit, onError: (PurchasesError) -> Unit)
 }
 
+// AutoPayApplication.onCreate() only calls Purchases.configure() when a
+// REVENUECAT_API_KEY is present in local.properties (blank in local/dev
+// builds); every call below must check isConfigured first or it throws
+// UninitializedPropertyAccessException on Purchases.sharedInstance.
+private const val NOT_CONFIGURED_MESSAGE = "RevenueCat is not configured (missing REVENUECAT_API_KEY)"
+private fun notConfiguredError() = PurchasesError(PurchasesErrorCode.ConfigurationError, NOT_CONFIGURED_MESSAGE)
+
 @Singleton
 class RevenueCatBillingRepositoryImpl @Inject constructor() : BillingRepository {
 
     override fun getCustomerInfoFlow(): Flow<CustomerInfo> = callbackFlow {
+        if (!Purchases.isConfigured) {
+            awaitClose { }
+            return@callbackFlow
+        }
+
         val listener = UpdatedCustomerInfoListener { customerInfo ->
             trySend(customerInfo)
         }
@@ -60,6 +73,10 @@ class RevenueCatBillingRepositoryImpl @Inject constructor() : BillingRepository 
     }
 
     override fun getOfferings(onSuccess: (Offerings) -> Unit, onError: (PurchasesError) -> Unit) {
+        if (!Purchases.isConfigured) {
+            onError(notConfiguredError())
+            return
+        }
         Purchases.sharedInstance.getOfferings(object : ReceiveOfferingsCallback {
             override fun onReceived(offerings: Offerings) {
                 onSuccess(offerings)
@@ -76,6 +93,10 @@ class RevenueCatBillingRepositoryImpl @Inject constructor() : BillingRepository 
         onSuccess: (CustomerInfo) -> Unit,
         onError: (PurchasesError, Boolean) -> Unit
     ) {
+        if (!Purchases.isConfigured) {
+            onError(notConfiguredError(), false)
+            return
+        }
         val params = PurchaseParams.Builder(activity, rcPackage).build()
         Purchases.sharedInstance.purchase(
             params,
@@ -91,6 +112,10 @@ class RevenueCatBillingRepositoryImpl @Inject constructor() : BillingRepository 
     }
 
     override fun restorePurchases(onSuccess: (CustomerInfo) -> Unit, onError: (PurchasesError) -> Unit) {
+        if (!Purchases.isConfigured) {
+            onError(notConfiguredError())
+            return
+        }
         Purchases.sharedInstance.restorePurchases(object : ReceiveCustomerInfoCallback {
             override fun onReceived(customerInfo: CustomerInfo) {
                 onSuccess(customerInfo)

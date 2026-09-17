@@ -4,61 +4,37 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.autopaymax.ui.theme.*
 
-@Composable
-fun PremiumGradientCard(
-    modifier: Modifier = Modifier,
-    colors: List<Color> = listOf(PrimaryIndigo, SecondaryPurple),
-    content: @Composable BoxScope.() -> Unit
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            .background(Brush.horizontalGradient(colors))
-            .padding(24.dp),
-        content = content
-    )
-}
-
+/**
+ * Instrument bezel card — the panel's default container. Flat surface,
+ * hairline border, tonal elevation via surfaceContainer; no drop shadow.
+ */
 @Composable
 fun PremiumNormalCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val cardModifier = if (onClick != null) {
-        modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(CardBackground)
-            .border(1.dp, BorderColor, RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
-            .padding(16.dp)
-    } else {
-        modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(CardBackground)
-            .border(1.dp, BorderColor, RoundedCornerShape(16.dp))
-            .padding(16.dp)
-    }
+    val cardModifier = modifier
+        .fillMaxWidth()
+        .clip(RoundedCornerShape(16.dp))
+        .background(MaterialTheme.colorScheme.surfaceContainer)
+        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
+        .let { if (onClick != null) it.clickable(onClick = onClick) else it }
+        .padding(16.dp)
 
     Column(
         modifier = cardModifier,
@@ -66,27 +42,33 @@ fun PremiumNormalCard(
     )
 }
 
+/**
+ * Status light — one of the three reserved instrument states (steady,
+ * amber, red), a dot plus a terse placard label. Never a colored pill;
+ * the dot alone carries the state, the label just names it.
+ */
 @Composable
 fun StatusBadge(status: String) {
     val (color, text) = when (status.uppercase()) {
-        "PAID" -> AccentEmerald to "Paid"
-        "PENDING" -> Color(0xFFF59E0B) to "Pending"
-        "OVERDUE" -> AccentCoral to "Overdue"
-        "ACTIVE" -> AccentTeal to "Active"
-        else -> TextGray to status
+        "PAID" -> StatusActive to "Paid"
+        "ACTIVE" -> StatusActive to "Active"
+        "PENDING" -> StatusPending to "Pending"
+        "OVERDUE" -> StatusOverdue to "Overdue"
+        else -> MaterialTheme.colorScheme.onSurfaceVariant to status
     }
 
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(color.copy(alpha = 0.15f))
-            .padding(horizontal = 10.dp, vertical = 4.dp)
-    ) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(7.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Spacer(modifier = Modifier.width(6.dp))
         Text(
-            text = text,
+            text = text.uppercase(),
             color = color,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.Bold
+            style = InstrumentLabel
         )
     }
 }
@@ -107,14 +89,13 @@ fun AppHeader(
         Column {
             Text(
                 text = title,
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineLarge,
                 color = TextWhite
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = subtitle,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodyMedium,
                 color = TextGray
             )
         }
@@ -158,14 +139,13 @@ fun SettingsItem(
             Column {
                 Text(
                     text = title,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.titleMedium,
                     color = TextWhite
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = subtitle,
-                    fontSize = 12.sp,
+                    style = MaterialTheme.typography.bodySmall,
                     color = TextGray
                 )
             }
@@ -178,10 +158,3 @@ fun SettingsItem(
         )
     }
 }
-
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun CustomDatePicker(){
-//    var showDatePicker by mutableStateOf(false)
-//    val datePickerState = rememberDatePickerState()
-//}

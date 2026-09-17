@@ -18,17 +18,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.appversal.appstorys.AppStorys
 import com.appversal.appstorys.utils.appstorys
 import com.autopaymax.data.local.entity.Transaction
+import com.autopaymax.ui.components.PremiumNormalCard
 import com.autopaymax.ui.dashboard.AutoPayTopHeader
+import com.autopaymax.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,7 +72,7 @@ fun PassbookScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .appstorys("passbook_screen")
     ) {
         // App Top Header (Same as Home & Settings)
@@ -82,11 +81,13 @@ fun PassbookScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp)    
+                .padding(horizontal = 20.dp)
         ) {
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Net Flow Hero Card (Matches Image 2)
+            // Net Flow Hero — the second instrument reading. Fixed dark
+            // bezel like the Dashboard hero, not a surface that flips
+            // with the app theme.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,11 +95,7 @@ fun PassbookScreen(
                     .clip(RoundedCornerShape(20.dp))
                     .background(
                         Brush.linearGradient(
-                            colors = listOf(
-                                Color(0xFFFF5500),
-                                Color(0xFFFF7600),
-                                Color(0xFFFF8500)
-                            )
+                            colors = listOf(AppDarkBackground, NavyPrimary, NavySecondary)
                         )
                     )
                     .padding(20.dp)
@@ -126,26 +123,19 @@ fun PassbookScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Net flow",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "•",
-                            fontSize = 14.sp,
-                            color = Color.White.copy(alpha = 0.8f)
+                            text = "NET FLOW",
+                            style = InstrumentLabel,
+                            color = Color.White.copy(alpha = 0.85f)
                         )
                         Box(
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.25f))
+                                .background(Color.White.copy(alpha = 0.2f))
                                 .padding(horizontal = 10.dp, vertical = 2.dp)
                         ) {
                             Text(
                                 text = "All time",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
+                                style = MaterialTheme.typography.labelMedium,
                                 color = Color.White
                             )
                         }
@@ -159,8 +149,7 @@ fun PassbookScreen(
                             text = if (showAmount) {
                                 if (netFlow < 0) "-$currencySymbol${kotlin.math.abs(netFlow).toInt()}" else "$currencySymbol${netFlow.toInt()}"
                             } else "$currencySymbol ••••••",
-                            fontSize = 38.sp,
-                            fontWeight = FontWeight.Black,
+                            style = InstrumentValueHero,
                             color = Color.White
                         )
 
@@ -178,13 +167,13 @@ fun PassbookScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(36.dp)
                     ) {
-                        // Left Credits metric
+                        // Left Credits metric — steady/active tone
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier
                                     .size(20.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFF22C55E)),
+                                    .background(StatusActiveDarkTone),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -196,18 +185,18 @@ fun PassbookScreen(
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
-                                Text("Credits", fontSize = 11.sp, color = Color.White.copy(alpha = 0.85f))
-                                Text("$currencySymbol${totalCredits.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text("Credits", style = MaterialTheme.typography.labelMedium, color = Color.White.copy(alpha = 0.85f))
+                                Text("$currencySymbol${totalCredits.toInt()}", style = InstrumentValueMedium, color = Color.White)
                             }
                         }
 
-                        // Right Debits/Credits metric (Matching Image 2)
+                        // Right Debits metric — reserved overdue/error tone
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Box(
                                 modifier = Modifier
                                     .size(20.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFEF4444).copy(alpha = 0.85f)),
+                                    .background(AppDarkError.copy(alpha = 0.85f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
@@ -219,15 +208,15 @@ fun PassbookScreen(
                             }
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
-                                Text("Debits", fontSize = 11.sp, color = Color.White.copy(alpha = 0.85f))
-                                Text("$currencySymbol${totalDebits.toInt()}", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                                Text("Debits", style = MaterialTheme.typography.labelMedium, color = Color.White.copy(alpha = 0.85f))
+                                Text("$currencySymbol${totalDebits.toInt()}", style = InstrumentValueMedium, color = Color.White)
                             }
                         }
                     }
                 }
             }
 
-            // Filter Tabs Row (All | Credits | Debits | All time v) (Matches Image 2)
+            // Filter Tabs Row (All | Credits | Debits)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -246,35 +235,20 @@ fun PassbookScreen(
                     Box(
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(if (active) Color(0xFFFF5E00) else Color.White)
-                            .border(1.dp, if (active) Color(0xFFFF5E00) else Color(0xFFE2E8F0), CircleShape)
+                            .background(if (active) PrimaryIndigo else MaterialTheme.colorScheme.surfaceContainer)
+                            .border(1.dp, if (active) PrimaryIndigo else MaterialTheme.colorScheme.outlineVariant, CircleShape)
                             .clickable { viewModel.setSelectedType(mappedType) }
                             .padding(horizontal = 18.dp, vertical = 8.dp)
                     ) {
                         Text(
                             text = tab,
-                            color = if (active) Color.White else Color(0xFF64748B),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
+                            color = if (active) Color.White else TextGray,
+                            style = MaterialTheme.typography.labelLarge
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
-
-//                Box(
-//                    modifier = Modifier
-//                        .clip(CircleShape)
-//                        .background(Color.White)
-//                        .border(1.dp, Color(0xFFE2E8F0), CircleShape)
-//                        .padding(horizontal = 14.dp, vertical = 8.dp)
-//                ) {
-//                    Row(verticalAlignment = Alignment.CenterVertically) {
-//                        Text("All time", fontSize = 12.sp, color = Color(0xFF64748B), fontWeight = FontWeight.SemiBold)
-//                        Spacer(modifier = Modifier.width(4.dp))
-//                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = Color(0xFF64748B), modifier = Modifier.size(16.dp))
-//                    }
-//                }
             }
         }
 
@@ -297,8 +271,8 @@ fun PassbookScreen(
                     ) {
                         Text(
                             text = "No passbook transactions recorded.",
-                            color = Color(0xFF94A3B8),
-                            fontSize = 14.sp
+                            color = TextGray,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
@@ -306,10 +280,9 @@ fun PassbookScreen(
                 groupedTransactions.forEach { (dateGroup, txns) ->
                     item {
                         Text(
-                            text = dateGroup,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFFF5E00),
+                            text = dateGroup.uppercase(),
+                            style = InstrumentLabel,
+                            color = PrimaryIndigo,
                             modifier = Modifier.padding(top = 8.dp, bottom = 2.dp)
                         )
                     }
@@ -341,97 +314,83 @@ fun PassbookTransactionRow(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(elevation = 2.dp, shape = RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .padding(14.dp)
-    ) {
+    PremiumNormalCard {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape)
+                        .background(PremiumNavyGradient),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.linearGradient(
-                                    colors = listOf(Color(0xFFFF7600).copy(0.3f), Color(0xFFFF9E40).copy(alpha = 1.0f))
-                                )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = initials,
-                            color = Color.White,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Column {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Text(
-                                text = txn.merchant,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1E293B),
-                                maxLines = 1,
-                                modifier = Modifier.weight(1f, fill = false)
-                            )
-                            TransactionTypeLabel(isAutoPay = txn.isAutoPay)
-                        }
-                        Text(
-                            text = "${txn.bankName} • $formattedDate",
-                            fontSize = 12.sp,
-                            color = Color(0xFF94A3B8)
-                        )
-                    }
+                    Text(
+                        text = initials,
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
 
-                Text(
-                    text = "${if (txn.transactionType == "CREDIT") "+" else "-"}$currencySymbol${txn.amount.toInt()}",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = if (txn.transactionType == "CREDIT") Color(0xFF10B981) else Color(0xFFDC2626)
-                )
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = txn.merchant,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextWhite,
+                            maxLines = 1,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                        TransactionTypeLabel(isAutoPay = txn.isAutoPay)
+                    }
+                    Text(
+                        text = "${txn.bankName} • $formattedDate",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextGray
+                    )
+                }
             }
+
+            Text(
+                text = "${if (txn.transactionType == "CREDIT") "+" else "-"}$currencySymbol${txn.amount.toInt()}",
+                style = InstrumentValueMedium,
+                color = if (txn.transactionType == "CREDIT") StatusActive else StatusOverdue
+            )
         }
     }
+}
 
 @Composable
 fun TransactionTypeLabel(isAutoPay: Boolean) {
+    // Not a status light — this is a category tag (auto-detected vs.
+    // manually logged), so it stays on the brand accent, not a reserved
+    // status color.
     val (bg, textColor, label) = if (isAutoPay) {
-        Triple(Color(0xFFFFF0EA), Color(0xFFFF5E00), "Automatic")
+        Triple(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.onPrimaryContainer, "Automatic")
     } else {
-        Triple(Color(0xFFF1F5F9), Color(0xFF64748B), "Normal")
+        Triple(MaterialTheme.colorScheme.surfaceContainerHigh, TextGray, "Normal")
     }
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
             .background(bg)
-            .border(1.dp, textColor.copy(alpha = 0.35f), RoundedCornerShape(20.dp))
             .padding(horizontal = 8.dp, vertical = 2.dp)
     ) {
         Text(
             text = label,
             color = textColor,
-            fontSize = 9.sp,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.labelMedium
         )
     }
 }
-

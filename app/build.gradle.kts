@@ -107,6 +107,9 @@ dependencies {
     implementation(libs.google.identity.googleid)
     implementation(libs.play.services.auth)
 
+    // On-device OCR for the "import from screenshot" add-subscription flow
+    implementation(libs.mlkit.text.recognition)
+
     // Networking (SoundBox backend)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)

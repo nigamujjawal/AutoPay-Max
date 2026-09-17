@@ -23,20 +23,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.autopaymax.R
 import com.autopaymax.ui.settings.SettingsViewModel
-import com.autopaymax.ui.theme.NavyPrimary
-
-private val ScreenBg = Color(0xFFFAFAFC)
-private val CardBorder = Color(0xFFE2E8F0)
-private val TitleColor = Color(0xFF0F172A)
-private val SubtitleColor = Color(0xFF64748B)
-private val BadgeBg = Color(0xFFEFF6FF)
-private val BadgeBorder = Color(0xFFDBEAFE)
+import com.autopaymax.ui.theme.*
 
 @Composable
 fun GoogleConnectScreen(
@@ -77,7 +68,7 @@ fun GoogleConnectScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ScreenBg)
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(horizontal = 24.dp, vertical = 20.dp),
@@ -90,14 +81,14 @@ fun GoogleConnectScreen(
                 .size(100.dp)
                 .shadow(6.dp, RoundedCornerShape(26.dp))
                 .clip(RoundedCornerShape(26.dp))
-                .background(BadgeBg)
-                .border(1.dp, BadgeBorder, RoundedCornerShape(26.dp)),
+                .background(PrimaryIndigo.copy(alpha = 0.12f))
+                .border(1.dp, PrimaryIndigo.copy(alpha = 0.25f), RoundedCornerShape(26.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.MailOutline,
                 contentDescription = "Mail",
-                tint = NavyPrimary,
+                tint = PrimaryIndigo,
                 modifier = Modifier.size(44.dp)
             )
         }
@@ -106,9 +97,8 @@ fun GoogleConnectScreen(
 
         Text(
             text = "Connect your Google account",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = TitleColor,
+            style = MaterialTheme.typography.headlineLarge,
+            color = TextWhite,
             textAlign = TextAlign.Center
         )
 
@@ -116,10 +106,9 @@ fun GoogleConnectScreen(
 
         Text(
             text = "Sign in to let AutoPay Max securely detect your mandate and subscription emails automatically. Nothing leaves your device.",
-            fontSize = 14.sp,
-            color = SubtitleColor,
-            textAlign = TextAlign.Center,
-            lineHeight = 20.sp
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextGray,
+            textAlign = TextAlign.Center
         )
 
         Spacer(Modifier.height(28.dp))
@@ -137,8 +126,8 @@ fun GoogleConnectScreen(
         // Security & Privacy Pill
         Surface(
             shape = CircleShape,
-            color = Color(0xFFF1F5F9),
-            border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE2E8F0)),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             modifier = Modifier.padding(vertical = 4.dp)
         ) {
             Row(
@@ -149,14 +138,13 @@ fun GoogleConnectScreen(
                 Icon(
                     imageVector = Icons.Default.Lock,
                     contentDescription = null,
-                    tint = NavyPrimary,
+                    tint = PrimaryIndigo,
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
                     text = "100% Private • On-Device Processing",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = NavyPrimary
+                    style = MaterialTheme.typography.labelLarge,
+                    color = PrimaryIndigo
                 )
             }
         }
@@ -173,9 +161,9 @@ fun GoogleConnectScreen(
                 .shadow(4.dp, CircleShape),
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(
-                containerColor = NavyPrimary,
+                containerColor = PrimaryIndigo,
                 contentColor = Color.White,
-                disabledContainerColor = Color(0xFFCBD5E1),
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 disabledContentColor = Color.White
             )
         ) {
@@ -199,8 +187,7 @@ fun GoogleConnectScreen(
                     Spacer(Modifier.width(10.dp))
                     Text(
                         text = "Continue with Google",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge,
                         color = Color.White
                     )
                 }
@@ -211,8 +198,8 @@ fun GoogleConnectScreen(
             Spacer(Modifier.height(14.dp))
             Text(
                 text = it,
-                color = Color(0xFFDC2626),
-                fontSize = 13.sp,
+                color = StatusOverdue,
+                style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center
             )
         }

@@ -1,11 +1,17 @@
 package com.autopaymax
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -38,6 +44,8 @@ import com.autopaymax.ui.autopay.AddSubscriptionPickerScreen
 import com.autopaymax.ui.autopay.AutoPayScreen
 import com.autopaymax.ui.autopay.MandateDetailScreen
 import com.autopaymax.ui.autopay.MandateViewModel
+import com.autopaymax.data.local.entity.Mandate
+import com.autopaymax.ui.calendar.CalendarScreen
 import com.autopaymax.ui.dashboard.DashboardScreen
 import com.autopaymax.ui.navigation.Screen
 import com.autopaymax.ui.onboarding.OnboardingScreen
@@ -53,7 +61,11 @@ import com.autopaymax.ui.settings.SettingsScreen
 import com.autopaymax.ui.settings.SettingsViewModel
 import com.autopaymax.ui.profile.ProfileViewModel
 import com.autopaymax.ui.theme.*
+import com.autopaymax.util.ScreenshotOcrParser
+import com.autopaymax.util.ScreenshotTextRecognizer
+import com.autopaymax.util.frequencyOffsetMillis
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
@@ -120,6 +132,70 @@ fun MainAppContent(
     // Dashboard, Passbook, and AutoPay read this instead of hardcoding a currency symbol.
     val currencySymbol by settingsViewModel.currency.collectAsState()
 
+    // "Import from screenshot" - reachable from both the Home empty state and the Add
+    // Subscription tile picker (see their onImportScreenshot callbacks below), so one picker +
+    // OCR pipeline lives here instead of being duplicated per entry point.
+    //
+    // A confident read (merchant matched AND a price found) creates the mandate directly - no
+    // detour through the manual form pretending OCR needs the user's help when it didn't. Anything
+    // less than that (a blank/unreadable screenshot, a photo of something else entirely) is the
+    // safe fallback: nothing gets written, and the user is told plainly it didn't work rather than
+    // being dropped on a blank "Add Autopay" form that looks like a continuation of the scan.
+    val context = LocalContext.current
+    val screenshotImportScope = rememberCoroutineScope()
+    var isImportingScreenshot by remember { mutableStateOf(false) }
+    val screenshotPickerLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            isImportingScreenshot = true
+            screenshotImportScope.launch {
+                val result = try {
+                    val text = ScreenshotTextRecognizer.recognize(context, uri)
+                    Log.d("ScreenshotImport", "OCR raw text: $text")
+                    ScreenshotOcrParser.parse(text).also { Log.d("ScreenshotImport", "Parsed: $it") }
+                } catch (e: Exception) {
+                    Log.e("ScreenshotImport", "OCR failed", e)
+                    null
+                }
+                isImportingScreenshot = false
+
+                val merchant = result?.merchant
+                val amount = result?.amount
+                if (merchant != null && amount != null && amount > 0.0) {
+                    val frequency = result.frequency ?: "Monthly"
+                    mandateViewModel.addMandate(
+                        Mandate(
+                            merchant = merchant,
+                            amount = amount,
+                            frequency = frequency,
+                            nextExpectedDebit = System.currentTimeMillis() + frequencyOffsetMillis(frequency),
+                            bank = "",
+                            status = "ACTIVE",
+                            source = "MANUAL"
+                        ),
+                        context
+                    )
+                    Toast.makeText(
+                        context,
+                        "Added $merchant · $currencySymbol${amount.toInt()}/$frequency",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    navController.popBackStack(Screen.Home.route, inclusive = false)
+                } else {
+                    Toast.makeText(
+                        context,
+                        "Couldn't read that screenshot clearly. Try a clearer one, or add it manually.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+    val launchScreenshotImport = {
+        screenshotPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
     // AppStorys campaign navigation. Every navigateToScreen call in the SDK fires from a click
     // inside an actively-composed overlay (tooltip/banner/widget tap) - there's no path where it
     // can happen while this Composable isn't alive, so a direct callback is enough; no Intent/
@@ -152,6 +228,7 @@ fun MainAppContent(
 
     val isMainTabScreen = currentRoute in navigationItems.map { it.route }
 
+    Box(modifier = Modifier.fillMaxSize()) {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
@@ -253,8 +330,18 @@ fun MainAppContent(
             composable(Screen.Splash.route) {
                 SplashScreen(
                     onNavigateNext = {
+                        // A user who is already authenticated or already has Gmail connected
+                        // has unambiguously already been through setup - even if the
+                        // is_onboarded flag itself was never flipped for them (e.g. an existing
+                        // user from before onboarding existed, or a fresh session on a device
+                        // that already completed it). Treat that as onboarding-complete and
+                        // self-heal the flag so this never has to re-derive it again.
+                        val alreadySetUp = authViewModel.isAuthenticated.value || settingsViewModel.isGmailConnected.value
+                        if (alreadySetUp && !settingsViewModel.isOnboarded.value) {
+                            settingsViewModel.setIsOnboarded(true)
+                        }
                         val target = when {
-                            !settingsViewModel.isOnboarded.value -> Screen.Onboarding.route
+                            !settingsViewModel.isOnboarded.value && !alreadySetUp -> Screen.Onboarding.route
                             !authViewModel.isAuthenticated.value -> Screen.GoogleConnect.route
                             else -> Screen.Home.route
                         }
@@ -319,11 +406,28 @@ fun MainAppContent(
                     onNotificationsClick = {
                         navController.navigate(Screen.Notifications.route)
                     },
+                    onCalendarClick = {
+                        navController.navigate(Screen.Calendar.route)
+                    },
                     onAddSubscriptionClick = {
                         navController.navigate(Screen.AddSubscription.route)
                     },
+                    onImportScreenshot = launchScreenshotImport,
                     onSelectApp = { merchant ->
                         navController.navigate(Screen.AutoPay.routeFor(merchant))
+                    }
+                )
+            }
+
+            // Calendar - highlights the next autopay date; tapping any date tile
+            // shows the mandates due that day.
+            composable(Screen.Calendar.route) {
+                CalendarScreen(
+                    mandateViewModel = mandateViewModel,
+                    currencySymbol = currencySymbol,
+                    onBack = { navController.popBackStack() },
+                    onMandateClick = { id ->
+                        navController.navigate(Screen.MandateDetail.routeFor(id))
                     }
                 )
             }
@@ -389,7 +493,8 @@ fun MainAppContent(
                     onPick = { merchant ->
                         navController.navigate(Screen.AutoPay.routeFor(merchant))
                     },
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onImportScreenshot = launchScreenshotImport
                 )
             }
 
@@ -421,5 +526,17 @@ fun MainAppContent(
                 )
             }
         }
+    }
+
+    if (isImportingScreenshot) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.4f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color.White)
+        }
+    }
     }
 }

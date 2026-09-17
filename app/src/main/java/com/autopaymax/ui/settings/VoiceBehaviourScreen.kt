@@ -24,14 +24,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.autopaymax.data.local.pref.PreferenceManager
 import com.autopaymax.tts.AnnouncementKind
 import com.autopaymax.tts.TextToSpeechHelper
-import com.autopaymax.ui.theme.NavyPrimary
+import com.autopaymax.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 private fun sliderFraction(state: SliderState): Float =
@@ -66,14 +64,14 @@ fun VoiceBehaviour(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             // App Header with Back Button
             Surface(
-                color = Color.White,
+                color = MaterialTheme.colorScheme.background,
                 shadowElevation = 0.dp,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -88,14 +86,14 @@ fun VoiceBehaviour(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .border(1.dp, Color(0xFFE2E8F0), CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
                             .clickable { navController.popBackStack() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color(0xFF64748B),
+                            tint = TextGray,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -107,9 +105,8 @@ fun VoiceBehaviour(
                     ) {
                         Text(
                             text = "Voice & Behaviour",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
+                            style = MaterialTheme.typography.titleLarge,
+                            color = TextWhite
                         )
                     }
 
@@ -130,25 +127,23 @@ fun VoiceBehaviour(
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(
                             text = "Voice & Language",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = TextWhite
                         )
 
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(Color.White)
-                                .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp))
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
                                 .padding(18.dp)
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                                 Text(
-                                    text = "Language",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF475569)
+                                    text = "LANGUAGE",
+                                    style = InstrumentLabel,
+                                    color = TextGray
                                 )
 
                                 // 2-column language grid
@@ -164,8 +159,8 @@ fun VoiceBehaviour(
                                                 modifier = Modifier
                                                     .weight(1f)
                                                     .clip(CircleShape)
-                                                    .background(if (isSelected) NavyPrimary else Color(0xFFF8FAFC))
-                                                    .border(1.dp, if (isSelected) NavyPrimary else Color(0xFFF1F5F9), CircleShape)
+                                                    .background(if (isSelected) PrimaryIndigo else MaterialTheme.colorScheme.surfaceContainerHigh)
+                                                    .border(1.dp, if (isSelected) PrimaryIndigo else MaterialTheme.colorScheme.outlineVariant, CircleShape)
                                                     .clickable { settingsViewModel.setSpeechLanguage(code) }
                                                     .padding(horizontal = 12.dp, vertical = 10.dp),
                                                 contentAlignment = Alignment.Center
@@ -184,9 +179,8 @@ fun VoiceBehaviour(
                                                     }
                                                     Text(
                                                         text = displayName,
-                                                        fontSize = 12.sp,
-                                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                                        color = if (isSelected) Color.White else Color(0xFF334155),
+                                                        style = MaterialTheme.typography.labelLarge,
+                                                        color = if (isSelected) Color.White else TextWhite,
                                                         maxLines = 1
                                                     )
                                                 }
@@ -201,10 +195,9 @@ fun VoiceBehaviour(
                                 Spacer(modifier = Modifier.height(6.dp))
 
                                 Text(
-                                    text = "Voice Engine",
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF475569)
+                                    text = "VOICE ENGINE",
+                                    style = InstrumentLabel,
+                                    color = TextGray
                                 )
 
                                 Row(
@@ -217,8 +210,8 @@ fun VoiceBehaviour(
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .clip(CircleShape)
-                                                .background(if (isSelected) NavyPrimary else Color(0xFFF8FAFC))
-                                                .border(1.dp, if (isSelected) NavyPrimary else Color(0xFFF1F5F9), CircleShape)
+                                                .background(if (isSelected) PrimaryIndigo else MaterialTheme.colorScheme.surfaceContainerHigh)
+                                                .border(1.dp, if (isSelected) PrimaryIndigo else MaterialTheme.colorScheme.outlineVariant, CircleShape)
                                                 .clickable { settingsViewModel.setVoiceEngine(engine) }
                                                 .padding(vertical = 12.dp),
                                             contentAlignment = Alignment.Center
@@ -237,9 +230,8 @@ fun VoiceBehaviour(
                                                 }
                                                 Text(
                                                     text = engine,
-                                                    fontSize = 13.sp,
-                                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                                    color = if (isSelected) Color.White else Color(0xFF334155)
+                                                    style = MaterialTheme.typography.titleSmall,
+                                                    color = if (isSelected) Color.White else TextWhite
                                                 )
                                             }
                                         }
@@ -255,17 +247,16 @@ fun VoiceBehaviour(
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(
                             text = "Volume & Alert Customization",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = TextWhite
                         )
 
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(Color.White)
-                                .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp))
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
                                 .padding(18.dp)
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
@@ -278,14 +269,13 @@ fun VoiceBehaviour(
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Filled.VolumeUp,
                                             contentDescription = null,
-                                            tint = NavyPrimary,
+                                            tint = PrimaryIndigo,
                                             modifier = Modifier.size(20.dp)
                                         )
                                         Text(
                                             text = "Voice Volume",
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF1E293B)
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = TextWhite
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
@@ -293,7 +283,7 @@ fun VoiceBehaviour(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Text("0", fontSize = 13.sp, color = Color(0xFF94A3B8), modifier = Modifier.width(34.dp))
+                                        Text("0", style = MaterialTheme.typography.bodySmall, color = TextGray, modifier = Modifier.width(34.dp))
                                         Slider(
                                             value = volumeValue,
                                             onValueChange = { volumeValue = it },
@@ -306,10 +296,11 @@ fun VoiceBehaviour(
                                                 Spacer(
                                                     Modifier
                                                         .size(16.dp)
-                                                        .background(Color(0xFF0F172A), CircleShape)
+                                                        .background(PrimaryIndigo, CircleShape)
                                                 )
                                             },
                                             track = { state ->
+                                                val trackBg = MaterialTheme.colorScheme.outlineVariant
                                                 Canvas(
                                                     Modifier
                                                         .fillMaxWidth()
@@ -318,7 +309,7 @@ fun VoiceBehaviour(
                                                     val centerY = size.height / 2f
                                                     val fraction = sliderFraction(state)
                                                     drawLine(
-                                                        color = Color(0xFFE2E8F0),
+                                                        color = trackBg,
                                                         start = Offset(0f, centerY),
                                                         end = Offset(size.width, centerY),
                                                         strokeWidth = size.height * 4f,
@@ -334,7 +325,7 @@ fun VoiceBehaviour(
                                                 }
                                             }
                                         )
-                                        Text("${volumeValue.toInt()}%", fontSize = 13.sp, color = Color(0xFF94A3B8), modifier = Modifier.width(42.dp))
+                                        Text("${volumeValue.toInt()}%", style = MaterialTheme.typography.bodySmall, color = TextGray, modifier = Modifier.width(42.dp))
                                     }
                                 }
 
@@ -347,14 +338,13 @@ fun VoiceBehaviour(
                                         Icon(
                                             imageVector = Icons.Default.FlashOn,
                                             contentDescription = null,
-                                            tint = NavyPrimary,
+                                            tint = PrimaryIndigo,
                                             modifier = Modifier.size(20.dp)
                                         )
                                         Text(
                                             text = "Speech Speed",
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF1E293B)
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = TextWhite
                                         )
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
@@ -362,7 +352,7 @@ fun VoiceBehaviour(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        Text("0.5x", fontSize = 13.sp, color = Color(0xFF94A3B8), modifier = Modifier.width(34.dp))
+                                        Text("0.5x", style = MaterialTheme.typography.bodySmall, color = TextGray, modifier = Modifier.width(34.dp))
                                         Slider(
                                             value = speedValue,
                                             onValueChange = { speedValue = it },
@@ -375,10 +365,11 @@ fun VoiceBehaviour(
                                                 Spacer(
                                                     Modifier
                                                         .size(16.dp)
-                                                        .background(Color(0xFF0F172A), CircleShape)
+                                                        .background(PrimaryIndigo, CircleShape)
                                                 )
                                             },
                                             track = { state ->
+                                                val trackBg = MaterialTheme.colorScheme.outlineVariant
                                                 Canvas(
                                                     Modifier
                                                         .fillMaxWidth()
@@ -387,7 +378,7 @@ fun VoiceBehaviour(
                                                     val centerY = size.height / 2f
                                                     val fraction = sliderFraction(state)
                                                     drawLine(
-                                                        color = Color(0xFFE2E8F0),
+                                                        color = trackBg,
                                                         start = Offset(0f, centerY),
                                                         end = Offset(size.width, centerY),
                                                         strokeWidth = size.height * 4f,
@@ -403,7 +394,7 @@ fun VoiceBehaviour(
                                                 }
                                             }
                                         )
-                                        Text(String.format("%.1fx", speedValue), fontSize = 13.sp, color = Color(0xFF94A3B8), modifier = Modifier.width(42.dp))
+                                        Text(String.format("%.1fx", speedValue), style = MaterialTheme.typography.bodySmall, color = TextGray, modifier = Modifier.width(42.dp))
                                     }
                                 }
 
@@ -416,15 +407,14 @@ fun VoiceBehaviour(
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
                                             text = "Play Chime Beep First",
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF1E293B)
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = TextWhite
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         Text(
                                             text = "Plays a chime sound before the voice announcement.",
-                                            fontSize = 12.sp,
-                                            color = Color(0xFF94A3B8)
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = TextGray
                                         )
                                     }
                                     Switch(
@@ -432,9 +422,9 @@ fun VoiceBehaviour(
                                         onCheckedChange = { settingsViewModel.setPlayChimeFirst(it) },
                                         colors = SwitchDefaults.colors(
                                             checkedThumbColor = Color.White,
-                                            checkedTrackColor = NavyPrimary,
+                                            checkedTrackColor = PrimaryIndigo,
                                             uncheckedThumbColor = Color.White,
-                                            uncheckedTrackColor = Color(0xFFCBD5E1)
+                                            uncheckedTrackColor = MaterialTheme.colorScheme.outline
                                         )
                                     )
                                 }
@@ -448,17 +438,16 @@ fun VoiceBehaviour(
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(
                             text = "Alert Behaviour",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = TextWhite
                         )
 
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(Color.White)
-                                .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp))
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
                                 .padding(18.dp)
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -478,15 +467,14 @@ fun VoiceBehaviour(
                                         Column(modifier = Modifier.weight(1f)) {
                                             Text(
                                                 text = title,
-                                                fontSize = 15.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color(0xFF1E293B)
+                                                style = MaterialTheme.typography.titleMedium,
+                                                color = TextWhite
                                             )
                                             Spacer(modifier = Modifier.height(2.dp))
                                             Text(
                                                 text = subtitle,
-                                                fontSize = 12.sp,
-                                                color = Color(0xFF94A3B8)
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = TextGray
                                             )
                                         }
 
@@ -494,8 +482,8 @@ fun VoiceBehaviour(
                                             selected = isSelected,
                                             onClick = { settingsViewModel.setAlertTone(title) },
                                             colors = RadioButtonDefaults.colors(
-                                                selectedColor = NavyPrimary,
-                                                unselectedColor = NavyPrimary
+                                                selectedColor = PrimaryIndigo,
+                                                unselectedColor = PrimaryIndigo
                                             )
                                         )
                                     }
@@ -510,17 +498,16 @@ fun VoiceBehaviour(
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(
                             text = "Diagnostics & Permissions",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF1E293B)
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = TextWhite
                         )
 
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(Color.White)
-                                .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp))
+                                .background(MaterialTheme.colorScheme.surfaceContainer)
+                                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(20.dp))
                                 .padding(18.dp)
                         ) {
                             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -532,29 +519,27 @@ fun VoiceBehaviour(
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
                                             text = "Notification Access",
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF1E293B)
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = TextWhite
                                         )
                                         Spacer(modifier = Modifier.height(2.dp))
                                         Text(
                                             text = "Required to capture payments from notifications.",
-                                            fontSize = 12.sp,
-                                            color = Color(0xFF94A3B8)
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = TextGray
                                         )
                                     }
 
                                     Box(
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .background(Color(0xFFDCFCE7))
+                                            .background(StatusActive.copy(alpha = 0.15f))
                                             .padding(horizontal = 14.dp, vertical = 6.dp)
                                     ) {
                                         Text(
                                             text = "Enabled",
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF15803D)
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = StatusActive
                                         )
                                     }
                                 }
@@ -569,7 +554,7 @@ fun VoiceBehaviour(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(50.dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary),
+                                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryIndigo),
                                     shape = CircleShape
                                 ) {
                                     Row(
@@ -584,8 +569,7 @@ fun VoiceBehaviour(
                                         )
                                         Text(
                                             text = "Play Test Alert Tone",
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold,
+                                            style = MaterialTheme.typography.titleMedium,
                                             color = Color.White
                                         )
                                     }

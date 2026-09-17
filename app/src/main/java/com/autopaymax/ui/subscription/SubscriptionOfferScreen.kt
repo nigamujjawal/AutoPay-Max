@@ -28,8 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.appversal.appstorys.utils.appstorys
-import com.autopaymax.ui.theme.NavySecondary
-import com.autopaymax.ui.theme.PremiumNavyGradient
+import com.autopaymax.ui.theme.*
 
 @Composable
 fun SubscriptionOfferScreen(
@@ -45,7 +44,7 @@ fun SubscriptionOfferScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFC))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -61,7 +60,7 @@ fun SubscriptionOfferScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
-                    .background(Color(0xFFF1F5F9))
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
             ) {
                 Row(
                     modifier = Modifier
@@ -74,20 +73,21 @@ fun SubscriptionOfferScreen(
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape)
-                            .background(Color.White)
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                             .clickable { onContinueClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Close",
-                            tint = Color(0xFF0F172A),
+                            tint = TextWhite,
                             modifier = Modifier.size(20.dp)
                         )
                     }
                 }
 
-                // Header Brand Icon Wall visual
+                // Header Brand Icon Wall visual — each keeps its own real
+                // brand color; these are third-party marks, not app theme.
                 Column(
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -114,19 +114,17 @@ fun SubscriptionOfferScreen(
             // Main Titles
             Text(
                 text = "Choose your plan",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF0F172A),
-                textAlign = TextAlign.Center,
-                letterSpacing = (-0.5).sp
+                style = MaterialTheme.typography.headlineLarge,
+                color = TextWhite,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Take full control of your subscriptions",
-                fontSize = 15.sp,
-                color = Color(0xFF64748B),
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextGray,
                 textAlign = TextAlign.Center
             )
 
@@ -177,14 +175,18 @@ fun SubscriptionOfferScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Primary Get Premium Button
+            // Primary Get Premium Button — a steady status readout once the
+            // purchase already went through, a call to action until then.
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
                     .height(56.dp)
                     .clip(RoundedCornerShape(18.dp))
-                    .background(PremiumNavyGradient)
+                    .then(
+                        if (state.isProUser) Modifier.background(StatusActive)
+                        else Modifier.background(PremiumNavyGradient)
+                    )
                     .clickable(enabled = !state.isProcessing) {
                         viewModel.subscribe(activity)
                         onSubscribeClick()
@@ -197,8 +199,7 @@ fun SubscriptionOfferScreen(
                     Text(
                         text = if (state.isProUser) "PRO MEMBER ACTIVE" else "Get Premium",
                         color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleLarge
                     )
                 }
             }
@@ -212,9 +213,8 @@ fun SubscriptionOfferScreen(
             ) {
                 Text(
                     text = "Restore purchases",
-                    color = Color(0xFF64748B),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
+                    color = TextGray,
+                    style = MaterialTheme.typography.bodyMedium,
                     textDecoration = TextDecoration.Underline
                 )
             }
@@ -266,7 +266,7 @@ private fun FeatureCheckRow(text: String) {
             modifier = Modifier
                 .size(26.dp)
                 .clip(CircleShape)
-                .background(NavySecondary),
+                .background(PrimaryIndigo),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -278,9 +278,8 @@ private fun FeatureCheckRow(text: String) {
         }
         Text(
             text = text,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF1E293B)
+            style = MaterialTheme.typography.titleMedium,
+            color = TextWhite
         )
     }
 }
@@ -302,10 +301,10 @@ private fun PlanOptionCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(22.dp))
-                .background(if (isSelected) Color(0xFFEFF6FF) else Color.White)
+                .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer)
                 .border(
                     width = if (isSelected) 2.dp else 1.dp,
-                    color = if (isSelected) NavySecondary else Color(0xFFE2E8F0),
+                    color = if (isSelected) PrimaryIndigo else MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(22.dp)
                 )
                 .clickable { onClick() }
@@ -320,10 +319,10 @@ private fun PlanOptionCard(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
-                        .background(if (isSelected) NavySecondary else Color.Transparent)
+                        .background(if (isSelected) PrimaryIndigo else Color.Transparent)
                         .border(
                             width = 2.dp,
-                            color = if (isSelected) NavySecondary else Color(0xFFCBD5E1),
+                            color = if (isSelected) PrimaryIndigo else MaterialTheme.colorScheme.outline,
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -341,34 +340,31 @@ private fun PlanOptionCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF0F172A)
+                        style = MaterialTheme.typography.titleLarge,
+                        color = TextWhite
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         if (originalPriceText != null) {
                             Text(
                                 text = originalPriceText,
-                                fontSize = 14.sp,
-                                color = Color(0xFFE11D48),
-                                textDecoration = TextDecoration.LineThrough,
-                                fontWeight = FontWeight.SemiBold
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = StatusOverdue,
+                                textDecoration = TextDecoration.LineThrough
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                         }
                         Text(
                             text = priceText,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = Color(0xFF0F172A)
+                            style = InstrumentValueLarge,
+                            color = TextWhite
                         )
                     }
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = subtitleText,
-                        fontSize = 12.sp,
-                        color = Color(0xFF64748B)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextGray
                     )
                 }
             }
@@ -388,8 +384,7 @@ private fun PlanOptionCard(
                 Text(
                     text = badgeText,
                     color = Color.White,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.ExtraBold
+                    style = InstrumentLabel
                 )
             }
         }

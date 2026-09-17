@@ -28,32 +28,18 @@ import com.appversal.appstorys.AppStorys
 import com.autopaymax.ui.navigation.Screen
 import com.appversal.appstorys.utils.appstorys
 import com.autopaymax.data.local.entity.Mandate
+import com.autopaymax.ui.theme.PrimaryIndigo
+import com.autopaymax.ui.theme.TextGray
+import com.autopaymax.ui.theme.TextWhite
+import com.autopaymax.util.frequencyOffsetMillis
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-private val NavyAccent = Color(0xFF1E3A8A)
-private val BlueAccent = Color(0xFF2563EB)
-private val FieldBackground = Color(0xFFF7F7FA)
-private val LabelDark = Color(0xFF1E293B)
-private val LabelMuted = Color(0xFF64748B)
-private val Placeholder = Color(0xFFAEAEBE)
-
 private val PaymentApps = listOf("GPay", "PhonePe", "Paytm", "Amazon Pay", "Other")
 private val Frequencies = listOf("Weekly", "Monthly", "Quarterly", "Yearly")
-
-private fun frequencyOffsetMillis(frequency: String): Long {
-    val days = when (frequency) {
-        "Weekly" -> 7L
-        "Monthly" -> 30L
-        "Quarterly" -> 90L
-        "Yearly" -> 365L
-        else -> 30L
-    }
-    return days * 24 * 60 * 60 * 1000
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,11 +77,11 @@ fun AutoPayScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .appstorys("autopay_screen")
     ) {
         // Navy header
-        Surface(color = NavyAccent, shadowElevation = 0.dp, modifier = Modifier.fillMaxWidth()) {
+        Surface(color = PrimaryIndigo, shadowElevation = 0.dp, modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -115,8 +101,7 @@ fun AutoPayScreen(
                 Text(
                     text = "Add Autopay",
                     color = Color.White,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
         }
@@ -132,7 +117,7 @@ fun AutoPayScreen(
             Text(
                 text = "Fill in the subscription details below.",
                 fontSize = 14.sp,
-                color = LabelMuted
+                color = TextGray
             )
 
             val matchedApp = remember(merchant) { com.autopaymax.util.matchAutoPayApp(merchant) }
@@ -154,7 +139,7 @@ fun AutoPayScreen(
                         )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
-                    Text(matchedApp.displayName, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = LabelDark)
+                    Text(matchedApp.displayName, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = TextWhite)
                 }
             }
 
@@ -197,14 +182,14 @@ fun AutoPayScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(FieldBackground)
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
                     .clickable { showDatePicker = true }
                     .padding(horizontal = 18.dp, vertical = 16.dp)
             ) {
                 Text(
                     text = dateFormat.format(Date(nextDueDate)),
                     fontSize = 15.sp,
-                    color = LabelDark
+                    color = TextWhite
                 )
             }
 
@@ -252,13 +237,13 @@ fun AutoPayScreen(
                     .height(52.dp),
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = BlueAccent,
+                    containerColor = PrimaryIndigo,
                     contentColor = Color.White,
-                    disabledContainerColor = Color(0xFFF1F1F5),
-                    disabledContentColor = Color(0xFFAEAEBE)
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    disabledContentColor = TextGray
                 )
             ) {
-                Text("Save Autopay", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text("Save Autopay", style = MaterialTheme.typography.titleMedium)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -288,12 +273,12 @@ fun AutoPayScreen(
                     }
                     showDatePicker = false
                 }) {
-                    Text("OK", color = BlueAccent, fontWeight = FontWeight.Bold)
+                    Text("OK", color = PrimaryIndigo, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = BlueAccent, fontWeight = FontWeight.Bold)
+                    Text("Cancel", color = PrimaryIndigo, fontWeight = FontWeight.Bold)
                 }
             }
         ) {
@@ -301,10 +286,10 @@ fun AutoPayScreen(
                 state = datePickerState,
                 title = { Text("Select date", modifier = Modifier.padding(start = 24.dp, top = 16.dp)) },
                 colors = DatePickerDefaults.colors(
-                    selectedDayContainerColor = BlueAccent,
+                    selectedDayContainerColor = PrimaryIndigo,
                     selectedDayContentColor = Color.White,
-                    todayDateBorderColor = BlueAccent,
-                    todayContentColor = BlueAccent
+                    todayDateBorderColor = PrimaryIndigo,
+                    todayContentColor = PrimaryIndigo
                 )
             )
         }
@@ -317,7 +302,7 @@ private fun FieldLabel(text: String, muted: Boolean = false) {
         text = text,
         fontSize = 14.sp,
         fontWeight = if (muted) FontWeight.Medium else FontWeight.Bold,
-        color = if (muted) LabelMuted else LabelDark
+        color = if (muted) TextGray else TextWhite
     )
 }
 
@@ -331,18 +316,18 @@ private fun AutoPayField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(placeholder, color = Placeholder) },
+        placeholder = { Text(placeholder, color = TextGray.copy(alpha = 0.6f)) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         shape = RoundedCornerShape(16.dp),
         modifier = Modifier.fillMaxWidth(),
         colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = FieldBackground,
-            focusedContainerColor = FieldBackground,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             unfocusedIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
-            focusedTextColor = LabelDark,
-            unfocusedTextColor = LabelDark
+            focusedTextColor = TextWhite,
+            unfocusedTextColor = TextWhite
         )
     )
 }
@@ -357,7 +342,7 @@ private fun FrequencyChip(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(if (selected) BlueAccent else FieldBackground)
+            .background(if (selected) PrimaryIndigo else MaterialTheme.colorScheme.surfaceContainer)
             .clickable(onClick = onClick)
             .padding(horizontal = 12.dp, vertical = 6.dp),
         contentAlignment = Alignment.Center
@@ -366,7 +351,7 @@ private fun FrequencyChip(
             text = label,
             fontSize = 12.sp,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
-            color = if (selected) Color.White else LabelMuted
+            color = if (selected) Color.White else TextGray
         )
     }
 }
@@ -389,7 +374,7 @@ private fun AutoPayDropdown(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
-                .background(FieldBackground)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
                 .clickable { expanded = !expanded }
                 .padding(horizontal = 18.dp, vertical = 16.dp)
         ) {
@@ -401,9 +386,9 @@ private fun AutoPayDropdown(
                 Text(
                     text = selected.ifBlank { "Select" },
                     fontSize = 15.sp,
-                    color = if (selected.isBlank()) Placeholder else LabelDark
+                    color = if (selected.isBlank()) TextGray.copy(alpha = 0.6f) else TextWhite
                 )
-                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = LabelMuted)
+                Icon(Icons.Default.KeyboardArrowDown, contentDescription = null, tint = TextGray)
             }
         }
 
@@ -415,14 +400,14 @@ private fun AutoPayDropdown(
                     .heightIn(max = 240.dp)
                     .verticalScroll(rememberScrollState())
                     .clip(RoundedCornerShape(14.dp))
-                    .background(Color.White)
-                    .border(1.dp, FieldBackground, RoundedCornerShape(14.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(14.dp))
             ) {
                 options.forEach { option ->
                     Text(
                         text = option,
                         fontSize = 15.sp,
-                        color = LabelDark,
+                        color = TextWhite,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {

@@ -30,16 +30,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.appversal.appstorys.AppStorys
 import com.appversal.appstorys.utils.appstorys
+import com.autopaymax.ui.components.StatusBadge
 import com.autopaymax.ui.dashboard.AutoPayTopHeader
 import com.autopaymax.ui.profile.ProfileUiEvent
 import com.autopaymax.ui.profile.ProfileViewModel
-import com.autopaymax.ui.theme.NavyPrimary
+import com.autopaymax.ui.theme.*
 import com.autopaymax.util.GmailAuthManager
 import kotlinx.coroutines.launch
 
@@ -117,7 +118,7 @@ fun SettingsScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFAFAFA))
+            .background(MaterialTheme.colorScheme.background)
             .appstorys("settings_screen")
     ) {
         // App Top Header
@@ -151,21 +152,20 @@ fun SettingsScreen(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(Color(0xFFF1F5F9)),
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.Person, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
+                                Icon(Icons.Default.Person, contentDescription = null, tint = PrimaryIndigo, modifier = Modifier.size(18.dp))
                             }
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
                                 Text(
                                     profileState.profile?.name?.takeIf { it.isNotBlank() } ?: "Add your name",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF1E293B)
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = TextWhite
                                 )
                                 if (signedInEmail.isNotBlank()) {
-                                    Text(signedInEmail, fontSize = 11.sp, color = Color(0xFF94A3B8))
+                                    Text(signedInEmail, style = MaterialTheme.typography.bodySmall, color = TextGray)
                                 }
                             }
                         }
@@ -179,7 +179,7 @@ fun SettingsScreen(
                                 .padding(8.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit profile", tint = NavyPrimary, modifier = Modifier.size(18.dp))
+                            Icon(Icons.Default.Edit, contentDescription = "Edit profile", tint = PrimaryIndigo, modifier = Modifier.size(18.dp))
                         }
                     }
                 }
@@ -198,33 +198,41 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.weight(1f, fill = false),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Box(
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(CircleShape)
-                                    .background(NavyPrimary),
+                                    .background(PrimaryIndigo),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(Icons.Default.Star, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
                             }
                             Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text("AutoPay Premium", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0F172A))
+                            Column(modifier = Modifier.weight(1f, fill = false)) {
+                                Text(
+                                    "AutoPay Premium",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = TextWhite,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                                 Spacer(modifier = Modifier.height(2.dp))
-                                Text("Premium active • Renews Jul 2027", fontSize = 11.sp, color = NavyPrimary, fontWeight = FontWeight.SemiBold)
+                                Text(
+                                    "Premium active • Renews Jul 2027",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = StatusActive,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
                             }
                         }
 
-                        Box(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(Color.White)
-                                .border(1.dp, Color(0xFFCBD5E1), CircleShape)
-                                .padding(horizontal = 14.dp, vertical = 6.dp)
-                        ) {
-                            Text("Active", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = NavyPrimary)
-                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        StatusBadge(status = "ACTIVE")
                     }
                 }
             }
@@ -244,7 +252,7 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setPushNotificationsEnabled(it) }
                         )
 
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                         GmailSyncRow(
                             connected = gmailConnected,
@@ -261,7 +269,7 @@ fun SettingsScreen(
                             }
                         )
 
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                         SettingsSwitchItem(
                             icon = Icons.Default.NotificationsActive,
@@ -271,7 +279,7 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setAutopayRemindersEnabled(it) }
                         )
 
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                         SettingsSwitchItem(
                             icon = Icons.Default.VolumeUp,
@@ -281,7 +289,7 @@ fun SettingsScreen(
                             onCheckedChange = { viewModel.setVoiceAlertsEnabled(it) }
                         )
 
-                        HorizontalDivider(color = Color(0xFFF1F5F9))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
                         SettingsRowItem(
                             icon = Icons.Default.Tune,
@@ -346,15 +354,16 @@ fun SettingsScreen(
                 }
             }
 
-            // Delete Account Button
+            // Delete Account Button — the one truly destructive, irreversible
+            // action on this screen; the only control that earns error/red.
             item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color(0xFFFFF1F2))
-                        .border(1.dp, Color(0xFFFECDD3), RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.errorContainer)
+                        .border(1.dp, MaterialTheme.colorScheme.error.copy(alpha = 0.35f), RoundedCornerShape(14.dp))
                         .clickable { Toast.makeText(context, "Delete Account clicked", Toast.LENGTH_SHORT).show() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -365,28 +374,28 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Default.DeleteForever,
                             contentDescription = "Delete Account",
-                            tint = Color(0xFFE11D48),
+                            tint = MaterialTheme.colorScheme.error,
                             modifier = Modifier.size(20.dp)
                         )
                         Text(
                             text = "Delete Account",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFE11D48)
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                 }
             }
 
-            // Log Out Button
+            // Log Out Button — routine and reversible, so it reads as a
+            // normal control, not a warning.
             item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(Color(0xFFFFF1F2))
-                        .border(1.dp, Color(0xFFFECDD3), RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(14.dp))
                         .clickable { onLogoutClick() },
                     contentAlignment = Alignment.Center
                 ) {
@@ -397,14 +406,13 @@ fun SettingsScreen(
                         Icon(
                             imageVector = Icons.Default.Logout,
                             contentDescription = "Log Out",
-                            tint = Color(0xFFE11D48),
+                            tint = TextWhite,
                             modifier = Modifier.size(20.dp)
                         )
                         Text(
                             text = "Log Out",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFFE11D48)
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextWhite
                         )
                     }
                 }
@@ -415,9 +423,9 @@ fun SettingsScreen(
     if (showEditProfileDialog) {
         AlertDialog(
             onDismissRequest = { showEditProfileDialog = false },
-            containerColor = Color.White,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             title = {
-                Text("Edit Profile", fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+                Text("Edit Profile", style = MaterialTheme.typography.titleLarge, color = TextWhite)
             },
             text = {
                 OutlinedTextField(
@@ -428,8 +436,8 @@ fun SettingsScreen(
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = NavyPrimary,
-                        unfocusedBorderColor = Color.Black
+                        focusedBorderColor = PrimaryIndigo,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     )
                 )
             },
@@ -440,14 +448,14 @@ fun SettingsScreen(
                         profileViewModel.saveProfile(name = profileName)
                     },
                     enabled = !profileState.isSaving,
-                    colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary)
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryIndigo)
                 ) {
-                    Text("Save", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text("Save", color = Color.White, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showEditProfileDialog = false }) {
-                    Text("Cancel", color = Color(0xFF64748B))
+                    Text("Cancel", color = TextGray)
                 }
             }
         )
@@ -457,10 +465,9 @@ fun SettingsScreen(
 @Composable
 fun SettingsSectionHeader(title: String) {
     Text(
-        text = title,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color(0xFF1E293B),
+        text = title.uppercase(),
+        style = InstrumentLabel,
+        color = TextGray,
         modifier = Modifier.padding(top = 4.dp)
     )
 }
@@ -471,8 +478,8 @@ fun SettingsCard(content: @Composable ColumnScope.() -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
-            .border(1.dp, Color(0xFFF1F5F9), RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
     ) {
         Column(content = content)
     }
@@ -484,8 +491,8 @@ fun SubscriptionCard(content: @Composable ColumnScope.() -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFFF8FAFC))
-            .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
     ) {
         Column(content = content)
     }
@@ -493,7 +500,7 @@ fun SubscriptionCard(content: @Composable ColumnScope.() -> Unit) {
 
 @Composable
 fun SettingsRowItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String,
     onClick: () -> Unit
@@ -511,15 +518,15 @@ fun SettingsRowItem(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFF1F5F9)),
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
+                Icon(icon, contentDescription = null, tint = PrimaryIndigo, modifier = Modifier.size(18.dp))
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
-                Text(subtitle, fontSize = 11.sp, color = Color(0xFF94A3B8))
+                Text(title, style = MaterialTheme.typography.titleMedium, color = TextWhite)
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = TextGray)
             }
         }
     }
@@ -527,7 +534,7 @@ fun SettingsRowItem(
 
 @Composable
 fun SettingsSwitchItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String,
     checked: Boolean,
@@ -548,16 +555,16 @@ fun SettingsSwitchItem(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFF1F5F9)),
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(icon, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
+                Icon(icon, contentDescription = null, tint = PrimaryIndigo, modifier = Modifier.size(18.dp))
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+                Text(title, style = MaterialTheme.typography.titleMedium, color = TextWhite)
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(subtitle, fontSize = 11.sp, color = Color(0xFF94A3B8))
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = TextGray)
             }
         }
         Switch(
@@ -565,9 +572,9 @@ fun SettingsSwitchItem(
             onCheckedChange = onCheckedChange,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = Color.White,
-                checkedTrackColor = NavyPrimary,
+                checkedTrackColor = PrimaryIndigo,
                 uncheckedThumbColor = Color.White,
-                uncheckedTrackColor = Color(0xFFCBD5E1)
+                uncheckedTrackColor = MaterialTheme.colorScheme.outline
             )
         )
     }
@@ -586,9 +593,9 @@ fun GmailSyncRow(
     val chevronRotation by animateFloatAsState(if (expanded) 180f else 0f, label = "gmailChevron")
 
     val (statusText, statusColor) = when {
-        reauthNeeded -> "Reconnect needed" to Color(0xFFB91C1C)
-        connected -> "Connected" to Color(0xFF15803D)
-        else -> "Not connected" to Color(0xFF94A3B8)
+        reauthNeeded -> "Reconnect needed" to StatusOverdue
+        connected -> "Connected" to StatusActive
+        else -> "Not connected" to TextGray
     }
 
     Column {
@@ -603,21 +610,30 @@ fun GmailSyncRow(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFF1F5F9)),
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.MailOutline, contentDescription = null, tint = NavyPrimary, modifier = Modifier.size(18.dp))
+                Icon(Icons.Default.MailOutline, contentDescription = null, tint = PrimaryIndigo, modifier = Modifier.size(18.dp))
             }
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text("Gmail Sync", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+                Text("Gmail Sync", style = MaterialTheme.typography.titleMedium, color = TextWhite)
                 Spacer(Modifier.height(2.dp))
-                Text(statusText, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = statusColor)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(statusColor)
+                    )
+                    Spacer(Modifier.width(5.dp))
+                    Text(statusText, style = MaterialTheme.typography.labelLarge, color = statusColor)
+                }
             }
             Icon(
                 Icons.Default.KeyboardArrowDown,
                 contentDescription = if (expanded) "Collapse" else "Expand",
-                tint = Color(0xFF94A3B8),
+                tint = TextGray,
                 modifier = Modifier.rotate(chevronRotation)
             )
         }
@@ -634,12 +650,11 @@ fun GmailSyncRow(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Account", fontSize = 12.sp, color = Color(0xFF94A3B8))
+                        Text("Account", style = MaterialTheme.typography.bodySmall, color = TextGray)
                         Text(
-                            email.ifBlank { "—" },
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF1E293B),
+                            email.ifBlank { "-" },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextWhite,
                             maxLines = 1
                         )
                     }
@@ -648,30 +663,30 @@ fun GmailSyncRow(
                             onClick = onSyncNow,
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary)
-                        ) { Text("Sync now", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                            colors = ButtonDefaults.buttonColors(containerColor = PrimaryIndigo)
+                        ) { Text("Sync now", style = MaterialTheme.typography.labelLarge) }
                         OutlinedButton(
                             onClick = onDisconnect,
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
-                            border = BorderStroke(1.dp, Color(0xFFFECACA)),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFB91C1C))
-                        ) { Text("Disconnect", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                            border = BorderStroke(1.dp, StatusOverdue.copy(alpha = 0.4f)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = StatusOverdue)
+                        ) { Text("Disconnect", style = MaterialTheme.typography.labelLarge) }
                     }
                 } else {
                     Text(
                         if (reauthNeeded) "Your Gmail access needs to be renewed."
                         else "Connect Gmail so autopays can be read from your subscription emails.",
-                        fontSize = 12.sp,
-                        color = Color(0xFF64748B)
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextGray
                     )
                     Spacer(Modifier.height(10.dp))
                     Button(
                         onClick = onConnect,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = NavyPrimary)
-                    ) { Text(if (reauthNeeded) "Reconnect" else "Connect Gmail", fontSize = 13.sp, fontWeight = FontWeight.Bold) }
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryIndigo)
+                    ) { Text(if (reauthNeeded) "Reconnect" else "Connect Gmail", style = MaterialTheme.typography.labelLarge) }
                 }
             }
         }

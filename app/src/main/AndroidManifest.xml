@@ -29,6 +29,13 @@
         android:theme="@style/Theme.AppStorysAutoPayManager"
         tools:replace="android:dataExtractionRules,android:fullBackupContent">
 
+        <!-- Asks Play Services to fetch the on-device text-recognition model as soon as
+             possible instead of lazily on first OCR call - without this, "Import from
+             screenshot" can fail on a device that hasn't downloaded the model yet. -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

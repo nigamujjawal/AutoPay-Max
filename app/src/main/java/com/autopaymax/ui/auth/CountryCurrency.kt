@@ -19,10 +19,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.autopaymax.ui.theme.BorderColor
+import com.autopaymax.ui.theme.CardBackground
+import com.autopaymax.ui.theme.TextGray
+import com.autopaymax.ui.theme.TextWhite
 
 // Relocated verbatim from the deleted phone-OTP LoginScreen. This picker is the ONLY thing that
 // sets the global currency preference (SettingsViewModel.setCurrency/setCurrencyCode, which
@@ -94,10 +97,6 @@ fun detectCountryCode(context: Context): CountryCode {
     return COUNTRY_CODES.find { it.iso == isoCode } ?: DEFAULT_COUNTRY
 }
 
-private val FieldBorder = Color(0xFFE2E8F0)
-private val TitleColor = Color(0xFF0F172A)
-private val SubtitleColor = Color(0xFF64748B)
-
 // Auto-detects on first composition and reports (symbol, code) via onSelected - the caller wires
 // that to SettingsViewModel. Manual override via the dropdown re-fires onSelected.
 @Composable
@@ -118,31 +117,31 @@ fun CountryCurrencyPicker(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(18.dp))
-                .background(Color.White)
-                .border(1.dp, FieldBorder, RoundedCornerShape(18.dp))
+                .background(CardBackground)
+                .border(1.dp, BorderColor, RoundedCornerShape(18.dp))
                 .clickable { expanded = true }
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            Text("${selected.displayName}  ${selected.dialCode}", fontSize = 15.sp, fontWeight = FontWeight.Medium, color = TitleColor)
-            Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Change country", tint = SubtitleColor, modifier = Modifier.size(18.dp))
+            Text("${selected.displayName}  ${selected.dialCode}", fontSize = 15.sp, fontWeight = FontWeight.Medium, color = TextWhite)
+            Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Change country", tint = TextGray, modifier = Modifier.size(18.dp))
         }
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             shape = RoundedCornerShape(18.dp),
-            containerColor = Color.White,
-            border = BorderStroke(1.dp, FieldBorder),
+            containerColor = CardBackground,
+            border = BorderStroke(1.dp, BorderColor),
             modifier = Modifier.heightIn(max = 320.dp)
         ) {
             COUNTRY_CODES.forEachIndexed { index, country ->
                 DropdownMenuItem(
-                    text = { Text("${country.displayName}   ${country.dialCode}", fontSize = 15.sp, color = TitleColor) },
+                    text = { Text("${country.displayName}   ${country.dialCode}", fontSize = 15.sp, color = TextWhite) },
                     onClick = {
                         selected = country
                         expanded = false
                     }
                 )
-                if (index != COUNTRY_CODES.lastIndex) HorizontalDivider(color = FieldBorder, thickness = 1.dp)
+                if (index != COUNTRY_CODES.lastIndex) HorizontalDivider(color = BorderColor, thickness = 1.dp)
             }
         }
     }
