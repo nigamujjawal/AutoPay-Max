@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,8 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,13 +21,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.autopaymax.ui.theme.*
+import com.autopaymax.R
+
+private val LightOnboardingBg = Color(0xFFE6EEF8)
+private val DarkTitleColor = Color(0xFF0F172A)
+private val SoftSubtextColor = Color(0xFF64748B)
+private val PrimaryBlueButton = Color(0xFF2563EB)
 
 @Composable
 fun OnboardingScreen(
@@ -40,7 +42,7 @@ fun OnboardingScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(LightOnboardingBg)
     ) {
         AnimatedContent(
             targetState = currentStep,
@@ -68,88 +70,71 @@ fun OnboardingScreen(
 // ==========================================
 @Composable
 private fun OnboardingStep1Welcome(onNext: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LightOnboardingBg)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(bottom = 110.dp),
+                .padding(horizontal = 24.dp)
+                .padding(top = 28.dp, bottom = 120.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Background brand grid wall — each tile keeps its own
-            // real brand color; these are third-party marks, not app theme.
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(390.dp)
-                    .padding(top = 20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        BrandTile("N", Color(0xFFE50914), Color.Black)
-                        BrandTile("hulu", Color(0xFF1CE783), Color(0xFF0F172A))
-                        BrandTile("prime", Color(0xFF00A8E1), Color(0xFF00A8E1))
-                        BrandTile("HBO", Color(0xFF9933FF), Color(0xFF9933FF))
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        BrandTile("tv+", Color.White, Color(0xFF334155))
-                        BrandTile("▶", Color.Red, Color(0xFFEF4444))
-                        BrandTile("≈", Color(0xFF1DB954), Color(0xFF1DB954))
-                        BrandTile("Cc", Color(0xFFFF9A00), Color(0xFFF43F5E))
-                    }
-                    Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                        BrandTile("aws", Color(0xFFFF9900), Color(0xFFF8FAFC))
-                        BrandTile("a", Color(0xFFFF9900), Color(0xFFFED7AA))
-                        BrandTile("P", Color(0xFF0066CC), Color(0xFFCBD5E1))
-                        BrandTile("aMC+", Color(0xFF00B0FF), Color(0xFF94A3B8))
-                    }
-                }
+            Spacer(modifier = Modifier.height(20.dp))
 
-                // Central App Logo Badge Overlaid
-                Surface(
-                    modifier = Modifier.size(96.dp),
-                    shape = RoundedCornerShape(26.dp),
-                    color = Color.White,
-                    shadowElevation = 16.dp,
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = com.autopaymax.R.drawable.appicon),
-                            contentDescription = "AutoPay Max Logo",
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                        )
-                    }
+            // Brand Logos Wall (3 Rows of authentic launcher icons)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Row 1: Prime Video, Disney+ Hotstar, Spotify, Netflix
+                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    BrandLauncherIcon(brand = BrandType.PRIME_VIDEO)
+                    BrandLauncherIcon(brand = BrandType.DISNEY_HOTSTAR)
+                    BrandLauncherIcon(brand = BrandType.SPOTIFY)
+                    BrandLauncherIcon(brand = BrandType.NETFLIX)
+                }
+                // Row 2: Hulu, Spotify, Netflix, YouTube
+                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    BrandLauncherIcon(brand = BrandType.HULU)
+                    BrandLauncherIcon(brand = BrandType.SPOTIFY)
+                    BrandLauncherIcon(brand = BrandType.NETFLIX)
+                    BrandLauncherIcon(brand = BrandType.YOUTUBE)
+                }
+                // Row 3: Apple TV+, Canva, OpenAI/ChatGPT, Prime Video
+                Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    BrandLauncherIcon(brand = BrandType.APPLE_TV)
+                    BrandLauncherIcon(brand = BrandType.CANVA)
+                    BrandLauncherIcon(brand = BrandType.OPENAI)
+                    BrandLauncherIcon(brand = BrandType.PRIME_VIDEO)
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(48.dp))
 
-            // App Name Headline
+            // Headline
             Text(
                 text = "AutoPay Max",
-                style = MaterialTheme.typography.headlineLarge,
-                color = TextWhite,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = DarkTitleColor,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
+            // Subtitle
             Text(
-                text = "Keep track of your\nsubscriptions in one place",
-                style = MaterialTheme.typography.titleLarge,
-                color = TextGray,
-                textAlign = TextAlign.Center
+                text = "Keep track of your subscriptions\nin one place",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Medium,
+                color = SoftSubtextColor,
+                textAlign = TextAlign.Center,
+                lineHeight = 24.sp
             )
         }
 
@@ -158,28 +143,30 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
-            shadowElevation = 12.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh
+            color = LightOnboardingBg
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
-                Box(
+                Button(
+                    onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(PremiumNavyGradient)
-                        .clickable { onNext() },
-                    contentAlignment = Alignment.Center
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryBlueButton,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
                     Text(
                         text = "Get started",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -192,134 +179,145 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
 // ==========================================
 @Composable
 private fun OnboardingStep2Spending(onNext: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LightOnboardingBg)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
-                .padding(top = 16.dp, bottom = 110.dp),
+                .padding(top = 20.dp, bottom = 120.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Step 2 App Logo Badge
+            // Credit Card Icon at Top
             Box(
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(54.dp)
+                    .shadow(4.dp, RoundedCornerShape(16.dp))
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color.White)
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(16.dp))
-                    .shadow(4.dp, RoundedCornerShape(16.dp)),
+                    .background(Color.White),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = com.autopaymax.R.drawable.appicon),
-                    contentDescription = "AutoPay Max Logo",
-                    modifier = Modifier
-                        .size(38.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                )
+                Surface(
+                    modifier = Modifier.size(28.dp, 18.dp),
+                    shape = RoundedCornerShape(4.dp),
+                    color = Color(0xFFFF8C00)
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .align(Alignment.CenterStart)
+                                .padding(start = 2.dp)
+                                .background(Color(0xFFFFD700), RoundedCornerShape(1.dp))
+                        )
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Headline
             Text(
                 text = "You're spending more\nthan you think",
-                style = MaterialTheme.typography.headlineLarge,
-                color = TextWhite,
-                textAlign = TextAlign.Center
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = DarkTitleColor,
+                textAlign = TextAlign.Center,
+                lineHeight = 32.sp
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
+            // Subtitle
             Text(
                 text = "Find forgotten subscriptions, cut what you\ndon't need, and start saving today.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextGray,
-                textAlign = TextAlign.Center
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                color = SoftSubtextColor,
+                textAlign = TextAlign.Center,
+                lineHeight = 20.sp
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // List of 4 White Cards
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                SpendItemCard(
+                    brand = BrandType.NETFLIX,
+                    name = "Netflix",
+                    price = "₹1,299"
+                )
+                SpendItemCard(
+                    brand = BrandType.SPOTIFY,
+                    name = "Spotify",
+                    price = "₹119"
+                )
+                SpendItemCard(
+                    brand = BrandType.YOUTUBE,
+                    name = "YouTube Premium",
+                    price = "₹189"
+                )
+                SpendItemCard(
+                    brand = BrandType.PRIME_VIDEO,
+                    name = "Amazon Prime",
+                    price = "₹179"
+                )
+            }
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Brand Subscription Cards List — each keeps its own real
-            // brand color; these are third-party marks, not app theme.
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                SpendBrandCard(
-                    name = "Netflix",
-                    price = "$12.99",
-                    backgroundColor = Color(0xFF0F172A),
-                    logoChar = "N",
-                    logoColor = Color(0xFFE50914)
-                )
-                SpendBrandCard(
-                    name = "Spotify",
-                    price = "$10.99",
-                    backgroundColor = Color(0xFF1DB954),
-                    logoChar = "≈",
-                    logoColor = Color.White
-                )
-                SpendBrandCard(
-                    name = "Youtube Premium",
-                    price = "$11.99",
-                    backgroundColor = Color(0xFFEF4444),
-                    logoChar = "▶",
-                    logoColor = Color.White
-                )
-                SpendBrandCard(
-                    name = "Amazon Prime",
-                    price = "$14.99",
-                    backgroundColor = Color(0xFF00A8E1),
-                    logoChar = "prime",
-                    logoColor = Color.White,
-                    iconRes = com.autopaymax.R.drawable.ic_brand_primevideo
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Total Spend Box — the instrument reading: this screen's
-            // one money figure, in the same monospace register as
-            // every other money readout in the app.
+            // Total Spend Readout
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "$611.52",
-                    style = InstrumentValueHero,
-                    color = TextWhite
+                    text = "₹21,551.52",
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = DarkTitleColor
                 )
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "per year",
-                    style = InstrumentLabel,
-                    color = TextGray
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF94A3B8)
                 )
             }
         }
 
-        // Bottom Action Button
+        // Bottom CTA Button
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
-            shadowElevation = 12.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh
+            color = LightOnboardingBg
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
-                Box(
+                Button(
+                    onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(PremiumNavyGradient)
-                        .clickable { onNext() },
-                    contentAlignment = Alignment.Center
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryBlueButton,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
                     Text(
                         text = "Find my savings",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -337,88 +335,75 @@ private fun OnboardingStep3HelpGoals(
 ) {
     var selectedOption by remember { mutableIntStateOf(0) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LightOnboardingBg)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
-                .padding(top = 16.dp, bottom = 110.dp)
+                .padding(top = 16.dp, bottom = 120.dp)
         ) {
-            // Top Navigation & Progress Bar
+            // Top Progress Bar
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(CircleShape)
             ) {
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .clickable { onBack() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = TextWhite,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                LinearProgressIndicator(
-                    progress = { 0.33f },
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(PrimaryBlueButton)
+                )
+                Box(
                     modifier = Modifier
                         .weight(1f)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
-                    color = NavySecondary,
-                    trackColor = MaterialTheme.colorScheme.outlineVariant
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Image(
-                    painter = painterResource(id = com.autopaymax.R.drawable.appicon),
-                    contentDescription = "AutoPay Max Logo",
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
+                        .fillMaxHeight()
+                        .background(Color(0xFFCBD5E1))
                 )
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
+            // Headline
             Text(
                 text = "What do you want help\nwith most?",
-                style = MaterialTheme.typography.headlineLarge,
-                color = TextWhite
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = DarkTitleColor,
+                lineHeight = 32.sp
             )
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // 3 Goal Questionnaire Cards
-            GoalCard(
-                icon = Icons.Default.Search,
+            // Option 1
+            HelpGoalOptionCard(
                 title = "Find hidden subscriptions",
                 subtitle = "Catch subscriptions hiding in receipts, renewals, and old trials.",
                 isSelected = selectedOption == 0,
                 onClick = { selectedOption = 0 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            GoalCard(
-                icon = Icons.Default.Savings,
+            // Option 2
+            HelpGoalOptionCard(
                 title = "Lower my bills",
                 subtitle = "Find cheaper plans, sharing options, and better deals.",
                 isSelected = selectedOption == 1,
                 onClick = { selectedOption = 1 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            GoalCard(
-                icon = Icons.Default.Notifications,
+            // Option 3
+            HelpGoalOptionCard(
                 title = "Never miss a renewal",
                 subtitle = "Stay ahead of upcoming charges, reminders, and plan changes.",
                 isSelected = selectedOption == 2,
@@ -426,33 +411,35 @@ private fun OnboardingStep3HelpGoals(
             )
         }
 
-        // Bottom Action Button
+        // Bottom CTA Button
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
-            shadowElevation = 12.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh
+            color = LightOnboardingBg
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
-                Box(
+                Button(
+                    onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(PremiumNavyGradient)
-                        .clickable { onNext() },
-                    contentAlignment = Alignment.Center
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryBlueButton,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
                     Text(
                         text = "Continue",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -461,151 +448,147 @@ private fun OnboardingStep3HelpGoals(
 }
 
 // ==========================================
-// STEP 4: Value & Stacked Notifications Screen
+// STEP 4: Value & Notifications Screen
 // ==========================================
 @Composable
 private fun OnboardingStep4ValueNotifications(
     onBack: () -> Unit,
     onNext: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(LightOnboardingBg)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
-                .padding(top = 16.dp, bottom = 110.dp),
+                .padding(top = 16.dp, bottom = 120.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top Navigation & Progress Bar
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .clickable { onBack() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = TextWhite,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                LinearProgressIndicator(
-                    progress = { 0.66f },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
-                    color = NavySecondary,
-                    trackColor = MaterialTheme.colorScheme.outlineVariant
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Image(
-                    painter = painterResource(id = com.autopaymax.R.drawable.appicon),
-                    contentDescription = "AutoPay Max Logo",
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                )
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            Text(
-                text = "We watch. You save.",
-                style = MaterialTheme.typography.headlineLarge,
-                color = TextWhite,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                text = "Price hikes, upcoming renewals, expiring\ntrials. We catch them so you don't have\nto.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextGray,
-                textAlign = TextAlign.Center
+            // Top Progress Bar (100% completed on final step)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(CircleShape)
+                    .background(PrimaryBlueButton)
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Stacked Notification Cards Visual
-            Column(
-                verticalArrangement = Arrangement.spacedBy((-14).dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+            // Headline
+            Text(
+                text = "We watch. You save.",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = DarkTitleColor,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Subtitle
+            Text(
+                text = "Price hikes, upcoming renewals, expiring trials. We catch them so you don't have to.",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                color = SoftSubtextColor,
+                textAlign = TextAlign.Center,
+                lineHeight = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Single White Notification Container Card
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                color = Color.White,
+                shadowElevation = 4.dp
             ) {
-                NotificationStackCard(
-                    brandChar = "N",
-                    brandColor = Color(0xFFE50914),
-                    title = "Netflix",
-                    time = "Today",
-                    description = "Found Netflix in your email: $12.99/mo",
-                    elevation = 10.dp
-                )
-                NotificationStackCard(
-                    brandChar = "≈",
-                    brandColor = Color(0xFF1DB954),
-                    title = "Spotify",
-                    time = "Today",
-                    description = "Spotify renews in 3 days",
-                    elevation = 8.dp
-                )
-                NotificationStackCard(
-                    brandChar = "▶",
-                    brandColor = Color(0xFFEF4444),
-                    title = "Youtube Premium",
-                    time = "Yesterday",
-                    description = "YouTube Premium price increased. Cheaper alternatives found",
-                    elevation = 6.dp
-                )
-                NotificationStackCard(
-                    brandChar = "prime",
-                    brandColor = Color(0xFF00A8E1),
-                    title = "Amazon Prime",
-                    time = "5 days",
-                    description = "Amazon Prime free trial ends in 5 days",
-                    elevation = 4.dp,
-                    iconRes = com.autopaymax.R.drawable.ic_brand_primevideo
-                )
+                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                    NotificationRowItem(
+                        brand = BrandType.NETFLIX,
+                        title = "Netflix",
+                        time = "Today",
+                        subtitle = "Found Netflix in your email: ₹1,299/month"
+                    )
+
+                    HorizontalDivider(
+                        color = Color(0xFFF1F5F9),
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+
+                    NotificationRowItem(
+                        brand = BrandType.SPOTIFY,
+                        title = "Spotify",
+                        time = "Today",
+                        subtitle = "Spotify renews in 3 days"
+                    )
+
+                    HorizontalDivider(
+                        color = Color(0xFFF1F5F9),
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+
+                    NotificationRowItem(
+                        brand = BrandType.YOUTUBE,
+                        title = "YouTube Premium",
+                        time = "Yesterday",
+                        subtitle = "Youtube Premium free trial ends in 5 days"
+                    )
+
+                    HorizontalDivider(
+                        color = Color(0xFFF1F5F9),
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+
+                    NotificationRowItem(
+                        brand = BrandType.PRIME_VIDEO,
+                        title = "Amazon Prime",
+                        time = "5 days",
+                        subtitle = "Amazon Prime free trial ends in 5 days"
+                    )
+                }
             }
         }
 
-        // Bottom Action Button
+        // Bottom CTA Button
         Surface(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth(),
-            shadowElevation = 12.dp,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh
+            color = LightOnboardingBg
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .padding(horizontal = 24.dp, vertical = 20.dp)
             ) {
-                Box(
+                Button(
+                    onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(PremiumNavyGradient)
-                        .clickable { onNext() },
-                    contentAlignment = Alignment.Center
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryBlueButton,
+                        contentColor = Color.White
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                 ) {
                     Text(
                         text = "Continue",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }
@@ -614,217 +597,296 @@ private fun OnboardingStep4ValueNotifications(
 }
 
 // ==========================================
-// HELPER COMPONENTS
+// BRAND LOGO HELPER COMPONENTS & TYPES
 // ==========================================
+
+private enum class BrandType {
+    PRIME_VIDEO,
+    DISNEY_HOTSTAR,
+    SPOTIFY,
+    NETFLIX,
+    HULU,
+    YOUTUBE,
+    APPLE_TV,
+    CANVA,
+    OPENAI
+}
+
 @Composable
-private fun BrandTile(text: String, textColor: Color, tileBg: Color) {
-    Box(
-        modifier = Modifier
-            .size(56.dp)
-            .shadow(4.dp, RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .background(tileBg),
-        contentAlignment = Alignment.Center
+private fun BrandLauncherIcon(
+    brand: BrandType,
+    size: androidx.compose.ui.unit.Dp = 60.dp
+) {
+    Surface(
+        modifier = Modifier.size(size),
+        shape = RoundedCornerShape(18.dp),
+        color = when (brand) {
+            BrandType.PRIME_VIDEO -> Color(0xFF00A8E1)
+            BrandType.DISNEY_HOTSTAR -> Color(0xFF092A38)
+            BrandType.SPOTIFY -> Color(0xFF1DB954)
+            BrandType.NETFLIX -> Color(0xFF000000)
+            BrandType.HULU -> Color(0xFF0F172A)
+            BrandType.YOUTUBE -> Color(0xFFEF4444)
+            BrandType.APPLE_TV -> Color(0xFF000000)
+            BrandType.CANVA -> Color(0xFF00C4CC)
+            BrandType.OPENAI -> Color(0xFF10A37F)
+        },
+        shadowElevation = 4.dp
     ) {
-        Text(
-            text = text,
-            color = textColor,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.ExtraBold
-        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            when (brand) {
+                BrandType.PRIME_VIDEO -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_brand_primevideo),
+                        contentDescription = "Prime Video",
+                        tint = Color.White,
+                        modifier = Modifier.size(34.dp)
+                    )
+                }
+                BrandType.DISNEY_HOTSTAR -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_brand_disney),
+                        contentDescription = "Disney+",
+                        tint = Color.White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                BrandType.SPOTIFY -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_brand_spotify),
+                        contentDescription = "Spotify",
+                        tint = Color.Black,
+                        modifier = Modifier.size(34.dp)
+                    )
+                }
+                BrandType.NETFLIX -> {
+                    Text(
+                        text = "N",
+                        color = Color(0xFFE50914),
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+                BrandType.HULU -> {
+                    Text(
+                        text = "hulu",
+                        color = Color(0xFF1CE783),
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+                BrandType.YOUTUBE -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_brand_youtube),
+                        contentDescription = "YouTube",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+                BrandType.APPLE_TV -> {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_brand_apple),
+                            contentDescription = "Apple TV+",
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = "tv+",
+                            color = Color.White,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+                BrandType.CANVA -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_brand_canva),
+                        contentDescription = "Canva",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+                BrandType.OPENAI -> {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_brand_openai),
+                        contentDescription = "OpenAI",
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun SpendBrandCard(
+private fun SpendItemCard(
+    brand: BrandType,
     name: String,
-    price: String,
-    backgroundColor: Color,
-    logoChar: String,
-    logoColor: Color,
-    iconRes: Int? = null
+    price: String
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        color = backgroundColor,
-        shadowElevation = 4.dp
+        shape = RoundedCornerShape(18.dp),
+        color = Color.White,
+        shadowElevation = 2.dp
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(38.dp)
-                        .clip(CircleShape)
-                        .background(Color.White.copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    if (iconRes != null) {
-                        Icon(
-                            painter = painterResource(id = iconRes),
-                            contentDescription = name,
-                            tint = logoColor,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    } else {
-                        Text(
-                            text = logoChar,
-                            color = logoColor,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
+                BrandLauncherIcon(brand = brand, size = 44.dp)
                 Text(
                     text = name,
-                    color = Color.White,
                     fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = DarkTitleColor
                 )
             }
             Text(
                 text = price,
-                color = Color.White,
-                style = InstrumentValueMedium
+                fontSize = 18.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = DarkTitleColor
             )
         }
     }
 }
 
 @Composable
-private fun GoalCard(
-    icon: ImageVector,
+private fun HelpGoalOptionCard(
     title: String,
     subtitle: String,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
-    Box(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(22.dp))
-            .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainer)
-            .border(
-                width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) NavySecondary else MaterialTheme.colorScheme.outlineVariant,
-                shape = RoundedCornerShape(22.dp)
-            )
-            .clickable { onClick() }
-            .padding(20.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(20.dp),
+        color = if (isSelected) Color.White else Color(0xFFF1F5F9),
+        border = if (isSelected) androidx.compose.foundation.BorderStroke(2.dp, PrimaryBlueButton) else null,
+        shadowElevation = if (isSelected) 3.dp else 0.dp
     ) {
         Row(
-            verticalAlignment = Alignment.Top,
+            modifier = Modifier.padding(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Blue Icon Box
             Box(
                 modifier = Modifier
-                    .size(44.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(if (isSelected) NavySecondary.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceContainerHigh),
+                    .size(46.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(PrimaryBlueButton),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = icon,
+                    imageVector = Icons.Default.Search,
                     contentDescription = null,
-                    tint = if (isSelected) NavySecondary else TextWhite,
+                    tint = Color.White,
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Column {
+
+            // Text Column
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = TextWhite
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkTitleColor
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextGray
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = SoftSubtextColor,
+                    lineHeight = 18.sp
                 )
+            }
+
+            // Custom Radio Button
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .border(
+                        width = 2.dp,
+                        color = if (isSelected) PrimaryBlueButton else Color(0xFFCBD5E1),
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isSelected) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .clip(CircleShape)
+                            .background(PrimaryBlueButton)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun NotificationStackCard(
-    brandChar: String,
-    brandColor: Color,
+private fun NotificationRowItem(
+    brand: BrandType,
     title: String,
     time: String,
-    description: String,
-    elevation: androidx.compose.ui.unit.Dp,
-    iconRes: Int? = null
+    subtitle: String
 ) {
-    Surface(
-        modifier = Modifier.fillMaxWidth(0.94f),
-        shape = RoundedCornerShape(22.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        shadowElevation = elevation
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(18.dp),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(46.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(14.dp)),
-                contentAlignment = Alignment.Center
+        BrandLauncherIcon(brand = brand, size = 46.dp)
+        Column(modifier = Modifier.weight(1f)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                if (iconRes != null) {
-                    Icon(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = title,
-                        tint = brandColor,
-                        modifier = Modifier.size(22.dp)
-                    )
-                } else {
-                    Text(
-                        text = brandChar,
-                        color = brandColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
-            }
-            Column(modifier = Modifier.weight(1f)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = TextWhite
-                    )
-                    Text(
-                        text = time,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = TextGray
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextGray
+                    text = title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = DarkTitleColor
+                )
+                Text(
+                    text = time,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color(0xFF94A3B8)
                 )
             }
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = subtitle,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Normal,
+                color = SoftSubtextColor,
+                maxLines = 2
+            )
         }
     }
 }
+

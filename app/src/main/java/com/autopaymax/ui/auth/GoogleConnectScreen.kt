@@ -8,12 +8,14 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,11 +25,17 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.autopaymax.R
 import com.autopaymax.ui.settings.SettingsViewModel
-import com.autopaymax.ui.theme.*
+
+private val LightAuthBg = Color(0xFFE6EEF8)
+private val DarkTitleColor = Color(0xFF0F172A)
+private val SoftSubtextColor = Color(0xFF64748B)
+private val PrimaryBlueButton = Color(0xFF2563EB)
 
 @Composable
 fun GoogleConnectScreen(
@@ -65,143 +73,224 @@ fun GoogleConnectScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = 24.dp, vertical = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(LightAuthBg)
     ) {
-        // Icon Badge Container
-        Box(
+        Column(
             modifier = Modifier
-                .size(100.dp)
-                .shadow(6.dp, RoundedCornerShape(26.dp))
-                .clip(RoundedCornerShape(26.dp))
-                .background(PrimaryIndigo.copy(alpha = 0.12f))
-                .border(1.dp, PrimaryIndigo.copy(alpha = 0.25f), RoundedCornerShape(26.dp)),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = Icons.Default.MailOutline,
-                contentDescription = "Mail",
-                tint = PrimaryIndigo,
-                modifier = Modifier.size(44.dp)
+            // Top Progress Bar (Blue line at top)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(PrimaryBlueButton)
             )
-        }
 
-        Spacer(Modifier.height(28.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
-        Text(
-            text = "Connect your Google account",
-            style = MaterialTheme.typography.headlineLarge,
-            color = TextWhite,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(Modifier.height(10.dp))
-
-        Text(
-            text = "Sign in to let AutoPay Max securely detect your mandate and subscription emails automatically. Nothing leaves your device.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextGray,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(Modifier.height(28.dp))
-
-        // Country & Currency Selector
-        CountryCurrencyPicker(
-            onSelected = { symbol, code ->
-                settingsViewModel.setCurrency(symbol)
-                settingsViewModel.setCurrencyCode(code)
-            }
-        )
-
-        Spacer(Modifier.height(20.dp))
-
-        // Security & Privacy Pill
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-            modifier = Modifier.padding(vertical = 4.dp)
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            // White Icon Box with Envelope
+            Surface(
+                modifier = Modifier.size(80.dp),
+                shape = RoundedCornerShape(22.dp),
+                color = Color.White,
+                shadowElevation = 4.dp
             ) {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null,
-                    tint = PrimaryIndigo,
-                    modifier = Modifier.size(14.dp)
-                )
-                Text(
-                    text = "100% Private • On-Device Processing",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = PrimaryIndigo
-                )
-            }
-        }
-
-        Spacer(Modifier.height(28.dp))
-
-        // Google Sign-In Button
-        Button(
-            onClick = { errorText = null; authViewModel.connect(activity) },
-            enabled = !isConnecting,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .shadow(4.dp, CircleShape),
-            shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PrimaryIndigo,
-                contentColor = Color.White,
-                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                disabledContentColor = Color.White
-            )
-        ) {
-            if (isConnecting) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(22.dp),
-                    color = Color.White,
-                    strokeWidth = 2.5.dp
-                )
-            } else {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_brand_google),
-                        contentDescription = "Google Logo",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(Modifier.width(10.dp))
-                    Text(
-                        text = "Continue with Google",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = Color.White
+                        imageVector = Icons.Outlined.Mail,
+                        contentDescription = "Mail",
+                        tint = PrimaryBlueButton,
+                        modifier = Modifier.size(36.dp)
                     )
                 }
             }
-        }
 
-        errorText?.let {
-            Spacer(Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Headline
             Text(
-                text = it,
-                color = StatusOverdue,
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center
+                text = "Connect your Google\naccount",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = DarkTitleColor,
+                textAlign = TextAlign.Center,
+                lineHeight = 32.sp
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Subtitle
+            Text(
+                text = "Sign in to let AutoPay Max securely detect your mandate and subscription emails automatically. Nothing leaves your device.",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                color = SoftSubtextColor,
+                textAlign = TextAlign.Center,
+                lineHeight = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(28.dp))
+
+            // Country & Currency Selector Card
+            var selectedCountry by remember { mutableStateOf("India +91") }
+            var countryDropdownExpanded by remember { mutableStateOf(false) }
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp)
+                        .clickable { countryDropdownExpanded = !countryDropdownExpanded },
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.White,
+                    shadowElevation = 2.dp
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 18.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = selectedCountry,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = DarkTitleColor
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Select country",
+                            tint = SoftSubtextColor
+                        )
+                    }
+                }
+
+                DropdownMenu(
+                    expanded = countryDropdownExpanded,
+                    onDismissRequest = { countryDropdownExpanded = false }
+                ) {
+                    listOf("India +91" to ("₹" to "INR"), "United States +1" to ("$" to "USD"), "United Kingdom +44" to ("£" to "GBP")).forEach { (label, curr) ->
+                        DropdownMenuItem(
+                            text = { Text(label) },
+                            onClick = {
+                                selectedCountry = label
+                                settingsViewModel.setCurrency(curr.first)
+                                settingsViewModel.setCurrencyCode(curr.second)
+                                countryDropdownExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Privacy Badge (White Pill)
+            Surface(
+                shape = CircleShape,
+                color = Color.White,
+                shadowElevation = 2.dp
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
+                        tint = PrimaryBlueButton,
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Text(
+                        text = "100% Private • On-Device Processing",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryBlueButton
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Google Sign-In Button
+            Button(
+                onClick = { errorText = null; authViewModel.connect(activity) },
+                enabled = !isConnecting,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(28.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrimaryBlueButton,
+                    contentColor = Color.White
+                ),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+            ) {
+                if (isConnecting) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(22.dp),
+                        color = Color.White,
+                        strokeWidth = 2.5.dp
+                    )
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_brand_google),
+                            contentDescription = "Google Logo",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        Text(
+                            text = "Continue with Google",
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Skip for now
+            Text(
+                text = "Skip for now",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Medium,
+                color = SoftSubtextColor,
+                modifier = Modifier
+                    .clickable { onSuccess() }
+                    .padding(8.dp)
+            )
+
+            errorText?.let {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
+
