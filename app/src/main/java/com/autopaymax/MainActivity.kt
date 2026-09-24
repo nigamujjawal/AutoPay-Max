@@ -131,6 +131,8 @@ fun MainAppContent(
     // Set from GoogleConnectScreen's country picker (auto-detected or manually chosen) -
     // Dashboard, Passbook, and AutoPay read this instead of hardcoding a currency symbol.
     val currencySymbol by settingsViewModel.currency.collectAsState()
+    val mandates by mandateViewModel.mandates.collectAsState()
+    val isGmailConnected by settingsViewModel.isGmailConnected.collectAsState()
 
     // "Import from screenshot" - reachable from both the Home empty state and the Add
     // Subscription tile picker (see their onImportScreenshot callbacks below), so one picker +
@@ -304,7 +306,7 @@ fun MainAppContent(
             }
         },
         floatingActionButton = {
-            if (currentRoute == Screen.Home.route) {
+            if (currentRoute == Screen.Home.route && mandates.isNotEmpty()) {
                 ExtendedFloatingActionButton(
                     shape = RoundedCornerShape(50.dp),
                     onClick = { navController.navigate(Screen.AddSubscription.route) },
@@ -342,7 +344,7 @@ fun MainAppContent(
                         }
                         val target = when {
                             !settingsViewModel.isOnboarded.value && !alreadySetUp -> Screen.Onboarding.route
-                            !authViewModel.isAuthenticated.value -> Screen.GoogleConnect.route
+                            !alreadySetUp -> Screen.GoogleConnect.route
                             else -> Screen.Home.route
                         }
                         navController.navigate(target) {
@@ -357,7 +359,7 @@ fun MainAppContent(
                 OnboardingScreen(
                     onStartTrialClick = {
                         settingsViewModel.setIsOnboarded(true)
-                        val target = if (!authViewModel.isAuthenticated.value) Screen.GoogleConnect.route else Screen.Home.route
+                        val target = if (!authViewModel.isAuthenticated.value && !settingsViewModel.isGmailConnected.value) Screen.GoogleConnect.route else Screen.Home.route
                         navController.navigate(target) {
                             popUpTo(Screen.Onboarding.route) { inclusive = true }
                         }
@@ -399,6 +401,7 @@ fun MainAppContent(
             composable(Screen.Home.route) {
                 DashboardScreen(
                     mandateViewModel = mandateViewModel,
+                    isGmailConnected = isGmailConnected,
                     currencySymbol = currencySymbol,
                     onMandateClick = { id ->
                         navController.navigate(Screen.MandateDetail.routeFor(id))

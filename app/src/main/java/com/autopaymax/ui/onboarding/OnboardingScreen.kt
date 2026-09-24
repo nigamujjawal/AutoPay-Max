@@ -4,6 +4,8 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.autopaymax.R
@@ -82,10 +85,9 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
                 .padding(top = 28.dp, bottom = 120.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
-
             // Brand Logos Wall (3 Rows of authentic launcher icons)
             Column(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -202,21 +204,7 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
                     .background(Color.White),
                 contentAlignment = Alignment.Center
             ) {
-                Surface(
-                    modifier = Modifier.size(28.dp, 18.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    color = Color(0xFFFF8C00)
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .align(Alignment.CenterStart)
-                                .padding(start = 2.dp)
-                                .background(Color(0xFFFFD700), RoundedCornerShape(1.dp))
-                        )
-                    }
-                }
+                Image(painter = painterResource(id = R.drawable.appicon), contentDescription = "App Icon")
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -615,7 +603,7 @@ private enum class BrandType {
 @Composable
 private fun BrandLauncherIcon(
     brand: BrandType,
-    size: androidx.compose.ui.unit.Dp = 60.dp
+    size: Dp = 60.dp
 ) {
     Surface(
         modifier = Modifier.size(size),
@@ -777,7 +765,7 @@ private fun HelpGoalOptionCard(
             .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         color = if (isSelected) Color.White else Color(0xFFF1F5F9),
-        border = if (isSelected) androidx.compose.foundation.BorderStroke(2.dp, PrimaryBlueButton) else null,
+        border = if (isSelected) BorderStroke(2.dp, PrimaryBlueButton) else null,
         shadowElevation = if (isSelected) 3.dp else 0.dp
     ) {
         Row(

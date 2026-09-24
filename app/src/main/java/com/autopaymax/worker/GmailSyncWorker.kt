@@ -224,6 +224,9 @@ class GmailSyncWorker(
     companion object {
         private const val UNIQUE = "gmail_sync"
         const val KEY_DEEP = "deep"
+        // Exposed so the UI (Home's pull-to-refresh) can observe this specific work's
+        // WorkInfo state instead of duplicating the name string.
+        const val SYNC_NOW_WORK_NAME = "${UNIQUE}_now"
 
         fun schedule(context: Context) {
             val request = PeriodicWorkRequestBuilder<GmailSyncWorker>(24, TimeUnit.HOURS)
@@ -241,7 +244,7 @@ class GmailSyncWorker(
                 .setInputData(androidx.work.workDataOf(KEY_DEEP to true))
                 .build()
             WorkManager.getInstance(context)
-                .enqueueUniqueWork("${UNIQUE}_now", ExistingWorkPolicy.REPLACE, request)
+                .enqueueUniqueWork(SYNC_NOW_WORK_NAME, ExistingWorkPolicy.REPLACE, request)
         }
     }
 }

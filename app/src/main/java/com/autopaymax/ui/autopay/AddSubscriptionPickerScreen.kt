@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -140,27 +141,44 @@ fun AddSubscriptionPickerScreen(
                     textAlign = TextAlign.Center
                 )
 
-                Button(
-                    onClick = { onPick(null) },
-                    shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = DarkNavyButton,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.height(48.dp),
-                    contentPadding = PaddingValues(horizontal = 20.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "Add Manually",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    OutlinedButton(
+                        onClick = onImportScreenshot,
+                        shape = RoundedCornerShape(28.dp),
+                        modifier = Modifier.height(48.dp).weight(1f),
+                        contentPadding = PaddingValues(horizontal = 12.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(text = "Screenshot", fontSize = 15.sp, fontWeight = FontWeight.Bold, maxLines = 1)
+                    }
+
+                    Button(
+                        onClick = { onPick(null) },
+                        shape = RoundedCornerShape(28.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = DarkNavyButton,
+                            contentColor = Color.White
+                        ),
+                        modifier = Modifier.height(48.dp).weight(1f),
+                        contentPadding = PaddingValues(horizontal = 12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Add Manually",
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
         }

@@ -8,17 +8,23 @@ import com.autopaymax.data.remote.dto.UpdateUserRequest
 import com.autopaymax.data.remote.dto.UserDto
 import com.autopaymax.domain.profile.model.UserProfile
 import com.autopaymax.domain.profile.repository.ProfileRepository
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.autopaymax.data.local.pref.PreferenceManager
 
 @Singleton
 class ProfileRepositoryImpl @Inject constructor(
     private val api: AutoPayApi,
-    private val tokenDao: AuthTokenDao
+    private val tokenDao: AuthTokenDao,
+    private val preferenceManager: PreferenceManager
 ) : ProfileRepository {
 
     override suspend fun getUserProfile(): Resource<UserProfile> {
         val token = tokenDao.getToken()
+        val localName = preferenceManager.profileNameFlow.first()
+        val displayName = localName.takeIf { it.isNotBlank() } ?: token?.name.orEmpty()
+        
         if (token == null || token.accessToken.isBlank()) {
             // No backend session (Google users the SoundBox backend can't onboard - see
             // AuthRepositoryImpl). Serve a local-only profile so Settings / Edit Profile still
@@ -26,13 +32,13 @@ class ProfileRepositoryImpl @Inject constructor(
             return Resource.Success(
                 UserProfile(
                     id = "", firebaseUid = token?.uid.orEmpty(), phoneNumber = "",
-                    name = token?.name.orEmpty(), upiId = "", provider = "google",
+                    name = displayName, upiId = "", provider = "google",
                     subscriptionId = null, subscriptionStatus = "", subscriptionEndsAt = null,
                     lastLogin = null, createdAt = "", updatedAt = ""
                 )
             )
         }
-        return safeApiCall { api.getUser().toDomain(name = token.name) }
+        return safeApiCall { api.getUser().toDomain(name = displayName) }
     }
 
     // name is purely local (Room), upiId is the only field still sent to the backend. Each is
@@ -42,6 +48,7 @@ class ProfileRepositoryImpl @Inject constructor(
         upiId: String?
     ): Resource<Unit> {
         if (name != null) {
+            preferenceManager.setProfileName(name)
             tokenDao.getToken()?.let { tokenDao.updateName(it.uid, name) }
         }
         if (upiId == null) return Resource.Success(Unit)

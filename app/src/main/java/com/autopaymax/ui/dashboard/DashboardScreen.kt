@@ -15,10 +15,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.outlined.Bolt
+import androidx.compose.material.icons.outlined.ElectricBolt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,14 +44,22 @@ import com.autopaymax.data.local.entity.Mandate
 import com.autopaymax.ui.autopay.MandateViewModel
 import com.autopaymax.ui.components.PremiumNormalCard
 import com.autopaymax.ui.theme.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import com.autopaymax.util.matchAutoPayApp
 import com.autopaymax.util.merchantInitials
+import com.autopaymax.worker.GmailSyncWorker
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import com.autopaymax.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     mandateViewModel: MandateViewModel,
+    isGmailConnected: Boolean,
     currencySymbol: String = "$",
     onNotificationsClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
@@ -99,12 +111,13 @@ fun DashboardScreen(
             // App Header
             AutoPayTopHeader(onNotificationsClick = onNotificationsClick, onCalendarClick = onCalendarClick)
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
+            if (mandates.isNotEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 // Hero instrument — the primary gauge. Fixed dark bezel in
@@ -161,7 +174,7 @@ fun DashboardScreen(
                         }
                         val readingText = when {
                             displayCount == 0 -> "No active autopays"
-                            attentionCount == 0 -> "$displayCount active · steady"
+                            attentionCount == 0 -> "Across $displayCount autopay${if (displayCount == 1) "" else "s"}"
                             else -> "$attentionCount of $displayCount need${if (attentionCount == 1) "s" else ""} attention"
                         }
 
@@ -205,41 +218,76 @@ fun DashboardScreen(
                     )
                 }
             }
+            }
 
-            // Auto Payments List or Empty State Exploration View
-            LazyColumn(
+            // Auto Payments List or Empty State Exploration View - pull down to re-sync Gmail.
+            val workManager = remember(context) { WorkManager.getInstance(context) }
+            val syncWorkInfos by remember(workManager) {
+                workManager.getWorkInfosForUniqueWorkFlow(GmailSyncWorker.SYNC_NOW_WORK_NAME)
+            }.collectAsState(initial = emptyList())
+            val isSyncing = syncWorkInfos.any { it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED }
+
+            PullToRefreshBox(
+                isRefreshing = isSyncing,
+                onRefresh = {
+                    if (isGmailConnected) {
+                        mandateViewModel.syncMailsOnce(context)
+                    } else {
+                        Toast.makeText(context, "Please connect your Gmail first in Settings.", Toast.LENGTH_SHORT).show()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                contentPadding = PaddingValues(top = 4.dp, bottom = 60.dp)
             ) {
-                if (!hasLoadedMandates) {
-                    // Room hasn't emitted its first result yet - render nothing rather than
-                    // guessing, so the empty-state screen never flashes ahead of real data.
-                } else if (mandates.isEmpty()) {
-                    item {
-                        EmptyStateStartExploring(
-                            onConnectGmail = {
-                                mandateViewModel.syncMailsOnce(context)
-                                Toast.makeText(context, "Syncing your inbox…", Toast.LENGTH_SHORT).show()
-                            },
-                            onImportScreenshot = onImportScreenshot,
-                            onAddSubscription = onAddSubscriptionClick,
-                            onQuickAdd = { name, _ ->
-                                onSelectApp(name)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(16.dp)),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    contentPadding = PaddingValues(top = 4.dp, bottom = 60.dp)
+                ) {
+                    if (!hasLoadedMandates) {
+                        // Room hasn't emitted its first result yet - render nothing rather than
+                        // guessing, so the empty-state screen never flashes ahead of real data.
+                    } else if (mandates.isEmpty()) {
+                        item {
+                            Box(
+                                modifier = Modifier.fillParentMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                EmptyStateStartExploring(
+                                    onConnectGmail = {
+                                        if (isGmailConnected) {
+                                            mandateViewModel.syncMailsOnce(context)
+                                            Toast.makeText(context, "Syncing your inbox…", Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(context, "Please connect your Gmail first in Settings.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    onImportScreenshot = onImportScreenshot,
+                                    onAddSubscription = onAddSubscriptionClick,
+                                    onQuickAdd = { name, _ ->
+                                        onSelectApp(name)
+                                    }
+                                )
                             }
-                        )
-                    }
-                } else {
-                    items(mandates, key = { it.id }) { mandate ->
-                        AutoPaymentRow(
-                            mandate = mandate,
-                            currencySymbol = currencySymbol,
-                            onClick = { onMandateClick(mandate.id) }
-                        )
+                        }
+                    } else {
+                        items(mandates, key = { it.id }) { mandate ->
+                            AutoPaymentRow(
+                                mandate = mandate,
+                                currencySymbol = currencySymbol,
+                                onClick = { onMandateClick(mandate.id) }
+                            )
+                        }
+                        item {
+                            DashboardStatRow(
+                                activeMandates = activeMandates,
+                                currencySymbol = currencySymbol
+                            )
+                        }
                     }
                 }
             }
@@ -267,8 +315,13 @@ fun DashboardScreen(
                 confirmButton = {
                     Button(
                         onClick = {
-                            mandateViewModel.syncMailsOnce(context)
-                            Toast.makeText(context, "Syncing your inbox…", Toast.LENGTH_SHORT).show()
+                            if (isGmailConnected) {
+                                mandateViewModel.syncMailsOnce(context)
+                                Toast.makeText(context, "Syncing your inbox…", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(context, "Please connect your Gmail first in Settings.", Toast.LENGTH_SHORT).show()
+                            }
+                            mandateViewModel.dismissMailSyncPrompt()
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = NavySecondary),
                         shape = RoundedCornerShape(12.dp)
@@ -403,138 +456,168 @@ private fun EmptyStateStartExploring(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Stacked Cards Graphic Header
+//        Box(
+//            modifier = Modifier
+//                .height(140.dp)
+//                .fillMaxWidth(),
+//            contentAlignment = Alignment.Center
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .size(92.dp)
+//                    .offset(x = (-32).dp, y = (-10).dp)
+//                    .shadow(8.dp, RoundedCornerShape(20.dp))
+//                    .clip(RoundedCornerShape(20.dp))
+//                    .background(Color(0xFFE50914)),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text("N", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+//            }
+//            Box(
+//                modifier = Modifier
+//                    .size(92.dp)
+//                    .offset(x = (-10).dp, y = 0.dp)
+//                    .shadow(8.dp, RoundedCornerShape(20.dp))
+//                    .clip(RoundedCornerShape(20.dp))
+//                    .background(Color(0xFF1DB954)),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text("≈", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+//            }
+//            Box(
+//                modifier = Modifier
+//                    .size(92.dp)
+//                    .offset(x = 10.dp, y = (-5).dp)
+//                    .shadow(8.dp, RoundedCornerShape(20.dp))
+//                    .clip(RoundedCornerShape(20.dp))
+//                    .background(AppDarkBackground),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text("D", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+//            }
+//            Box(
+//                modifier = Modifier
+//                    .size(92.dp)
+//                    .offset(x = 32.dp, y = 10.dp)
+//                    .shadow(8.dp, RoundedCornerShape(20.dp))
+//                    .clip(RoundedCornerShape(20.dp))
+//                    .background(Color(0xFF0066CC)),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text("1P", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+//            }
+//        }
+
+//        Spacer(modifier = Modifier.height(20.dp))
+//
+//        Text(
+//            text = "Start exploring",
+//            style = MaterialTheme.typography.headlineLarge,
+//            color = TextWhite,
+//            textAlign = TextAlign.Center
+//        )
+//
+//        Spacer(modifier = Modifier.height(6.dp))
+//
+//        Text(
+//            text = "Add your first subscription to begin your\njourney.",
+//            style = MaterialTheme.typography.bodyMedium,
+//            color = TextGray,
+//            textAlign = TextAlign.Center
+//        )
+
         Box(
             modifier = Modifier
-                .height(140.dp)
-                .fillMaxWidth(),
+                .clip(CircleShape)
+                .background(NavyPrimary)
+                .size(60.dp),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .size(92.dp)
-                    .offset(x = (-32).dp, y = (-10).dp)
-                    .shadow(8.dp, RoundedCornerShape(20.dp))
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFFE50914)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("N", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-            }
-            Box(
-                modifier = Modifier
-                    .size(92.dp)
-                    .offset(x = (-10).dp, y = 0.dp)
-                    .shadow(8.dp, RoundedCornerShape(20.dp))
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFF1DB954)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("≈", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-            }
-            Box(
-                modifier = Modifier
-                    .size(92.dp)
-                    .offset(x = 10.dp, y = (-5).dp)
-                    .shadow(8.dp, RoundedCornerShape(20.dp))
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(AppDarkBackground),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("D", color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-            }
-            Box(
-                modifier = Modifier
-                    .size(92.dp)
-                    .offset(x = 32.dp, y = 10.dp)
-                    .shadow(8.dp, RoundedCornerShape(20.dp))
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(Color(0xFF0066CC)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("1P", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            }
+            Icon(
+                painter = painterResource(id =R.drawable.outline_bolt_24 ),
+                contentDescription = "",
+                tint = Color.White,
+                modifier = Modifier.size(40.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = "Start exploring",
-            style = MaterialTheme.typography.headlineLarge,
-            color = TextWhite,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            text = "Add your first subscription to begin your\njourney.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = TextGray,
-            textAlign = TextAlign.Center
-        )
-
         Spacer(modifier = Modifier.height(24.dp))
+
+        Text("""
+            We'll list every UPI autopay we spot in
+            your inbox here with due dates, 
+            amounts,and quick cancel.
+        """.trimIndent(), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = TextGray)
+
+        Spacer(modifier = Modifier.height(40.dp))
 
         // Action Buttons Stack
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Button 1: Connect to Gmail
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp)
-                    .clip(RoundedCornerShape(18.dp))
-                    .clickable { onConnectGmail() },
-                color = MaterialTheme.colorScheme.surfaceContainer
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                // Button 1: Connect to Gmail
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(35.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .clickable { onConnectGmail() },
+                    color = NavyAccent.copy(alpha = 0.4f)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Mail,
-                        contentDescription = "Gmail",
-                        tint = Color(0xFFEA4335),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Connect to Gmail",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextWhite
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.gmailsvg),
+                            contentDescription = "Gmail",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Gmail",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextWhite,
+                            maxLines = 1
+                        )
+                    }
                 }
-            }
 
-            // Button 2: Import from screenshot
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp)
-                    .clip(RoundedCornerShape(18.dp))
-                    .clickable { onImportScreenshot() },
-                color = MaterialTheme.colorScheme.surfaceContainer
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                // Button 2: Import from screenshot
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(35.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .clickable { onImportScreenshot() },
+                    color = NavyAccent.copy(alpha = 0.4f)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Image,
-                        contentDescription = "Screenshot",
-                        tint = TextGray,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Import from screenshot",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextWhite
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Image,
+                            contentDescription = "Screenshot",
+                            tint = TextGray,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Screenshot",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextWhite,
+                            maxLines = 1
+                        )
+                    }
                 }
             }
 
@@ -545,7 +628,7 @@ private fun EmptyStateStartExploring(
                     .height(54.dp)
                     .clip(RoundedCornerShape(18.dp))
                     .clickable { onAddSubscription() },
-                color = MaterialTheme.colorScheme.surfaceContainer
+                color = NavyPrimary
             ) {
                 Row(
                     modifier = Modifier.fillMaxSize(),
@@ -555,14 +638,14 @@ private fun EmptyStateStartExploring(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add",
-                        tint = TextGray,
+                        tint = Color.White,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "Add subscription",
+                        text = "Add Manually",
                         style = MaterialTheme.typography.titleMedium,
-                        color = TextWhite
+                        color = Color.White
                     )
                 }
             }
@@ -572,91 +655,91 @@ private fun EmptyStateStartExploring(
 
         // Popular Subscriptions Quick Add Cards Row — each keeps its own
         // real brand color; these are third-party marks, not app theme.
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp)
-        ) {
-            item {
-                QuickAddCard(
-                    name = "Netflix",
-                    price = "$15.49",
-                    bgColor = Color(0xFF0F172A),
-                    logoChar = "N",
-                    logoColor = Color(0xFFE50914),
-                    onAdd = { onQuickAdd("Netflix", 15.49) }
-                )
-            }
-            item {
-                QuickAddCard(
-                    name = "Amazon Prime",
-                    price = "$14.99",
-                    bgColor = Color(0xFF00A8E1),
-                    logoChar = "P",
-                    logoColor = Color.White,
-                    onAdd = { onQuickAdd("Amazon Prime", 14.99) }
-                )
-            }
-            item {
-                QuickAddCard(
-                    name = "Spotify",
-                    price = "$10.99",
-                    bgColor = Color(0xFF1DB954),
-                    logoChar = "S",
-                    logoColor = Color.White,
-                    onAdd = { onQuickAdd("Spotify", 10.99) }
-                )
-            }
-            item {
-                QuickAddCard(
-                    name = "Disney+",
-                    price = "$13.99",
-                    bgColor = Color(0xFF113CCF),
-                    logoChar = "D",
-                    logoColor = Color.White,
-                    onAdd = { onQuickAdd("Disney+", 13.99) }
-                )
-            }
-            item {
-                QuickAddCard(
-                    name = "YouTube",
-                    price = "$13.99",
-                    bgColor = Color(0xFFFF0000),
-                    logoChar = "Y",
-                    logoColor = Color.White,
-                    onAdd = { onQuickAdd("YouTube", 13.99) }
-                )
-            }
-            item {
-                QuickAddCard(
-                    name = "ChatGPT",
-                    price = "$20.00",
-                    bgColor = Color(0xFF10A37F),
-                    logoChar = "O",
-                    logoColor = Color.White,
-                    onAdd = { onQuickAdd("ChatGPT", 20.00) }
-                )
-            }
-            item {
-                QuickAddCard(
-                    name = "Claude AI",
-                    price = "$20.00",
-                    bgColor = Color(0xFFD97757),
-                    logoChar = "C",
-                    logoColor = Color.White,
-                    onAdd = { onQuickAdd("Claude AI", 20.00) }
-                )
-            }
-            item {
-                QuickAddCard(
-                    name = "Apple / iCloud",
-                    price = "$9.99",
-                    bgColor = Color(0xFF555555),
-                    logoChar = "A",
-                    logoColor = Color.White,
-                    onAdd = { onQuickAdd("Apple / iCloud", 9.99) }
-                )
-            }
-        }
+//        LazyRow(
+//            horizontalArrangement = Arrangement.spacedBy(12.dp),
+//            contentPadding = PaddingValues(horizontal = 4.dp)
+//        ) {
+//            item {
+//                QuickAddCard(
+//                    name = "Netflix",
+//                    price = "$15.49",
+//                    bgColor = Color(0xFF0F172A),
+//                    logoChar = "N",
+//                    logoColor = Color(0xFFE50914),
+//                    onAdd = { onQuickAdd("Netflix", 15.49) }
+//                )
+//            }
+//            item {
+//                QuickAddCard(
+//                    name = "Amazon Prime",
+//                    price = "$14.99",
+//                    bgColor = Color(0xFF00A8E1),
+//                    logoChar = "P",
+//                    logoColor = Color.White,
+//                    onAdd = { onQuickAdd("Amazon Prime", 14.99) }
+//                )
+//            }
+//            item {
+//                QuickAddCard(
+//                    name = "Spotify",
+//                    price = "$10.99",
+//                    bgColor = Color(0xFF1DB954),
+//                    logoChar = "S",
+//                    logoColor = Color.White,
+//                    onAdd = { onQuickAdd("Spotify", 10.99) }
+//                )
+//            }
+////            item {
+////                QuickAddCard(
+////                    name = "Disney+",
+////                    price = "$13.99",
+////                    bgColor = Color(0xFF113CCF),
+////                    logoChar = "D",
+////                    logoColor = Color.White,
+////                    onAdd = { onQuickAdd("Disney+", 13.99) }
+////                )
+////            }
+////            item {
+////                QuickAddCard(
+////                    name = "YouTube",
+////                    price = "$13.99",
+////                    bgColor = Color(0xFFFF0000),
+////                    logoChar = "Y",
+////                    logoColor = Color.White,
+////                    onAdd = { onQuickAdd("YouTube", 13.99) }
+////                )
+////            }
+////            item {
+////                QuickAddCard(
+////                    name = "ChatGPT",
+////                    price = "$20.00",
+////                    bgColor = Color(0xFF10A37F),
+////                    logoChar = "O",
+////                    logoColor = Color.White,
+////                    onAdd = { onQuickAdd("ChatGPT", 20.00) }
+////                )
+////            }
+////            item {
+////                QuickAddCard(
+////                    name = "Claude AI",
+////                    price = "$20.00",
+////                    bgColor = Color(0xFFD97757),
+////                    logoChar = "C",
+////                    logoColor = Color.White,
+////                    onAdd = { onQuickAdd("Claude AI", 20.00) }
+////                )
+////            }
+////            item {
+////                QuickAddCard(
+////                    name = "Apple / iCloud",
+////                    price = "$9.99",
+////                    bgColor = Color(0xFF555555),
+////                    logoChar = "A",
+////                    logoColor = Color.White,
+////                    onAdd = { onQuickAdd("Apple / iCloud", 9.99) }
+////                )
+////            }
+//        }
     }
 }
 
@@ -736,18 +819,15 @@ fun AutoPaymentRow(
     val now = remember(mandate.nextExpectedDebit) { System.currentTimeMillis() }
     val daysUntilDueRaw = remember(mandate.nextExpectedDebit) { daysUntilDebit(mandate.nextExpectedDebit, now) }
     val isOverdue = isActive && daysUntilDueRaw < 0
-    val isDueSoon = isActive && !isOverdue && daysUntilDueRaw <= 3
     val daysUntilDue = daysUntilDueRaw.coerceAtLeast(1)
 
     val initials = remember(mandate.merchant) { merchantInitials(mandate.merchant) }
     val matchedApp = remember(mandate.merchant) { matchAutoPayApp(mandate.merchant) }
+    val dueDateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale.getDefault()) }
 
-    val lightColor = when {
-        !isActive -> TextGray.copy(alpha = 0.6f)
-        isOverdue -> StatusOverdue
-        isDueSoon -> StatusPending
-        else -> StatusActive
-    }
+    // Home's amount/due text is one accent regardless of how soon it's due (matches the
+    // approved design) - urgency itself is still surfaced via the hero card's attention chip.
+    val lightColor = if (isActive) AccentCoral else TextGray.copy(alpha = 0.6f)
     val statusText = when {
         !isActive -> "Cancelled"
         isOverdue -> "Overdue"
@@ -798,21 +878,18 @@ fun AutoPaymentRow(
 
                 Spacer(modifier = Modifier.width(14.dp))
 
-                // Home is a glance list - date, frequency, and source live on the mandate
-                // detail screen (one tap away), not here.
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(
-                        modifier = Modifier
-                            .size(7.dp)
-                            .clip(CircleShape)
-                            .background(lightColor)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
+                Column {
                     Text(
                         text = mandate.merchant,
                         style = MaterialTheme.typography.titleLarge,
                         color = TextWhite,
                         maxLines = 1
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "${dueDateFormat.format(Date(mandate.nextExpectedDebit))} · ${if (mandate.source == "MANUAL") "Manual" else "Automatic"}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = TextGray
                     )
                 }
             }
@@ -823,7 +900,7 @@ fun AutoPaymentRow(
                 Text(
                     text = "$currencySymbol${mandate.amount.toInt()}",
                     style = InstrumentValueMedium,
-                    color = TextWhite
+                    color = lightColor
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
@@ -833,6 +910,53 @@ fun AutoPaymentRow(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun DashboardStatRow(
+    activeMandates: List<Mandate>,
+    currencySymbol: String
+) {
+    val now = remember(activeMandates) { System.currentTimeMillis() }
+    val nextDue = remember(activeMandates) { activeMandates.minByOrNull { it.nextExpectedDebit } }
+    val nextDueDays = nextDue?.let { daysUntilDebit(it.nextExpectedDebit, now).coerceAtLeast(0) }
+    val yearlySpend = remember(activeMandates) { activeMandates.sumOf { it.amount } * 12 }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 2.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        DashboardStatBox(
+            modifier = Modifier.weight(1f),
+            label = "Next due",
+            value = if (nextDue == null) "—" else if (nextDueDays == 0L) "Today" else "$nextDueDays days",
+            caption = nextDue?.merchant ?: "No upcoming autopays"
+        )
+        DashboardStatBox(
+            modifier = Modifier.weight(1f),
+            label = "Yearly spend",
+            value = "$currencySymbol${String.format(Locale.getDefault(), "%,d", yearlySpend.toLong())}",
+            caption = "Estimated"
+        )
+    }
+}
+
+@Composable
+private fun DashboardStatBox(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+    caption: String
+) {
+    PremiumNormalCard(modifier = modifier) {
+        Text(text = label, style = MaterialTheme.typography.labelMedium, color = TextGray, maxLines = 1)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(text = value, style = MaterialTheme.typography.titleLarge, color = TextWhite, maxLines = 1)
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(text = caption, style = MaterialTheme.typography.labelMedium, color = TextGray, maxLines = 1)
     }
 }
 

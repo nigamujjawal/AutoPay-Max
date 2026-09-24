@@ -132,4 +132,6 @@ dependencies {
     // RevenueCat Subscriptions & Google Play Billing
     implementation(libs.revenuecat.purchases)
     implementation(libs.revenuecat.ui)
+
+    implementation("androidx.compose.material:material-icons-extended")
 }

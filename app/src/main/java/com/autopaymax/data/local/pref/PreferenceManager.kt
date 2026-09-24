@@ -42,8 +42,9 @@ class PreferenceManager @Inject constructor(
         // path (the Gmail scope is granted with the same account).
         val SIGNED_IN_EMAIL_KEY = stringPreferencesKey("signed_in_email")
         // One-time "sync your inbox" prompt on the Home screen - flipped true once the user has
-        // either run or dismissed it, so it never shows again.
         val IS_MAIL_SYNC_PROMPT_SEEN_KEY = booleanPreferencesKey("is_mail_sync_prompt_seen")
+        // Local-only display name, edited from Settings > Edit Profile
+        val PROFILE_NAME_KEY = stringPreferencesKey("profile_name")
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { it[THEME_KEY] ?: "Light" }
@@ -74,6 +75,7 @@ class PreferenceManager @Inject constructor(
     val isGmailBackfillDoneFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_GMAIL_BACKFILL_DONE_KEY] ?: false }
     val signedInEmailFlow: Flow<String> = context.dataStore.data.map { it[SIGNED_IN_EMAIL_KEY] ?: "" }
     val isMailSyncPromptSeenFlow: Flow<Boolean> = context.dataStore.data.map { it[IS_MAIL_SYNC_PROMPT_SEEN_KEY] ?: false }
+    val profileNameFlow: Flow<String> = context.dataStore.data.map { it[PROFILE_NAME_KEY] ?: "" }
 
     suspend fun setTheme(theme: String) {
         context.dataStore.edit { it[THEME_KEY] = theme }
@@ -171,7 +173,12 @@ class PreferenceManager @Inject constructor(
             it[GMAIL_CONNECTED_EMAIL_KEY] = ""
             it[IS_GMAIL_REAUTH_NEEDED_KEY] = false
             it[IS_GMAIL_BACKFILL_DONE_KEY] = false
+            it[PROFILE_NAME_KEY] = ""
         }
+    }
+
+    suspend fun setProfileName(name: String) {
+        context.dataStore.edit { it[PROFILE_NAME_KEY] = name }
     }
 }
 
