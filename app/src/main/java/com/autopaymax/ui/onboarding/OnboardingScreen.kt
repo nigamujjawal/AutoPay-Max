@@ -30,6 +30,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.autopaymax.R
+import android.net.Uri
+import androidx.annotation.RawRes
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 
 private val LightOnboardingBg = Color(0xFFE6EEF8)
 private val DarkTitleColor = Color(0xFF0F172A)
@@ -89,6 +97,7 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
             verticalArrangement = Arrangement.Center
         ) {
             // Brand Logos Wall (3 Rows of authentic launcher icons)
+            /*
             Column(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -115,6 +124,14 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
                     BrandLauncherIcon(brand = BrandType.PRIME_VIDEO)
                 }
             }
+            */
+            VideoPlayer(
+                videoRes = R.raw.onboarding1,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(280.dp)
+                    .clip(RoundedCornerShape(20.dp))
+            )
 
             Spacer(modifier = Modifier.height(48.dp))
 
@@ -196,6 +213,7 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Credit Card Icon at Top
+            /*
             Box(
                 modifier = Modifier
                     .size(54.dp)
@@ -206,6 +224,14 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
             ) {
                 Image(painter = painterResource(id = R.drawable.appicon), contentDescription = "App Icon")
             }
+            */
+            VideoPlayer(
+                videoRes = R.raw.onboarding2,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(280.dp)
+                    .clip(RoundedCornerShape(20.dp))
+            )
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -878,3 +904,36 @@ private fun NotificationRowItem(
     }
 }
 
+@Composable
+fun VideoPlayer(
+    @RawRes videoRes: Int,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context).build().apply {
+            val uri = Uri.parse("android.resource://${context.packageName}/$videoRes")
+            val mediaItem = MediaItem.fromUri(uri)
+            setMediaItem(mediaItem)
+            repeatMode = Player.REPEAT_MODE_ALL
+            playWhenReady = true
+            prepare()
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    AndroidView(
+        factory = {
+            PlayerView(context).apply {
+                player = exoPlayer
+                useController = false
+            }
+        },
+        modifier = modifier
+    )
+}

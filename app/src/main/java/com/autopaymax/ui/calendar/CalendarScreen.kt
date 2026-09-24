@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -129,56 +131,86 @@ fun CalendarScreen(
                 .padding(horizontal = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Brush.verticalGradient(colors = listOf(NavyAccent.copy(alpha = 0.45f), NavyPrimary.copy(alpha = 0.35f))))
+                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
             ) {
-                IconButton(onClick = {
-                    if (visibleMonthIdx == 0) { visibleMonthIdx = 11; visibleYear-- } else visibleMonthIdx--
-                }) {
-                    Icon(Icons.Default.ChevronLeft, contentDescription = "Previous month", tint = TextGray)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = {
+                        if (visibleMonthIdx == 0) { visibleMonthIdx = 11; visibleYear-- } else visibleMonthIdx--
+                    }) {
+                        Icon(Icons.Default.ChevronLeft, contentDescription = "Previous month", tint = TextWhite)
+                    }
+                    Text(monthLabel, style = MaterialTheme.typography.titleMedium, color = TextWhite)
+                    IconButton(onClick = {
+                        if (visibleMonthIdx == 11) { visibleMonthIdx = 0; visibleYear++ } else visibleMonthIdx++
+                    }) {
+                        Icon(Icons.Default.ChevronRight, contentDescription = "Next month", tint = TextWhite)
+                    }
                 }
-                Text(monthLabel, style = MaterialTheme.typography.titleMedium, color = TextWhite)
-                IconButton(onClick = {
-                    if (visibleMonthIdx == 11) { visibleMonthIdx = 0; visibleYear++ } else visibleMonthIdx++
-                }) {
-                    Icon(Icons.Default.ChevronRight, contentDescription = "Next month", tint = TextGray)
-                }
-            }
 
-            Row(modifier = Modifier.fillMaxWidth()) {
-                listOf("S", "M", "T", "W", "T", "F", "S").forEach { label ->
-                    Text(
-                        text = label,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = TextGray
-                    )
-                }
-            }
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
 
-            cells.chunked(7).forEach { week ->
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    week.forEach { day ->
-                        if (day == null) {
-                            Spacer(modifier = Modifier.weight(1f))
-                        } else {
-                            val millis = dayMillis(day)
-                            DayTile(
-                                day = day,
-                                isToday = millis == today,
-                                isNextAutoPay = millis == nextAutoPayDay,
-                                isSelected = millis == selectedDay,
-                                hasMandates = mandatesByDay.containsKey(millis),
-                                modifier = Modifier.weight(1f),
-                                onClick = { selectedDay = millis }
+                Row(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
+                    listOf("S", "M", "T", "W", "T", "F", "S").forEach { label ->
+                        Text(
+                            text = label,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = TextGray
+                        )
+                    }
+                }
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    cells.chunked(7).forEachIndexed { index, week ->
+                        if (index > 0) {
+                            HorizontalDivider(
+                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                modifier = Modifier.padding(horizontal = 12.dp)
                             )
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            week.forEach { day ->
+                                if (day == null) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                } else {
+                                    val millis = dayMillis(day)
+                                    DayTile(
+                                        day = day,
+                                        isToday = millis == today,
+                                        isNextAutoPay = millis == nextAutoPayDay,
+                                        isSelected = millis == selectedDay,
+                                        hasMandates = mandatesByDay.containsKey(millis),
+                                        modifier = Modifier.weight(1f),
+                                        onClick = { selectedDay = millis }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(4.dp))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
+            Spacer(modifier = Modifier.height(4.dp))
 
             // Focused box - the day tapped (or the next autopay day, by default).
             selectedDay?.let { day ->
