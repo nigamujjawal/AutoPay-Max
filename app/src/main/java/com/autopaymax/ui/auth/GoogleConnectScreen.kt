@@ -143,16 +143,48 @@ fun GoogleConnectScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Country & Currency Selector Card
-            var selectedCountry by remember { mutableStateOf("India +91") }
-            var countryDropdownExpanded by remember { mutableStateOf(false) }
+            // Auto-detect IP Location & Currency Card
+            var detectedCountry by remember { mutableStateOf<com.autopaymax.ui.auth.CountryCode?>(null) }
+            var isDetecting by remember { mutableStateOf(true) }
+
+            LaunchedEffect(Unit) {
+                kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    try {
+                        val response = java.net.URL("https://ipinfo.io/json").readText()
+                        val json = org.json.JSONObject(response)
+                        val countryIso = json.optString("country", "US")
+                        val countryInfo = com.autopaymax.ui.auth.COUNTRY_CODES.firstOrNull { it.iso == countryIso } 
+                            ?: com.autopaymax.ui.auth.DEFAULT_COUNTRY
+                        
+                        android.util.Log.d("IP_DETECT", "Detected Country: ${countryInfo.displayName} (ISO: ${countryInfo.iso}, Currency: ${countryInfo.currencyCode})")
+
+                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            detectedCountry = countryInfo
+                            settingsViewModel.setCurrency(countryInfo.currencySymbol)
+                            settingsViewModel.setCurrencyCode(countryInfo.currencyCode)
+                            isDetecting = false
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        val fallback = com.autopaymax.ui.auth.DEFAULT_COUNTRY
+                        
+                        android.util.Log.e("IP_DETECT", "IP Detection failed, falling back to: ${fallback.displayName}", e)
+
+                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            detectedCountry = fallback
+                            settingsViewModel.setCurrency(fallback.currencySymbol)
+                            settingsViewModel.setCurrencyCode(fallback.currencyCode)
+                            isDetecting = false
+                        }
+                    }
+                }
+            }
 
             Box(modifier = Modifier.fillMaxWidth()) {
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(52.dp)
-                        .clickable { countryDropdownExpanded = !countryDropdownExpanded },
+                        .height(52.dp),
                     shape = RoundedCornerShape(16.dp),
                     color = Color.White,
                     shadowElevation = 2.dp
@@ -164,34 +196,32 @@ fun GoogleConnectScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(
-                            text = selectedCountry,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = DarkTitleColor
-                        )
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = "Select country",
-                            tint = SoftSubtextColor
-                        )
-                    }
-                }
-
-                DropdownMenu(
-                    expanded = countryDropdownExpanded,
-                    onDismissRequest = { countryDropdownExpanded = false }
-                ) {
-                    listOf("India +91" to ("₹" to "INR"), "United States +1" to ("$" to "USD"), "United Kingdom +44" to ("£" to "GBP")).forEach { (label, curr) ->
-                        DropdownMenuItem(
-                            text = { Text(label) },
-                            onClick = {
-                                selectedCountry = label
-                                settingsViewModel.setCurrency(curr.first)
-                                settingsViewModel.setCurrencyCode(curr.second)
-                                countryDropdownExpanded = false
-                            }
-                        )
+                        if (isDetecting) {
+                            Text(
+                                text = "Detecting your region...",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = SoftSubtextColor
+                            )
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                color = PrimaryBlueButton,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text(
+                                text = detectedCountry?.let { "${it.displayName} ${it.dialCode}" } ?: "Unknown",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = DarkTitleColor
+                            )
+                            Text(
+                                text = detectedCountry?.let { "${it.currencyCode} (${it.currencySymbol})" } ?: "",
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = PrimaryBlueButton
+                            )
+                        }
                     }
                 }
             }

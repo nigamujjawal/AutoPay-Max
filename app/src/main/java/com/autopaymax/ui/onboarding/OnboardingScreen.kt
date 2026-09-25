@@ -126,7 +126,7 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
             }
             */
             VideoPlayer(
-                videoRes = R.raw.onboarding1,
+                videoUrl = "https://cdn.appversal.com/onborading%2001%20(1).mov",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp)
@@ -226,7 +226,7 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
             }
             */
             VideoPlayer(
-                videoRes = R.raw.onboarding2,
+                videoUrl = "https://cdn.appversal.com/002.%20%20(1).mov",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp)
@@ -906,13 +906,17 @@ private fun NotificationRowItem(
 
 @Composable
 fun VideoPlayer(
-    @RawRes videoRes: Int,
+    videoUrl: String,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val exoPlayer = remember {
-        ExoPlayer.Builder(context).build().apply {
-            val uri = Uri.parse("android.resource://${context.packageName}/$videoRes")
+        val renderersFactory = androidx.media3.exoplayer.DefaultRenderersFactory(context)
+            .setEnableDecoderFallback(true)
+            .setExtensionRendererMode(androidx.media3.exoplayer.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+            
+        ExoPlayer.Builder(context, renderersFactory).build().apply {
+            val uri = Uri.parse(videoUrl)
             val mediaItem = MediaItem.fromUri(uri)
             setMediaItem(mediaItem)
             repeatMode = Player.REPEAT_MODE_ALL
