@@ -126,7 +126,7 @@ private fun OnboardingStep1Welcome(onNext: () -> Unit) {
             }
             */
             VideoPlayer(
-                videoUrl = "https://cdn.appversal.com/onborading%2001%20(1).mov",
+                videoUrl = "https://cdn.appversal.com/WhatsApp%20Video%202026-09-26%20at%2010.47.17%20AM.mp4",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp)
@@ -226,7 +226,7 @@ private fun OnboardingStep2Spending(onNext: () -> Unit) {
             }
             */
             VideoPlayer(
-                videoUrl = "https://cdn.appversal.com/002.%20%20(1).mov",
+                videoUrl = "https://cdn.appversal.com/WhatsApp%20Video%202026-09-26%20at%2010.47.23%20AM.mp4",
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(280.dp)
@@ -936,6 +936,8 @@ fun VideoPlayer(
             PlayerView(context).apply {
                 player = exoPlayer
                 useController = false
+                setShutterBackgroundColor(android.graphics.Color.TRANSPARENT)
+                setBackgroundColor(android.graphics.Color.TRANSPARENT)
             }
         },
         modifier = modifier
