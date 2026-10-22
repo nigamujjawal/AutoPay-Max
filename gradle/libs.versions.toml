@@ -20,6 +20,11 @@ googleServices = "4.5.0"
 coroutinesPlayServices = "1.9.0"
 retrofit = "3.0.0"
 okhttp = "4.12.0"
+credentials = "1.6.0"
+googleid = "1.2.0"
+playServicesAuth = "22.0.0"
+revenuecat = "10.21.1"
+mlkitTextRecognition = "16.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -60,13 +65,27 @@ androidx-biometric = { group = "androidx.biometric", name = "biometric", version
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
+
+# Google Sign-In (Credential Manager) + Gmail authorization
+androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
+androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
+google-identity-googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 
 # Networking (SoundBox backend)
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+
+# RevenueCat Subscriptions & Google Play Billing
+revenuecat-purchases = { group = "com.revenuecat.purchases", name = "purchases", version.ref = "revenuecat" }
+revenuecat-ui = { group = "com.revenuecat.purchases", name = "purchases-ui", version.ref = "revenuecat" }
+
+# On-device OCR for the "import from screenshot" add-subscription flow
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

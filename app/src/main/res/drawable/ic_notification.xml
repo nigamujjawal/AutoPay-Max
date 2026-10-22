@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Status-bar icons must be a plain white silhouette (the system ignores color and just
+         masks by alpha) - this is a simplified version of appicon.png's card mark: a card
+         outline with the same three account-line strokes and toggle dot, punched through as
+         transparent cutouts so the shape still reads as "AutoPay Max" at 24dp. -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="
+            M4,5 L20,5 L22,7 L22,17 L20,19 L4,19 L2,17 L2,7 Z
+            M5,9 L17,9 L17,10.2 L5,10.2 Z
+            M5,11.4 L17,11.4 L17,12.6 L5,12.6 Z
+            M5,13.8 L13,13.8 L13,15 L5,15 Z
+            M15.8,14.4 a1.7,1.7 0 1,0 3.4,0 a1.7,1.7 0 1,0 -3.4,0 Z" />
+</vector>

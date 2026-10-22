@@ -18,16 +18,23 @@ val localProperties = Properties().apply {
         load(FileInputStream(localFile))
     }
 }
+<<<<<<< HEAD
 val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL") ?: "https://api.example.com/"
 val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID") ?: "dummy_app_id"
 val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID") ?: "dummy_account_id"
+=======
+val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL")?.ifBlank { "https://api.autopaymax.com/" } ?: "https://api.autopaymax.com/"
+val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID") ?: ""
+val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID") ?: ""
+val revenueCatApiKey: String = localProperties.getProperty("REVENUECAT_API_KEY") ?: ""
+>>>>>>> newupdate
 
 android {
-    namespace = "com.uj.appstorysautopaymanager"
+    namespace = "com.autopaymax"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.uj.appstorysautopaymanager"
+        applicationId = "com.autopaymax"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -37,6 +44,7 @@ android {
         buildConfigField("String", "API_BASE_URL", "\"$soundBoxApiBaseUrl\"")
         buildConfigField("String", "APPSTORYS_APP_ID", "\"$appStorysAppId\"")
         buildConfigField("String", "APPSTORYS_ACCOUNT_ID", "\"$appStorysAccountId\"")
+        buildConfigField("String", "REVENUECAT_API_KEY", "\"$revenueCatApiKey\"")
     }
 
     buildTypes {
@@ -92,11 +100,21 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.biometric)
 
-    // Firebase (Phone/OTP auth)
+    // Firebase (Google-federated auth bridge + Remote Config)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.config)
     implementation(libs.kotlinx.coroutines.play.services)
+
+    // In-app Google sign-in (Credential Manager) + Gmail readonly authorization
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.google.identity.googleid)
+    implementation(libs.play.services.auth)
+
+    // On-device OCR for the "import from screenshot" add-subscription flow
+    implementation(libs.mlkit.text.recognition)
 
     // Networking (SoundBox backend)
     implementation(libs.retrofit)
@@ -114,6 +132,10 @@ dependencies {
 
     implementation("com.github.appversal:AppStorys-Android-SDK-Downgraded:3.9.5")
 
-    // Google Play Billing Library
-    implementation("com.android.billingclient:billing-ktx:7.0.0")
+    // Source: https://mvnrepository.com/artifact/com.appsflyer/af-android-sdk
+    implementation("com.appsflyer:af-android-sdk:7.0.1")
+
+    // RevenueCat Subscriptions & Google Play Billing
+    implementation(libs.revenuecat.purchases)
+    implementation(libs.revenuecat.ui)
 }
