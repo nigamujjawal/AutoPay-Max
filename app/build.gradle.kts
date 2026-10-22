@@ -18,16 +18,10 @@ val localProperties = Properties().apply {
         load(FileInputStream(localFile))
     }
 }
-<<<<<<< HEAD
-val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL") ?: "https://api.example.com/"
-val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID") ?: "dummy_app_id"
-val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID") ?: "dummy_account_id"
-=======
 val soundBoxApiBaseUrl: String = localProperties.getProperty("API_BASE_URL")?.ifBlank { "https://api.autopaymax.com/" } ?: "https://api.autopaymax.com/"
 val appStorysAppId: String = localProperties.getProperty("APPSTORYS_APP_ID") ?: ""
 val appStorysAccountId: String = localProperties.getProperty("APPSTORYS_ACCOUNT_ID") ?: ""
 val revenueCatApiKey: String = localProperties.getProperty("REVENUECAT_API_KEY") ?: ""
->>>>>>> newupdate
 
 android {
     namespace = "com.autopaymax"
